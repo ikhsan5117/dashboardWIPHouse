@@ -1034,3 +1034,4 @@ E:\dashboardWIPHouse\obj\Debug\net8.0\refint\dashboardWIPHouse.dll
 E:\dashboardWIPHouse\obj\Debug\net8.0\dashboardWIPHouse.pdb
 E:\dashboardWIPHouse\obj\Debug\net8.0\dashboardWIPHouse.genruntimeconfig.cache
 E:\dashboardWIPHouse\obj\Debug\net8.0\ref\dashboardWIPHouse.dll
+E:\dashboardWIPHouse\obj\Debug\net8.0\dashboardWIPHouse.sourcelink.json

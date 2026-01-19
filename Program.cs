@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using dashboardWIPHouse.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using dashboardWIPHouse.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -122,6 +123,40 @@ using (var scope = app.Services.CreateScope())
         if (moldedContext.Database.CanConnect())
         {
             Console.WriteLine("✓ MOLDED Database connection successful");
+
+            // Auto-create admin user if it doesn't exist
+            try 
+            {
+                var adminUser = moldedContext.UsersMolded.FirstOrDefault(u => u.Username == "adminMolded");
+                if (adminUser == null)
+                {
+                    moldedContext.UsersMolded.Add(new UserMolded 
+                    { 
+                        Username = "adminMolded", 
+                        Password = "molded321", // Default password
+                        CreatedDate = DateTime.Now 
+                    });
+                    moldedContext.SaveChanges();
+                    Console.WriteLine("✓ Created default 'adminMolded' user");
+                }
+                
+                var adminUser321 = moldedContext.UsersMolded.FirstOrDefault(u => u.Username == "adminMolded321");
+                if (adminUser321 == null)
+                {
+                    moldedContext.UsersMolded.Add(new UserMolded 
+                    { 
+                        Username = "adminMolded321", 
+                        Password = "molded321", 
+                        CreatedDate = DateTime.Now 
+                    });
+                    moldedContext.SaveChanges();
+                    Console.WriteLine("✓ Created default 'adminMolded321' user");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"! Global Error Seeding Users: {ex.Message}");
+            }
         }
         else
         {
