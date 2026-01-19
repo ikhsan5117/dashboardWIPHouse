@@ -1,0 +1,2086 @@
+﻿@model dashboardWIPHouse.Models.DashboardSummary
+
+@{
+    ViewData["Title"] = "Dashboard - Supply Hose Management";
+}
+
+<style>
+    /* ===== IMPROVED MAIN DASHBOARD STATS ===== */
+    .dashboard-stats-row {
+        margin-bottom: 40px;
+        padding: 0 15px;
+    }
+
+    .dashboard-stats-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: space-between;
+        align-items: stretch;
+    }
+
+    .stats-widget-wrapper {
+        flex: 1;
+        min-width: 220px;
+        max-width: calc(20% - 16px);
+    }
+
+    .widget-simple-custom {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: 100%;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .widget-simple-custom:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 8px 35px rgba(0, 0, 0, 0.15);
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .widget-simple-custom .widget-icon {
+        width: 100px;
+        height: 100%;
+        min-height: 140px;
+        border-radius: 12px 0 0 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.2rem;
+        color: #fff;
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .widget-simple-custom .widget-icon::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+        border-radius: 12px 0 0 12px;
+    }
+
+    .widget-simple-custom .widget-icon i {
+        position: relative;
+        z-index: 2;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+
+    /* Show FontAwesome icons by default */
+    .widget-icon i {
+        display: block;
+        position: relative;
+        z-index: 2;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .widget-simple-custom .widget-content {
+        padding: 30px 25px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-height: 140px;
+    }
+
+    .widget-simple-custom .widget-content h3 {
+        margin: 0 0 8px 0;
+        font-size: 2.2rem;
+        font-weight: 400;
+        line-height: 1.3;
+        color: #2c3e50;
+    }
+
+    .widget-simple-custom .widget-content h3 strong {
+        font-weight: 800;
+        font-size: 3.2rem;
+        display: block;
+        line-height: 1.1;
+        margin-bottom: 6px;
+        color: #1a252f;
+    }
+
+    .widget-simple-custom .widget-content small {
+        font-size: 1.4rem;
+        color: #6c757d;
+        font-weight: 500;
+        line-height: 1.4;
+    }
+
+    /* Enhanced theme colors with gradients - Same as After Washing */
+    .themed-background-danger {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    }
+
+    .themed-background-warning {
+        background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    }
+
+    .themed-background-critical {
+        background: linear-gradient(135deg, #e91e63 0%, #ad1457 100%);
+    }
+
+    .themed-background-success {
+        background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+    }
+
+    .themed-background-info {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 1200px) {
+        .stats-widget-wrapper {
+            max-width: calc(33.333% - 14px);
+            min-width: 200px;
+        }
+    }
+
+    @@media (max-width: 992px) {
+        .dashboard-stats-container {
+            gap: 15px;
+        }
+
+        .stats-widget-wrapper {
+            max-width: calc(50% - 8px);
+            min-width: 180px;
+        }
+
+        .widget-simple-custom .widget-icon {
+            width: 90px;
+            min-height: 130px;
+            font-size: 2.8rem;
+        }
+
+        .widget-simple-custom .widget-content {
+            padding: 25px 18px;
+            min-height: 130px;
+        }
+
+        .widget-simple-custom .widget-content h3 {
+            font-size: 2.0rem;
+        }
+
+        .widget-simple-custom .widget-content h3 strong {
+            font-size: 2.8rem;
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .dashboard-stats-row {
+            padding: 0 10px;
+        }
+
+        .dashboard-stats-container {
+            gap: 12px;
+        }
+
+        .stats-widget-wrapper {
+            max-width: 100%;
+            min-width: 100%;
+        }
+
+        .widget-simple-custom .widget-icon {
+            width: 80px;
+            min-height: 120px;
+            font-size: 2.4rem;
+        }
+
+        .widget-simple-custom .widget-content {
+            padding: 22px 15px;
+            min-height: 120px;
+        }
+
+        .widget-simple-custom .widget-content h3 {
+            font-size: 1.8rem;
+        }
+
+        .widget-simple-custom .widget-content h3 strong {
+            font-size: 2.6rem;
+        }
+
+        .widget-simple-custom .widget-content small {
+            font-size: 1.2rem;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .widget-simple-custom {
+            border-radius: 8px;
+        }
+
+        .widget-simple-custom .widget-icon {
+            border-radius: 8px 0 0 8px;
+            width: 75px;
+            min-height: 110px;
+            font-size: 2.2rem;
+        }
+
+        .widget-simple-custom .widget-content {
+            padding: 20px 12px;
+            min-height: 110px;
+        }
+
+        .widget-simple-custom .widget-content h3 strong {
+            font-size: 2.4rem;
+        }
+    }
+
+    /* ===== ORIGINAL HEADER STYLES (Preserved) ===== */
+    .content-header-dashboard {
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('/img/placeholders/headers/dashboard_header.jpg');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        color: white;
+        padding: 40px 0;
+        margin-bottom: 30px;
+        border-radius: 0 0 6px 6px;
+        position: relative;
+        min-height: 220px;
+    }
+
+    .content-header-dashboard:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 0 0 6px 6px;
+    }
+
+    .header-section {
+        position: relative;
+        z-index: 2;
+    }
+
+    .header-section h1 {
+        font-size: 3rem;
+        font-weight: 400;
+        margin: 0 0 15px 0;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        line-height: 1.2;
+    }
+
+    .header-section h1 strong {
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .header-section small {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        color: #f8f9fa;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    }
+
+    .header-stats h2 {
+        font-size: 1.9rem;
+        font-weight: 400;
+        margin: 0;
+        line-height: 1.2;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .header-stats h2 strong {
+        font-weight: 800;
+        font-size: 2.2rem;
+        color: #ffffff;
+        display: block;
+    }
+
+    .header-stats h2 small {
+        display: block;
+        font-size: 0.85rem;
+        opacity: 0.9;
+        margin-top: 8px;
+        color: #f8f9fa;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        font-weight: 400;
+    }
+
+    .header-stats h2 small i {
+        margin-right: 5px;
+        opacity: 0.8;
+    }
+
+    .header-stats .col-xs-3 {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        padding: 15px 10px;
+        margin: 0 5px;
+        backdrop-filter: blur(2px);
+    }
+
+    .header-stats .col-xs-custom {
+        width: 19%;
+        float: left;
+        position: relative;
+        min-height: 1px;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    @@media (max-width: 768px) {
+        .header-stats .col-xs-custom {
+            width: 50%;
+            margin-bottom: 10px;
+        }
+
+        .header-section h1 {
+            font-size: 4rem;
+        }
+
+        .header-stats h2 {
+            font-size: 1.4rem;
+        }
+
+        .header-stats h2 strong {
+            font-size: 1.8rem;
+        }
+
+        .header-stats .col-xs-custom {
+            margin: 5px 2px;
+            padding: 10px 5px;
+        }
+    }
+
+    /* ===== OTHER COMPONENTS (Preserved) ===== */
+    .widget-advanced-custom {
+        background: #fff;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .widget-header-custom {
+        background: #f8f9fa;
+        padding: 20px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .widget-header-custom h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .widget-main-custom {
+        padding: 20px;
+    }
+
+    /* Animation classes */
+    .animation-fadeIn {
+        animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .animation-pullDown {
+        animation: pullDown 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @@keyframes pullDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .error-alert {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        border-radius: 4px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-left: 4px solid #dc3545;
+    }
+
+    .refresh-floating-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: #667eea;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+
+    .refresh-floating-btn:hover {
+        background: #5a67d8;
+        transform: scale(1.1);
+        color: white;
+    }
+
+    /* Loading state - Enhanced */
+    .loading-overlay {
+        position: relative;
+    }
+
+    .loading-overlay:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 10;
+        border-radius: 12px;
+        backdrop-filter: blur(2px);
+    }
+
+    .loading-overlay:after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 24px;
+        height: 24px;
+        margin: -12px 0 0 -12px;
+        border: 3px solid #e9ecef;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 11;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .summary-box {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        padding: 20px;
+        margin-top: 30px;
+    }
+
+    .summary-box h4 {
+        margin: 0 0 15px 0;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .summary-stats {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .summary-stat {
+        text-align: center;
+        flex: 1;
+        min-width: 120px;
+        padding: 10px;
+    }
+
+    .summary-stat strong {
+        display: block;
+        font-size: 1.4rem;
+        color: #495057;
+    }
+
+    .summary-stat span {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .dt-buttons {
+        margin-bottom: 10px;
+    }
+
+    .dt-button {
+        background: #667eea !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 4px !important;
+        padding: 6px 12px !important;
+        font-size: 0.9rem !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .dt-button:hover {
+        background: #5a67d8 !important;
+        transform: scale(1.05);
+    }
+
+    /* Widget hover effect */
+    .widget-hover-effect1 {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .widget-hover-effect1:hover {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    /* ===== EXCEL UPLOAD WIDGET STYLES ===== */
+    .upload-widget {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .upload-widget:hover {
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .upload-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px 25px;
+        border-bottom: none;
+    }
+
+    .upload-header h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+    }
+
+    .upload-header h4 i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .upload-body {
+        padding: 25px;
+    }
+
+    .upload-area {
+        border: 2px dashed #dee2e6;
+        border-radius: 8px;
+        padding: 40px 20px;
+        text-align: center;
+        transition: all 0.3s ease;
+        background: #f8f9fa;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .upload-area:hover {
+        border-color: #667eea;
+        background: #f0f2ff;
+    }
+
+    .upload-area.drag-over {
+        border-color: #667eea;
+        background: #e8ecff;
+        transform: scale(1.02);
+    }
+
+    .upload-area.uploading {
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: #6c757d;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+
+    .upload-area:hover .upload-icon {
+        color: #667eea;
+        transform: scale(1.1);
+    }
+
+    .upload-text {
+        font-size: 1.1rem;
+        color: #495057;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    .upload-subtext {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
+
+    .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: -9999px;
+    }
+
+    .upload-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .upload-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .upload-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .upload-progress {
+        margin-top: 20px;
+        display: none;
+    }
+
+    .progress {
+        height: 6px;
+        border-radius: 3px;
+        background: #e9ecef;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.3s ease;
+    }
+
+    .upload-result {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 6px;
+        display: none;
+    }
+
+    .upload-result.success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+
+    .upload-result.error {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+
+    .upload-result.warning {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+    }
+
+    .result-header {
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .error-list {
+        max-height: 200px;
+        overflow-y: auto;
+        margin-top: 10px;
+    }
+
+    .error-item {
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+        padding: 4px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .error-item:last-child {
+        border-bottom: none;
+    }
+
+    .file-info {
+        background: #e9ecef;
+        border-radius: 6px;
+        padding: 10px 15px;
+        margin-top: 15px;
+        display: none;
+        font-size: 0.9rem;
+    }
+
+    .file-info-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+    }
+
+    .file-info-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .upload-guidelines {
+        background: #f8f9fa;
+        border-left: 4px solid #667eea;
+        padding: 15px 20px;
+        margin-top: 20px;
+        border-radius: 0 6px 6px 0;
+    }
+
+    .upload-guidelines h5 {
+        margin: 0 0 10px 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .upload-guidelines ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+
+    .upload-guidelines li {
+        margin-bottom: 5px;
+    }
+
+    .loading-spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @@keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Filter Status Indicator Styles */
+    #filter-status {
+        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%) !important;
+        border: 1px solid #90caf9 !important;
+        border-left: 4px solid #2196f3 !important;
+        color: #1565c0 !important;
+        animation: slideDown 0.3s ease-out !important;
+    }
+
+    #filter-status .btn-xs {
+        font-size: 0.75rem !important;
+        padding: 2px 8px !important;
+        border-radius: 3px !important;
+        background: #2196f3 !important;
+        color: white !important;
+        border: none !important;
+        transition: all 0.2s ease !important;
+    }
+
+    #filter-status .btn-xs:hover {
+        background: #1976d2 !important;
+        transform: scale(1.05) !important;
+    }
+
+    @@keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Dropdown specific styles */
+    #upload-type {
+        font-size: 1.2rem !important;
+        font-weight: 500 !important;
+        padding: 15px !important;
+        min-height: 50px !important;
+        line-height: 1.4 !important;
+        border: 2px solid #dee2e6 !important;
+        border-radius: 8px !important;
+        background-color: #fff !important;
+        color: #495057 !important;
+    }
+
+    #upload-type option {
+        font-size: 1.2rem !important;
+        padding: 10px !important;
+        line-height: 1.4 !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+    }
+
+    #upload-type:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25) !important;
+        outline: none !important;
+    }
+
+    /* Dashboard Section Headers - Larger Font */
+    .widget-header-custom h4 {
+        font-size: 1.4rem !important;
+        font-weight: 700 !important;
+        color: #2c3e50 !important;
+    }
+
+    .widget-header-custom h4 i {
+        font-size: 1.5rem !important;
+        margin-right: 10px !important;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .upload-body {
+            padding: 20px;
+        }
+
+        .upload-area {
+            padding: 30px 15px;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+        }
+
+        .upload-text {
+            font-size: 1.4rem;
+        }
+
+        .upload-btn {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+        }
+
+        #upload-type {
+            font-size: 1.1rem !important;
+            padding: 12px !important;
+        }
+
+        #upload-type option {
+            font-size: 1.1rem !important;
+            padding: 8px !important;
+        }
+
+        .widget-header-custom h4 {
+            font-size: 1.2rem !important;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .upload-header {
+            padding: 15px 20px;
+        }
+
+        .upload-header h4 {
+            font-size: 1rem;
+        }
+
+        #upload-type {
+            font-size: 1rem !important;
+            padding: 10px !important;
+        }
+
+        #upload-type option {
+            font-size: 1rem !important;
+            padding: 6px !important;
+        }
+
+        .widget-header-custom h4 {
+            font-size: 1.1rem !important;
+        }
+    }
+</style>
+
+@if (ViewData["Error"] != null)
+{
+    <div class="error-alert">
+        <i class="fa fa-exclamation-triangle"></i>
+        @ViewData["Error"]
+    </div>
+}
+
+<!-- Dashboard Header -->
+<div class="content-header content-header-dashboard">
+    <div class="header-section">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Main Title -->
+                <div class="col-md-4 col-lg-6 hidden-xs hidden-sm">
+                    <h1>Monitoring Stock <strong>Green Hose</strong><br><small>Dashboard WIP Green Hose</small></h1>
+                </div>
+                <!-- END Main Title -->
+
+                <!-- Top Stats - Updated for 5 columns -->
+                <div class="col-md-8 col-lg-6">
+                    <div class="row text-center header-stats">
+                        <div class="col-xs-custom">
+                            <h2 class="animation-hatch">
+                                <strong id="header-expired">@Model.ExpiredCount</strong>
+                                <small><i class="fa fa-times-circle"></i> Expired</small>
+                            </h2>
+                        </div>
+                        <div class="col-xs-custom">
+                            <h2 class="animation-hatch">
+                                <strong id="header-near-expired">@Model.NearExpiredCount</strong>
+                                <small><i class="fa fa-exclamation-triangle"></i> Near Exp</small>
+                            </h2>
+                        </div>
+                        <div class="col-xs-custom">
+                            <h2 class="animation-hatch">
+                                <strong id="header-shortage">@Model.ShortageCount</strong>
+                                <small><i class="fa fa-battery-quarter"></i> Shortage</small>
+                            </h2>
+                        </div>
+                        <div class="col-xs-custom">
+                            <h2 class="animation-hatch">
+                                <strong id="header-above-max">@Model.AboveMaxCount</strong>
+                                <small><i class="fa fa-arrow-up"></i> Over</small>
+                            </h2>
+                        </div>
+                        <div class="col-xs-custom">
+                            <h2 class="animation-hatch">
+                                <strong>@Model.TotalItems</strong>
+                                <small><i class="fa fa-cubes"></i> Total</small>
+                            </h2>
+                        </div>
+                    </div>
+                </div>
+                <!-- END Top Stats -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END Dashboard Header -->
+
+<!-- IMPROVED Main Dashboard Stats -->
+<div class="dashboard-stats-row" id="main-stats">
+    <div class="dashboard-stats-container">
+        <div class="stats-widget-wrapper">
+            <!-- Expired Items Widget -->
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Already Expired')">
+                <div class="widget-simple widget-simple-custom">
+                    <div class="widget-icon themed-background-danger animation-fadeIn">
+                        <i class="fa fa-times-circle"></i>
+                    </div>
+                    <div class="widget-content animation-pullDown">
+                        <h3>
+                            <strong id="main-expired">@Model.ExpiredCount</strong>
+                            Items
+                        </h3>
+                        <small>Expired</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="stats-widget-wrapper">
+            <!-- Near Expired Widget -->
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Near Expired')">
+                <div class="widget-simple widget-simple-custom">
+                    <div class="widget-icon themed-background-warning animation-fadeIn">
+                        <i class="fa fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="widget-content animation-pullDown">
+                        <h3>
+                            <strong id="main-near-expired">@Model.NearExpiredCount</strong>
+                            Items
+                        </h3>
+                        <small>Expiring Soon</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="stats-widget-wrapper">
+            <!-- Shortage Widget -->
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Shortage')">
+                <div class="widget-simple widget-simple-custom">
+                    <div class="widget-icon themed-background-critical animation-fadeIn">
+                        <i class="fa fa-battery-quarter"></i>
+                    </div>
+                    <div class="widget-content animation-pullDown">
+                        <h3>
+                            <strong id="main-shortage">@Model.ShortageCount</strong>
+                            Items
+                        </h3>
+                        <small>Shortage</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="stats-widget-wrapper">
+            <!-- Above Maximum Widget -->
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Over Stock')">
+                <div class="widget-simple widget-simple-custom">
+                    <div class="widget-icon themed-background-success animation-fadeIn">
+                        <i class="fa fa-arrow-up"></i>
+                    </div>
+                    <div class="widget-content animation-pullDown">
+                        <h3>
+                            <strong id="main-above-max">@Model.AboveMaxCount</strong>
+                            Items
+                        </h3>
+                        <small>Over Stock</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="stats-widget-wrapper">
+            <!-- Normal Items Widget -->
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Normal')">
+                <div class="widget-simple widget-simple-custom">
+                    <div class="widget-icon themed-background-info animation-fadeIn">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <div class="widget-content animation-pullDown">
+                        <h3>
+                            <strong id="main-normal">@(Model.TotalItems - Model.ExpiredCount - Model.NearExpiredCount -
+                                                                Model.ShortageCount - Model.AboveMaxCount)</strong>
+                            Items
+                        </h3>
+                        <small>Normal Stock</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- END Improved Main Dashboard Stats -->
+
+<!-- Right side - Keep existing Inventory Summary -->
+<div class="col-lg-12">
+    <div class="widget-advanced-custom">
+        <div class="widget-header-custom">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h4><i class="fa fa-bar-chart"></i> Inventory Summary</h4>
+                </div>
+                <div class="col-sm-4 text-right">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="refreshDashboard()">
+                        <i class="fa fa-refresh" id="refresh-icon"></i> Refresh Data
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="widget-main-custom">
+            <div class="summary-stats">
+                <div class="summary-stat">
+                    <strong id="total-items">@Model.TotalItems</strong>
+                    <span>Total Itemsss</span>
+                </div>
+                <div class="summary-stat">
+                    <strong id="critical-items">@(Model.ExpiredCount + Model.NearExpiredCount +
+                                                Model.ShortageCount)</strong>
+                    <span>Critical Items</span>
+                </div>
+                <div class="summary-stat">
+                    <strong id="normal-items">@(Model.TotalItems - Model.ExpiredCount - Model.NearExpiredCount -
+                                                Model.ShortageCount - Model.AboveMaxCount)</strong>
+                    <span>Normal Items</span>
+                </div>
+                <div class="summary-stat">
+                    <strong id="last-update">@DateTime.Now.ToString("HH:mm")</strong>
+                    <span>Last Updated</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e9ecef;">
+                <div class="row text-center">
+                    <div class="col-sm-3">
+                        <small class="text-muted">Database: DB_SUPPLY_HOSE</small>
+                    </div>
+                    <div class="col-sm-3">
+                        <small class="text-muted">Table: storage_log</small>
+                    </div>
+                    <div class="col-sm-3">
+                        <small class="text-muted">Auto-refresh: 5 min</small>
+                    </div>
+                    <div class="col-sm-3">
+                        <small class="text-muted">Status: <span class="text-success"
+                                id="connection-status">Connected</span></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DataTable Section -->
+
+<div class="col-lg-12">
+    <div class="widget-advanced-custom">
+        <div class="widget-header-custom">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h4><i class="fa fa-table"></i> Stock Details</h4>
+                </div>
+                <div class="col-sm-4 text-right">
+                    <button type="button" class="btn btn-warning btn-sm" onclick="resetTableFilter()" style="margin-right: 5px;">
+                        <i class="fa fa-undo"></i> Reset Filter
+                    </button>
+                    <button type="button" class="btn btn-info btn-sm" onclick="checkDataConsistency()" style="margin-right: 5px;">
+                        <i class="fa fa-bug"></i> Debug Data
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="refreshTable()">
+                        <i class="fa fa-refresh" id="table-refresh-icon"></i> Refresh Table
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="widget-main-custom">
+            <div class="table-responsive">
+                <table id="stock-table" class="table table-striped table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Item Code</th>
+                            <th>Std Min</th>
+                            <th>Std Max</th>
+                            <th>Box Stock</th>
+                            <th>Qty Per Box</th>
+                            <th>Pcs Stock</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated by DataTables -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- END DataTable Section -->
+
+@if (User.IsInRole("Admin"))
+{
+    <!-- Excel Upload Widget with Enhanced Text -->
+    <div class="col-lg-12" style="margin-bottom: 20px;">
+        <div class="upload-widget">
+            <div class="upload-header">
+                <h4>
+                    <i class="fa fa-cloud-upload"></i>
+                    Upload Green Hose Excel Data
+                </h4>
+            </div>
+            <div class="upload-body">
+                <!-- Upload Type Selection -->
+                <div class="upload-type-selection" style="margin-bottom: 25px;">
+                    <label for="upload-type" style="display: block; margin-bottom: 12px; font-weight: 700; color: #495057; font-size: 1.2rem;">
+                        <i class="fa fa-list-alt" style="margin-right: 10px; font-size: 1.3rem;"></i>
+                        Pilih Jenis Upload:
+                    </label>
+                    <select id="upload-type" class="form-control" style="padding: 15px; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1.2rem; font-weight: 500; height: auto; line-height: 1.4; min-height: 50px;">
+                        <option value="storage" style="font-size: 1.2rem; padding: 8px;">📥 IN - Storage Log (Masuk ke Gudang)</option>
+                        <option value="supply" style="font-size: 1.2rem; padding: 8px;">📤 OUT - Supply Log (Keluar dari Gudang)</option>
+                        <option value="raks" style="font-size: 1.2rem; padding: 8px;">🏗️ RAKS - Raks Data (Data Rak Gudang)</option>
+                    </select>
+                    <div id="upload-type-description" style="margin-top: 12px; padding: 15px; background: #f8f9fa; border-radius: 6px; font-size: 1.1rem; color: #6c757d; line-height: 1.5;">
+                        <strong style="font-size: 1.15rem;">Storage Log:</strong> Data masuk ke gudang (storage_log table)
+                    </div>
+                    
+                    <!-- Download Template Button -->
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button type="button" id="download-template-btn" class="btn btn-success" 
+                                style="font-size: 1.1rem; padding: 12px 25px; font-weight: 600; border-radius: 6px;">
+                            <i class="fa fa-download"></i>
+                            <span id="template-btn-text">Download Storage Log Template</span>
+                        </button>
+                        <div style="margin-top: 8px; font-size: 0.95rem; color: #6c757d;">
+                            <i class="fa fa-info-circle"></i>
+                            Download Excel template with sample data and correct column structure
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-area" id="upload-area">
+                    <div class="upload-icon">
+                        <i class="fa fa-file-excel-o"></i>
+                    </div>
+                    <div class="upload-text" style="font-size: 1.6rem; font-weight: 600;">
+                        Drop Green Hose Excel file here or click to browse
+                    </div>
+                    <div class="upload-subtext" style="font-size: 1.3rem; margin-bottom: 15px;">
+                        Supports .xlsx and .xls files (max 10MB)
+                    </div>
+
+                    <!-- Database Information Panel -->
+                    <div id="database-info-panel"
+                        style="background: #e8f4f8; border: 1px solid #bee5eb; border-radius: 8px; padding: 18px; margin: 20px 0; font-size: 1.15rem;">
+                        <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                            <i class="fa fa-database" style="color: #17a2b8; margin-right: 10px; font-size: 1.3rem;"></i>
+                            <strong style="color: #0c5460; font-size: 1.25rem;">Green Hose Database Target
+                                Information</strong>
+                        </div>
+                        <div style="color: #424242; line-height: 1.6;">
+                            <div style="font-size: 1.15rem;"><strong>Database:</strong> DB_SUPPLY_HOSE</div>
+                            <div style="font-size: 1.15rem;"><strong>Target Table:</strong> <span id="target-table-name">storage_log</span></div>
+                            <div style="font-size: 1.1rem; color: #666; margin-top: 8px;">
+                                <i class="fa fa-info-circle" style="margin-right: 8px;"></i>
+                                <span id="target-table-description">Data will be imported directly into the storage_log table</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="file-input-wrapper">
+                        <input type="file" id="excel-file" accept=".xlsx,.xls" />
+                        <button type="button" class="upload-btn" id="browse-btn"
+                            style="font-size: 1.2rem; padding: 16px 32px; font-weight: 600;">
+                            <i class="fa fa-folder-open"></i>
+                            Browse Files
+                        </button>
+                    </div>
+                </div>
+
+                <div class="file-info" id="file-info" style="font-size: 1.1rem;">
+                    <div class="file-info-item" style="font-size: 1.1rem;">
+                        <span><strong>File:</strong></span>
+                        <span id="file-name">-</span>
+                    </div>
+                    <div class="file-info-item" style="font-size: 1.1rem;">
+                        <span><strong>Size:</strong></span>
+                        <span id="file-size">-</span>
+                    </div>
+                    <div class="file-info-item" style="font-size: 1.1rem;">
+                        <span><strong>Type:</strong></span>
+                        <span id="file-type">-</span>
+                    </div>
+                </div>
+
+                <div class="upload-progress" id="upload-progress">
+                    <div class="progress">
+                        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div style="text-align: center; margin-top: 8px; font-size: 1.1rem; color: #6c757d; font-weight: 500;" id="progress-text">
+                        Uploading...
+                    </div>
+                </div>
+
+                <div class="upload-result" id="upload-result">
+                    <div class="result-header" id="result-header">
+                        <i class="fa fa-check-circle"></i>
+                        <span id="result-title">Upload Successful</span>
+                    </div>
+                    <div id="result-message"></div>
+                    <div class="error-list" id="error-list"></div>
+                </div>
+
+                <div style="text-align: center; margin-top: 25px;">
+                    <button type="button" class="upload-btn" id="upload-btn" disabled
+                        style="font-size: 1.3rem; padding: 18px 35px; font-weight: 700;">
+                        <i class="fa fa-upload"></i>
+                        Upload to Database
+                    </button>
+                </div>
+
+                <!-- Enhanced Guidelines Section -->
+                <div class="upload-guidelines">
+                    <h5 style="font-size: 1.3rem; font-weight: 700;">
+                        <i class="fa fa-list-ul" style="margin-right: 10px; font-size: 1.4rem;"></i>
+                        <span id="guidelines-title">Storage Log Upload Guidelines</span>
+                    </h5>
+                    <div id="guidelines-content">
+                        <ul style="font-size: 1.15rem; line-height: 1.7;">
+                            <li>Excel file will be processed and imported into <strong>storage_log</strong> table</li>
+                            <li>Excel file must contain these columns in order: <strong>Timestamp, Kode Rak, Full QR, Kode Item, Jml Box, Production Date, Qty Pcs</strong></li>
+                            <li>Required columns: Timestamp, Full QR, Kode Item, Jml Box</li>
+                            <li>Optional columns: Kode Rak, Production Date, Qty Pcs</li>
+                            <li>Maximum file size: 10MB</li>
+                            <li>Supported formats: .xlsx, .xls</li>
+                            <li>Data validation will be performed before database insertion</li>
+                            <li>Dashboard will automatically refresh after successful upload</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+<!-- Floating Refresh Button -->
+<button type="button" class="refresh-floating-btn" onclick="refreshDashboard()" title="Refresh Dashboard">
+    <i class="fa fa-refresh"></i>
+</button>
+
+@section Scripts {
+    <!-- Include DataTables CSS and JS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Include DataTables Buttons for Excel export -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+
+    <script>
+        let stockTable; // Global variable to store DataTable instance
+
+        function refreshTable() {
+            const refreshIcon = document.getElementById('table-refresh-icon');
+            refreshIcon.classList.add('fa-spin');
+            stockTable.ajax.reload(() => {
+                refreshIcon.classList.remove('fa-spin');
+            });
+        }
+
+        function refreshDashboard() {
+            // Add loading state
+            const mainStats = document.getElementById('main-stats');
+            const refreshIcon = document.getElementById('refresh-icon');
+
+            mainStats.classList.add('loading-overlay');
+            refreshIcon.classList.add('fa-spin');
+
+            fetch('@Url.Action("GetDashboardData", "Home")')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Error loading data:', data.error);
+                        document.getElementById('connection-status').innerHTML = '<span class="text-danger">Error</span>';
+                        return;
+                    }
+
+                    // Update all counters with animation
+                    updateCounterWithAnimation('header-expired', data.expiredCount);
+                    updateCounterWithAnimation('header-near-expired', data.nearExpiredCount);
+                    updateCounterWithAnimation('header-shortage', data.shortageCount);
+                    updateCounterWithAnimation('header-above-max', data.aboveMaxCount);
+
+                    updateCounterWithAnimation('main-expired', data.expiredCount);
+                    updateCounterWithAnimation('main-near-expired', data.nearExpiredCount);
+                    updateCounterWithAnimation('main-shortage', data.shortageCount);
+                    updateCounterWithAnimation('main-above-max', data.aboveMaxCount);
+                    updateCounterWithAnimation('main-normal', data.totalItems - data.expiredCount - data.nearExpiredCount - data.shortageCount - data.aboveMaxCount);
+
+                    updateCounterWithAnimation('total-items', data.totalItems);
+                    updateCounterWithAnimation('critical-items', data.expiredCount + data.nearExpiredCount + data.shortageCount);
+                    updateCounterWithAnimation('normal-items', data.totalItems - data.expiredCount - data.nearExpiredCount - data.shortageCount - data.aboveMaxCount);
+
+                    // Update last update time
+                    document.getElementById('last-update').textContent = new Date().toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false
+                    });
+
+                    document.getElementById('connection-status').innerHTML = '<span class="text-success">Connected</span>';
+
+                    // Refresh DataTable as well
+                    refreshTable();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('connection-status').innerHTML = '<span class="text-danger">Connection Error</span>';
+                })
+                .finally(() => {
+                    mainStats.classList.remove('loading-overlay');
+                    refreshIcon.classList.remove('fa-spin');
+                });
+        }
+
+        function updateCounterWithAnimation(elementId, targetValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+
+            const startValue = parseInt(element.textContent) || 0;
+            const duration = 800; // Animation duration in milliseconds
+            const startTime = performance.now();
+
+            function animate(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+
+                // Use easing function for smooth animation
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+                const currentValue = Math.round(startValue + (targetValue - startValue) * easeProgress);
+                element.textContent = currentValue;
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // Function to filter table and scroll
+        function filterTable(status) {
+            stockTable.column(7).search(status).draw();
+            const tableElement = document.querySelector('#stock-table');
+            if (tableElement) {
+                tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // Add visual feedback for active filter
+            showFilterStatus(status);
+        }
+
+        // Function to reset table filter and show all data
+        function resetTableFilter() {
+            // Clear all column filters
+            stockTable.columns().search('').draw();
+            
+            // Scroll to table
+            const tableElement = document.querySelector('#stock-table');
+            if (tableElement) {
+                tableElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // Hide filter status
+            hideFilterStatus();
+            
+            // Show success message
+            console.log('Table filter reset - showing all data');
+        }
+
+        // Function to show filter status
+        function showFilterStatus(status) {
+            // Remove existing filter status if any
+            hideFilterStatus();
+            
+            // Create filter status indicator
+            const filterStatus = document.createElement('div');
+            filterStatus.id = 'filter-status';
+            filterStatus.className = 'alert alert-info';
+            filterStatus.style.cssText = 'margin: 10px 0; padding: 8px 15px; border-radius: 4px; font-size: 0.9rem;';
+            filterStatus.innerHTML = `
+                <i class="fa fa-filter"></i> 
+                <strong>Filter Active:</strong> Showing items with status "${status}" 
+                <button type="button" class="btn btn-xs btn-default" onclick="resetTableFilter()" style="margin-left: 10px;">
+                    <i class="fa fa-times"></i> Clear Filter
+                </button>
+            `;
+            
+            // Insert before table
+            const tableContainer = document.querySelector('#stock-table').closest('.widget-main-custom');
+            tableContainer.insertBefore(filterStatus, tableContainer.querySelector('.table-responsive'));
+        }
+
+        // Function to hide filter status
+        function hideFilterStatus() {
+            const existingStatus = document.getElementById('filter-status');
+            if (existingStatus) {
+                existingStatus.remove();
+            }
+        }
+
+        // Initialize dashboard and DataTable
+        $(document).ready(function () {
+            // Initialize DataTable
+            stockTable = $('#stock-table').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetTableData", "Home")',
+                    dataSrc: 'data',
+                    error: function (xhr, error, thrown) {
+                        console.error('DataTable load error:', thrown);
+                        document.getElementById('connection-status').innerHTML = '<span class="text-danger">Table Data Error</span>';
+                    }
+                },
+                columns: [
+                    { data: 'no', searchable: false, orderable: true },
+                    { data: 'itemCode' },
+                    {
+                        data: 'standardMin',
+                        render: function (data) {
+                            return data ?? '-';
+                        }
+                    },
+                    {
+                        data: 'standardMax',
+                        render: function (data) {
+                            return data ?? '-';
+                        }
+                    },
+                    { data: 'currentBoxStock' },
+                    {
+                        data: 'qtyPerBox',
+                        render: function (data) {
+                            return data ?? '-';
+                        }
+                    },
+                    { data: 'pcs' },
+                    {
+                        data: 'status',
+                        render: function (data, type, row) {
+                            let badgeClass = '';
+                            switch (data) {
+                                case 'Already Expired':
+                                    badgeClass = 'badge badge-danger';
+                                    break;
+                                case 'Near Expired':
+                                    badgeClass = 'badge badge-warning';
+                                    break;
+                                case 'Shortage':
+                                    badgeClass = 'badge badge-dark'; // Dark red for shortage
+                                    break;
+                                case 'Over Stock':
+                                    badgeClass = 'badge badge-success';
+                                    break;
+                                case 'Normal':
+                                    badgeClass = 'badge badge-info';
+                                    break;
+                                default:
+                                    badgeClass = 'badge badge-secondary';
+                            }
+                            return `<span class="${badgeClass}">${data}</span>`;
+                        }
+                    }
+                ],
+                responsive: true,
+                pageLength: 10,
+                order: [[1, 'asc']], // Sort by ItemCode by default
+                language: {
+                    emptyTable: 'No stock data available',
+                    loadingRecords: 'Loading stock data...',
+                    processing: 'Processing...',
+                    search: 'Search items:',
+                    paginate: {
+                        first: 'First',
+                        last: 'Last',
+                        next: 'Next',
+                        previous: 'Previous'
+                    }
+                },
+                dom: '<"row"<"col-sm-6"l><"col-sm-6"fB>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        text: '<i class="fa fa-file-excel-o"></i> Export to Excel',
+                        title: 'Supply Hose Stock Report',
+                        filename: 'SupplyHose_StockReport_' + new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7] // Export all visible columns
+                        }
+                    }
+                ],
+                initComplete: function () {
+                    console.log('Stock DataTable initialized successfully');
+                }
+            });
+
+            // Auto-refresh every 5 minutes
+            setInterval(refreshDashboard, 300000);
+
+            // Enhanced hover effects for improved widgets
+            $('.widget-hover-effect1').hover(
+                function () {
+                    $(this).find('.widget-simple-custom').css('transform', 'translateY(-6px)');
+                },
+                function () {
+                    $(this).find('.widget-simple-custom').css('transform', 'translateY(0)');
+                }
+            );
+
+            console.log('Supply Hose Dashboard with improved stats initialized successfully');
+        });
+
+
+        $(document).ready(function () {
+            let selectedFile = null;
+
+            // File input elements
+            const fileInput = document.getElementById('excel-file');
+            const uploadArea = document.getElementById('upload-area');
+            const browseBtn = document.getElementById('browse-btn');
+            const uploadBtn = document.getElementById('upload-btn');
+            const fileInfo = document.getElementById('file-info');
+            const uploadProgress = document.getElementById('upload-progress');
+            const uploadResult = document.getElementById('upload-result');
+            const uploadTypeSelect = document.getElementById('upload-type');
+            const uploadTypeDescription = document.getElementById('upload-type-description');
+            const targetTableName = document.getElementById('target-table-name');
+            const targetTableDescription = document.getElementById('target-table-description');
+            const guidelinesTitle = document.getElementById('guidelines-title');
+            const guidelinesContent = document.getElementById('guidelines-content');
+            const downloadTemplateBtn = document.getElementById('download-template-btn');
+            const templateBtnText = document.getElementById('template-btn-text');
+
+            // Handle upload type change
+            uploadTypeSelect.addEventListener('change', function() {
+                const selectedType = this.value;
+                updateUploadTypeUI(selectedType);
+            });
+
+            // Handle download template button click
+            downloadTemplateBtn.addEventListener('click', function() {
+                const selectedType = uploadTypeSelect.value;
+                downloadTemplate(selectedType);
+            });
+
+            function updateUploadTypeUI(type) {
+                if (type === 'supply') {
+                    // Update description
+                    uploadTypeDescription.innerHTML = '<strong>Supply Log:</strong> Data keluar dari gudang (supply_log table)';
+                    
+                    // Update database info panel
+                    targetTableName.textContent = 'supply_log';
+                    targetTableDescription.textContent = 'Data will be imported directly into the supply_log table';
+                    
+                    // Update download template button
+                    templateBtnText.textContent = 'Download Supply Log Template';
+                    
+                    // Update guidelines
+                    guidelinesTitle.textContent = 'Supply Log Upload Guidelines';
+                    guidelinesContent.innerHTML = `
+                        <ul style="font-size: 1.15rem; line-height: 1.7;">
+                            <li>Excel file will be processed and imported into <strong>supply_log</strong> table</li>
+                            <li>Excel file must contain these columns in order: <strong>item_code, full_qr, box_count, qty_pcs, supplied_at, to_process</strong></li>
+                            <li>Required columns: item_code, full_qr</li>
+                            <li>Optional columns: box_count, qty_pcs, supplied_at, to_process</li>
+                            <li><strong>Note:</strong> storage_log_id is automatically populated by matching FullQR with storage_log table</li>
+                            <li>Maximum file size: 10MB</li>
+                            <li>Supported formats: .xlsx, .xls</li>
+                            <li>Data validation will be performed before database insertion</li>
+                            <li>Dashboard will automatically refresh after successful upload</li>
+                        </ul>
+                    `;
+                } else if (type === 'raks') {
+                    // Update description
+                    uploadTypeDescription.innerHTML = '<strong>Raks Data:</strong> Data rak gudang (raks table)';
+                    
+                    // Update database info panel
+                    targetTableName.textContent = 'raks';
+                    targetTableDescription.textContent = 'Data will be imported directly into the raks table';
+                    
+                    // Update download template button
+                    templateBtnText.textContent = 'Download Raks Template';
+                    
+                    // Update guidelines
+                    guidelinesTitle.textContent = 'Raks Upload Guidelines';
+                    guidelinesContent.innerHTML = `
+                        <ul style="font-size: 1.15rem; line-height: 1.7;">
+                            <li>Excel file will be processed and imported into <strong>raks</strong> table</li>
+                            <li>Excel file must contain these columns in order: <strong>full_qr, location, item_code</strong></li>
+                            <li>Required columns: full_qr, location, item_code</li>
+                            <li>All columns are mandatory for raks data</li>
+                            <li>Maximum file size: 10MB</li>
+                            <li>Supported formats: .xlsx, .xls</li>
+                            <li>Data validation will be performed before database insertion</li>
+                            <li>Dashboard will automatically refresh after successful upload</li>
+                        </ul>
+                    `;
+                } else {
+                    // Update description
+                    uploadTypeDescription.innerHTML = '<strong>Storage Log:</strong> Data masuk ke gudang (storage_log table)';
+                    
+                    // Update database info panel
+                    targetTableName.textContent = 'storage_log';
+                    targetTableDescription.textContent = 'Data will be imported directly into the storage_log table';
+                    
+                    // Update download template button
+                    templateBtnText.textContent = 'Download Storage Log Template';
+                    
+                    // Update guidelines
+                    guidelinesTitle.textContent = 'Storage Log Upload Guidelines';
+                    guidelinesContent.innerHTML = `
+                        <ul style="font-size: 1.15rem; line-height: 1.7;">
+                            <li>Excel file will be processed and imported into <strong>storage_log</strong> table</li>
+                            <li>Excel file must contain these columns in order: <strong>Timestamp, Kode Rak, Full QR, Kode Item, Jml Box, Production Date, Qty Pcs</strong></li>
+                            <li>Required columns: Timestamp, Full QR, Kode Item, Jml Box</li>
+                            <li>Optional columns: Kode Rak, Production Date, Qty Pcs</li>
+                            <li>Maximum file size: 10MB</li>
+                            <li>Supported formats: .xlsx, .xls</li>
+                            <li>Data validation will be performed before database insertion</li>
+                            <li>Dashboard will automatically refresh after successful upload</li>
+                        </ul>
+                    `;
+                }
+            }
+
+            function downloadTemplate(uploadType) {
+                try {
+                    // Show loading state
+                    const originalText = templateBtnText.textContent;
+                    templateBtnText.textContent = 'Generating Template...';
+                    downloadTemplateBtn.disabled = true;
+                    
+                    // Create download link
+                    const downloadUrl = `@Url.Action("DownloadTemplate", "Home")?uploadType=${uploadType}`;
+                    
+                    // Create temporary link element
+                    const link = document.createElement('a');
+                    link.href = downloadUrl;
+                    link.download = '';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Reset button state
+                    setTimeout(() => {
+                        templateBtnText.textContent = originalText;
+                        downloadTemplateBtn.disabled = false;
+                    }, 1000);
+                    
+                    console.log(`Template download initiated for: ${uploadType}`);
+                } catch (error) {
+                    console.error('Error downloading template:', error);
+                    alert('Error downloading template. Please try again.');
+                    
+                    // Reset button state
+                    templateBtnText.textContent = originalText;
+                    downloadTemplateBtn.disabled = false;
+                }
+            }
+
+            // Initialize with default type
+            updateUploadTypeUI('storage');
+
+            // Browse button click
+            browseBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            // Upload area click
+            uploadArea.addEventListener('click', (e) => {
+                if (e.target === uploadArea || e.target.closest('.upload-icon, .upload-text, .upload-subtext')) {
+                    fileInput.click();
+                }
+            });
+
+            // Drag and drop functionality
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelection(files[0]);
+                }
+            });
+
+            // File input change
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileSelection(e.target.files[0]);
+                }
+            });
+
+            // Upload button click
+            uploadBtn.addEventListener('click', () => {
+                if (selectedFile) {
+                    uploadFile(selectedFile);
+                }
+            });
+
+            function handleFileSelection(file) {
+                // Validate file type
+                const allowedTypes = ['.xlsx', '.xls'];
+                const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+                if (!allowedTypes.includes(fileExtension)) {
+                    showResult('error', 'Invalid File Type', 'Please select an Excel file (.xlsx or .xls)');
+                    return;
+                }
+
+                // Validate file size (10MB limit)
+                if (file.size > 10 * 1024 * 1024) {
+                    showResult('error', 'File Too Large', 'File size must be less than 10MB');
+                    return;
+                }
+
+                selectedFile = file;
+
+                // Show file info
+                document.getElementById('file-name').textContent = file.name;
+                document.getElementById('file-size').textContent = formatFileSize(file.size);
+                document.getElementById('file-type').textContent = fileExtension.toUpperCase();
+
+                fileInfo.style.display = 'block';
+                uploadBtn.disabled = false;
+
+                // Hide previous results
+                hideResult();
+
+                console.log('File selected:', file.name, 'Size:', formatFileSize(file.size));
+            }
+
+            function uploadFile(file) {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('uploadType', uploadTypeSelect.value);
+
+                // Show upload progress
+                uploadProgress.style.display = 'block';
+                uploadBtn.disabled = true;
+                uploadArea.classList.add('uploading');
+
+                // Update button text
+                uploadBtn.innerHTML = '<span class="loading-spinner"></span> Uploading...';
+
+                // Simulate progress
+                let progress = 0;
+                const progressInterval = setInterval(() => {
+                    progress += Math.random() * 15;
+                    if (progress > 90) progress = 90;
+                    updateProgress(progress);
+                }, 200);
+
+                fetch('@Url.Action("UploadExcel", "Home")', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        clearInterval(progressInterval);
+                        updateProgress(100);
+
+                        setTimeout(() => {
+                            uploadProgress.style.display = 'none';
+                            uploadArea.classList.remove('uploading');
+                            uploadBtn.innerHTML = '<i class="fa fa-upload"></i> Upload to Database';
+                            uploadBtn.disabled = false;
+
+                            if (data.success) {
+                                let resultType = 'success';
+                                let title = 'Upload Successful';
+                                let message = data.message;
+
+                                if (data.errorRows > 0) {
+                                    resultType = 'warning';
+                                    title = 'Upload Completed with Warnings';
+                                }
+
+                                showResult(resultType, title, message, data.errors);
+
+                                // Refresh dashboard data after successful upload
+                                setTimeout(() => {
+                                    refreshDashboard();
+                                }, 1000);
+
+                                // Reset form
+                                setTimeout(() => {
+                                    resetUploadForm();
+                                }, 5000);
+
+                            } else {
+                                showResult('error', 'Upload Failed', data.message || 'An error occurred during upload', data.errors);
+                            }
+                        }, 500);
+                    })
+                    .catch(error => {
+                        clearInterval(progressInterval);
+                        uploadProgress.style.display = 'none';
+                        uploadArea.classList.remove('uploading');
+                        uploadBtn.innerHTML = '<i class="fa fa-upload"></i> Upload to Database';
+                        uploadBtn.disabled = false;
+
+                        console.error('Upload error:', error);
+                        showResult('error', 'Upload Failed', 'Network error occurred. Please try again.');
+                    });
+            }
+
+            function updateProgress(percentage) {
+                const progressBar = document.getElementById('progress-bar');
+                const progressText = document.getElementById('progress-text');
+
+                progressBar.style.width = percentage + '%';
+
+                if (percentage < 100) {
+                    progressText.textContent = `Uploading... ${Math.round(percentage)}%`;
+                } else {
+                    progressText.textContent = 'Processing data...';
+                }
+            }
+
+            function showResult(type, title, message, errors = []) {
+                const resultDiv = uploadResult;
+                const resultHeader = document.getElementById('result-header');
+                const resultTitle = document.getElementById('result-title');
+                const resultMessage = document.getElementById('result-message');
+                const errorList = document.getElementById('error-list');
+
+                // Reset classes
+                resultDiv.className = 'upload-result ' + type;
+
+                // Set icon and title based on type
+                let icon = 'fa-check-circle';
+                if (type === 'error') icon = 'fa-times-circle';
+                if (type === 'warning') icon = 'fa-exclamation-triangle';
+
+                resultHeader.innerHTML = `<i class="fa ${icon}"></i><span>${title}</span>`;
+                resultMessage.textContent = message;
+
+                // Show errors if any
+                if (errors && errors.length > 0) {
+                    let errorHtml = '';
+                    errors.forEach(error => {
+                        errorHtml += `<div class="error-item">${error}</div>`;
+                    });
+                    errorList.innerHTML = errorHtml;
+                    errorList.style.display = 'block';
+                } else {
+                    errorList.style.display = 'none';
+                }
+
+                resultDiv.style.display = 'block';
+
+                // Scroll to result
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function hideResult() {
+                uploadResult.style.display = 'none';
+            }
+
+            function resetUploadForm() {
+                selectedFile = null;
+                fileInput.value = '';
+                fileInfo.style.display = 'none';
+                uploadBtn.disabled = true;
+                hideResult();
+
+                // Reset file info
+                document.getElementById('file-name').textContent = '-';
+                document.getElementById('file-size').textContent = '-';
+                document.getElementById('file-type').textContent = '-';
+
+                console.log('Upload form reset');
+            }
+
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+
+            console.log('Excel upload functionality initialized');
+
+        });
+
+        // Debug function untuk mengecek konsistensi data
+        function checkDataConsistency() {
+            console.log('Checking data consistency...');
+            
+            fetch('/Home/GetDataConsistency')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Data Consistency Check:', data);
+                        
+                        // Tampilkan hasil di alert
+                        let message = `Data Consistency Check:\n\n`;
+                        message += `Total Items: ${data.totalItems}\n`;
+                        message += `Stats Shortage Count: ${data.statsShortageCount}\n`;
+                        message += `Table Shortage Count: ${data.tableShortageCount}\n`;
+                        message += `Expired Count: ${data.expiredCount}\n`;
+                        message += `Near Expired Count: ${data.nearExpiredCount}\n`;
+                        message += `Above Max Count: ${data.aboveMaxCount}\n\n`;
+                        
+                        if (data.statsShortageCount !== data.tableShortageCount) {
+                            message += `⚠️ MISMATCH DETECTED!\n`;
+                            message += `Stats shows ${data.statsShortageCount} shortage items\n`;
+                            message += `Table shows ${data.tableShortageCount} shortage items\n\n`;
+                        }
+                        
+                        message += `Sample Shortage Items:\n`;
+                        data.shortageItems.forEach((item, index) => {
+                            message += `${index + 1}. ${item.ItemCode} - Stock: ${item.Stock}, Min: ${item.Min}, Status: ${item.Status}\n`;
+                        });
+                        
+                        alert(message);
+                    } else {
+                        console.error('Error checking data consistency:', data.error);
+                        alert('Error checking data consistency: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error checking data consistency: ' + error.message);
+                });
+        }
+    </script>
+}

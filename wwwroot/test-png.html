@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test PNG Icons Access</title>
+    <style>
+        .test-container {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .test-icon {
+            width: 100px;
+            height: 100px;
+            background-size: 60px 60px;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: 2px solid #ccc;
+            margin: 10px;
+            display: inline-block;
+            position: relative;
+        }
+        .expired { background-image: url('/img/stats/expired.png'); }
+        .near-expired { background-image: url('/img/stats/near_expired.png'); }
+        .shortage { background-image: url('/img/stats/shortage.png'); }
+        .over-stock { background-image: url('/img/stats/over_stock.png'); }
+        .normal { background-image: url('/img/stats/normal.png'); }
+        .test-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>PNG Icons Test</h1>
+        
+        <div id="status" class="status">Testing PNG icons...</div>
+        
+        <h2>Icons Test:</h2>
+        <div class="test-icon expired">
+            <div class="test-label">Expired</div>
+        </div>
+        <div class="test-icon near-expired">
+            <div class="test-label">Near Expired</div>
+        </div>
+        <div class="test-icon shortage">
+            <div class="test-label">Shortage</div>
+        </div>
+        <div class="test-icon over-stock">
+            <div class="test-label">Over Stock</div>
+        </div>
+        <div class="test-icon normal">
+            <div class="test-label">Normal</div>
+        </div>
+        
+        <h2>Direct Links Test:</h2>
+        <ul>
+            <li><a href="/img/stats/expired.png" target="_blank">expired.png</a></li>
+            <li><a href="/img/stats/near_expired.png" target="_blank">near_expired.png</a></li>
+            <li><a href="/img/stats/shortage.png" target="_blank">shortage.png</a></li>
+            <li><a href="/img/stats/over_stock.png" target="_blank">over_stock.png</a></li>
+            <li><a href="/img/stats/normal.png" target="_blank">normal.png</a></li>
+        </ul>
+    </div>
+
+    <script>
+        // Test if PNG files can be loaded
+        const testImages = [
+            '/img/stats/expired.png',
+            '/img/stats/near_expired.png',
+            '/img/stats/shortage.png',
+            '/img/stats/over_stock.png',
+            '/img/stats/normal.png'
+        ];
+        
+        let loadedCount = 0;
+        const totalImages = testImages.length;
+        
+        testImages.forEach((src, index) => {
+            const img = new Image();
+            img.onload = function() {
+                loadedCount++;
+                console.log(`✓ Loaded: ${src}`);
+                if (loadedCount === totalImages) {
+                    document.getElementById('status').innerHTML = `✅ All ${totalImages} PNG icons loaded successfully!`;
+                    document.getElementById('status').className = 'status success';
+                }
+            };
+            img.onerror = function() {
+                console.error(`✗ Failed to load: ${src}`);
+                document.getElementById('status').innerHTML = `❌ Failed to load: ${src}`;
+                document.getElementById('status').className = 'status error';
+            };
+            img.src = src;
+        });
+    </script>
+</body>
+</html>
+
+
+

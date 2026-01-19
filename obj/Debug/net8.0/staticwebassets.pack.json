@@ -1,0 +1,2565 @@
+{
+  "Files": [
+    {
+      "Id": "E:\\dashboardWIPHouse\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\dashboardWIPHouse.bundle.scp.css",
+      "PackagePath": "staticwebassets\\dashboardWIPHouse.bundle.scp.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\Glyphicons PRO (License).txt",
+      "PackagePath": "staticwebassets\\css\\fonts\\Glyphicons PRO (License).txt"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\fontawesome\\FontAwesome.otf",
+      "PackagePath": "staticwebassets\\css\\fonts\\fontawesome\\FontAwesome.otf"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\fontawesome\\fontawesome-webfont.eot",
+      "PackagePath": "staticwebassets\\css\\fonts\\fontawesome\\fontawesome-webfont.eot"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\fontawesome\\fontawesome-webfont.svg",
+      "PackagePath": "staticwebassets\\css\\fonts\\fontawesome\\fontawesome-webfont.svg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\fontawesome\\fontawesome-webfont.ttf",
+      "PackagePath": "staticwebassets\\css\\fonts\\fontawesome\\fontawesome-webfont.ttf"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\fontawesome\\fontawesome-webfont.woff",
+      "PackagePath": "staticwebassets\\css\\fonts\\fontawesome\\fontawesome-webfont.woff"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\fontawesome\\fontawesome-webfont.woff2",
+      "PackagePath": "staticwebassets\\css\\fonts\\fontawesome\\fontawesome-webfont.woff2"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.filetypes.pro\\glyphicons-filetypes-regular.eot",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.filetypes.pro\\glyphicons-filetypes-regular.eot"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.filetypes.pro\\glyphicons-filetypes-regular.svg",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.filetypes.pro\\glyphicons-filetypes-regular.svg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.filetypes.pro\\glyphicons-filetypes-regular.ttf",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.filetypes.pro\\glyphicons-filetypes-regular.ttf"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.filetypes.pro\\glyphicons-filetypes-regular.woff",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.filetypes.pro\\glyphicons-filetypes-regular.woff"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.halflings.pro\\glyphicons-halflings-regular.eot",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.halflings.pro\\glyphicons-halflings-regular.eot"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.halflings.pro\\glyphicons-halflings-regular.svg",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.halflings.pro\\glyphicons-halflings-regular.svg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.halflings.pro\\glyphicons-halflings-regular.ttf",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.halflings.pro\\glyphicons-halflings-regular.ttf"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.halflings.pro\\glyphicons-halflings-regular.woff",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.halflings.pro\\glyphicons-halflings-regular.woff"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.pro\\glyphicons-regular.eot",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.pro\\glyphicons-regular.eot"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.pro\\glyphicons-regular.svg",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.pro\\glyphicons-regular.svg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.pro\\glyphicons-regular.ttf",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.pro\\glyphicons-regular.ttf"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.pro\\glyphicons-regular.woff",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.pro\\glyphicons-regular.woff"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.social.pro\\glyphicons-social-regular.eot",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.social.pro\\glyphicons-social-regular.eot"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.social.pro\\glyphicons-social-regular.svg",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.social.pro\\glyphicons-social-regular.svg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.social.pro\\glyphicons-social-regular.ttf",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.social.pro\\glyphicons-social-regular.ttf"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\fonts\\glyphicons.social.pro\\glyphicons-social-regular.woff",
+      "PackagePath": "staticwebassets\\css\\fonts\\glyphicons.social.pro\\glyphicons-social-regular.woff"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\main.css",
+      "PackagePath": "staticwebassets\\css\\main.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\plugins.css",
+      "PackagePath": "staticwebassets\\css\\plugins.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes.css",
+      "PackagePath": "staticwebassets\\css\\themes.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\amethyst.css",
+      "PackagePath": "staticwebassets\\css\\themes\\amethyst.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\autumn.css",
+      "PackagePath": "staticwebassets\\css\\themes\\autumn.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\blackberry.css",
+      "PackagePath": "staticwebassets\\css\\themes\\blackberry.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\coral.css",
+      "PackagePath": "staticwebassets\\css\\themes\\coral.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\emerald.css",
+      "PackagePath": "staticwebassets\\css\\themes\\emerald.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\fancy.css",
+      "PackagePath": "staticwebassets\\css\\themes\\fancy.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\fire.css",
+      "PackagePath": "staticwebassets\\css\\themes\\fire.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\flatie.css",
+      "PackagePath": "staticwebassets\\css\\themes\\flatie.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\forest.css",
+      "PackagePath": "staticwebassets\\css\\themes\\forest.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\lake.css",
+      "PackagePath": "staticwebassets\\css\\themes\\lake.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\modern.css",
+      "PackagePath": "staticwebassets\\css\\themes\\modern.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\night.css",
+      "PackagePath": "staticwebassets\\css\\themes\\night.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\spring.css",
+      "PackagePath": "staticwebassets\\css\\themes\\spring.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\css\\themes\\waterlily.css",
+      "PackagePath": "staticwebassets\\css\\themes\\waterlily.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\favicon.png",
+      "PackagePath": "staticwebassets\\img\\favicon.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\icon114.png",
+      "PackagePath": "staticwebassets\\img\\icon114.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\icon120.png",
+      "PackagePath": "staticwebassets\\img\\icon120.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\icon144.png",
+      "PackagePath": "staticwebassets\\img\\icon144.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\icon152.png",
+      "PackagePath": "staticwebassets\\img\\icon152.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\icon180.png",
+      "PackagePath": "staticwebassets\\img\\icon180.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\icon57.png",
+      "PackagePath": "staticwebassets\\img\\icon57.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\icon72.png",
+      "PackagePath": "staticwebassets\\img\\icon72.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\icon76.png",
+      "PackagePath": "staticwebassets\\img\\icon76.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.chosen\\chosen-sprite.png",
+      "PackagePath": "staticwebassets\\img\\jquery.chosen\\chosen-sprite.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.chosen\\chosen-sprite@2x.png",
+      "PackagePath": "staticwebassets\\img\\jquery.chosen\\chosen-sprite@2x.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.colorpicker\\alpha-horizontal.png",
+      "PackagePath": "staticwebassets\\img\\jquery.colorpicker\\alpha-horizontal.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.colorpicker\\alpha.png",
+      "PackagePath": "staticwebassets\\img\\jquery.colorpicker\\alpha.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.colorpicker\\hue-horizontal.png",
+      "PackagePath": "staticwebassets\\img\\jquery.colorpicker\\hue-horizontal.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.colorpicker\\hue.png",
+      "PackagePath": "staticwebassets\\img\\jquery.colorpicker\\hue.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.colorpicker\\saturation.png",
+      "PackagePath": "staticwebassets\\img\\jquery.colorpicker\\saturation.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_asc.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_asc.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_asc@2x.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_asc@2x.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_asc_disabled.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_asc_disabled.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_asc_disabled@2x.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_asc_disabled@2x.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_both.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_both.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_both@2x.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_both@2x.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_desc.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_desc.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_desc@2x.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_desc@2x.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_desc_disabled.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_desc_disabled.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\jquery.datatables\\sort_desc_disabled@2x.png",
+      "PackagePath": "staticwebassets\\img\\jquery.datatables\\sort_desc_disabled@2x.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\logo.png",
+      "PackagePath": "staticwebassets\\img\\logo.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar1.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar1.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar10.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar10.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar10@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar10@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar11.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar11.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar11@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar11@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar12.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar12.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar12@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar12@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar13.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar13.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar13@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar13@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar14.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar14.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar14@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar14@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar15.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar15.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar15@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar15@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar16.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar16.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar16@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar16@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar1@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar1@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar2.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar2.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar2@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar2@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar3.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar3.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar3@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar3@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar4.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar4.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar4@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar4@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar5.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar5.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar5@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar5@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar6.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar6.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar6@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar6@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar7.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar7.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar7@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar7@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar8.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar8.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar8@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar8@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar9.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar9.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar9@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar9@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\avatar@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\avatar@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\avatars\\readme.txt",
+      "PackagePath": "staticwebassets\\img\\placeholders\\avatars\\readme.txt"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\backgrounds\\coming_soon_full_bg.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\backgrounds\\coming_soon_full_bg.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\backgrounds\\lock_full_bg.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\backgrounds\\lock_full_bg.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\backgrounds\\login_full_bg.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\backgrounds\\login_full_bg.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\article_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\article_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\dashboard_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\dashboard_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\lock_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\lock_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\login_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\login_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\profile_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\profile_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\widget1_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\widget1_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\widget2_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\widget2_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\widget3_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\widget3_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\widget4_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\widget4_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\widget5_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\widget5_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\headers\\widget6_header.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\headers\\widget6_header.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo1.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo1.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo10.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo10.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo10@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo10@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo11.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo11.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo11@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo11@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo12.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo12.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo12@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo12@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo13.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo13.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo13@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo13@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo14.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo14.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo14@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo14@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo15.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo15.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo15@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo15@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo16.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo16.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo16@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo16@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo17.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo17.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo17@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo17@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo18.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo18.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo18@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo18@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo19.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo19.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo19@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo19@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo1@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo1@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo2.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo2.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo20.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo20.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo20@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo20@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo21.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo21.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo21@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo21@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo22.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo22.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo22@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo22@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo23.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo23.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo23@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo23@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo24.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo24.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo24@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo24@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo2@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo2@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo3.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo3.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo3@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo3@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo4.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo4.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo4@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo4@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo5.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo5.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo5@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo5@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo6.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo6.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo6@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo6@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo7.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo7.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo7@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo7@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo8.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo8.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo8@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo8@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo9.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo9.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\placeholders\\photos\\photo9@2x.jpg",
+      "PackagePath": "staticwebassets\\img\\placeholders\\photos\\photo9@2x.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\stats\\README.md",
+      "PackagePath": "staticwebassets\\img\\stats\\README.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\stats\\expired.png",
+      "PackagePath": "staticwebassets\\img\\stats\\expired.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\stats\\near_expired.png",
+      "PackagePath": "staticwebassets\\img\\stats\\near_expired.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\stats\\normal.png",
+      "PackagePath": "staticwebassets\\img\\stats\\normal.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\stats\\over_stock.png",
+      "PackagePath": "staticwebassets\\img\\stats\\over_stock.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\stats\\shortage.png",
+      "PackagePath": "staticwebassets\\img\\stats\\shortage.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\app.js",
+      "PackagePath": "staticwebassets\\js\\app.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\CHANGES.md",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\CHANGES.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\LICENSE.md",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\LICENSE.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\README.md",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\README.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\adapters\\jquery.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\adapters\\jquery.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\build-config.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\build-config.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\ckeditor.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\ckeditor.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\config.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\config.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\contents.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\contents.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\lang\\en.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\lang\\en.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\a11yhelp.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\a11yhelp.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\_translationstatus.txt",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\_translationstatus.txt"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\af.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\af.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ar.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ar.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\az.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\az.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\bg.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\bg.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ca.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ca.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\cs.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\cs.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\cy.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\cy.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\da.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\da.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\de-ch.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\de-ch.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\de.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\de.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\el.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\el.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\en-gb.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\en-gb.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\en.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\en.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\eo.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\eo.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\es.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\es.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\et.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\et.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\eu.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\eu.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fa.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fa.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fi.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fi.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fo.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fo.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fr-ca.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fr-ca.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fr.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\fr.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\gl.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\gl.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\gu.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\gu.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\he.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\he.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\hi.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\hi.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\hr.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\hr.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\hu.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\hu.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\id.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\id.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\it.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\it.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ja.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ja.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\km.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\km.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ko.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ko.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ku.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ku.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\lt.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\lt.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\lv.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\lv.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\mk.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\mk.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\mn.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\mn.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\nb.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\nb.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\nl.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\nl.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\no.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\no.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\oc.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\oc.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\pl.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\pl.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\pt-br.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\pt-br.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\pt.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\pt.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ro.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ro.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ru.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ru.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\si.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\si.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sk.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sk.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sl.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sl.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sq.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sq.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sr-latn.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sr-latn.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sr.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sr.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sv.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\sv.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\th.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\th.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\tr.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\tr.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\tt.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\tt.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ug.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\ug.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\uk.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\uk.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\vi.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\vi.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\zh-cn.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\zh-cn.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\zh.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\a11yhelp\\dialogs\\lang\\zh.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\about\\dialogs\\about.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\about\\dialogs\\about.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\about\\dialogs\\hidpi\\logo_ckeditor.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\about\\dialogs\\hidpi\\logo_ckeditor.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\about\\dialogs\\logo_ckeditor.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\about\\dialogs\\logo_ckeditor.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\clipboard\\dialogs\\paste.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\clipboard\\dialogs\\paste.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\colordialog\\dialogs\\colordialog.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\colordialog\\dialogs\\colordialog.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\colordialog\\dialogs\\colordialog.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\colordialog\\dialogs\\colordialog.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\copyformatting\\cursors\\cursor-disabled.svg",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\copyformatting\\cursors\\cursor-disabled.svg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\copyformatting\\cursors\\cursor.svg",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\copyformatting\\cursors\\cursor.svg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\copyformatting\\styles\\copyformatting.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\copyformatting\\styles\\copyformatting.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\dialog\\dialogDefinition.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\dialog\\dialogDefinition.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\div\\dialogs\\div.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\div\\dialogs\\div.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\find\\dialogs\\find.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\find\\dialogs\\find.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\flash\\dialogs\\flash.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\flash\\dialogs\\flash.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\flash\\images\\placeholder.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\flash\\images\\placeholder.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\button.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\button.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\checkbox.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\checkbox.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\form.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\form.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\hiddenfield.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\hiddenfield.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\radio.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\radio.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\select.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\select.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\textarea.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\textarea.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\textfield.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\forms\\dialogs\\textfield.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\forms\\images\\hiddenfield.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\forms\\images\\hiddenfield.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\icons.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\icons.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\icons_hidpi.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\icons_hidpi.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\iframe\\dialogs\\iframe.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\iframe\\dialogs\\iframe.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\iframe\\images\\placeholder.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\iframe\\images\\placeholder.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\image\\dialogs\\image.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\image\\dialogs\\image.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\image\\images\\noimage.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\image\\images\\noimage.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\link\\dialogs\\anchor.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\link\\dialogs\\anchor.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\link\\dialogs\\link.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\link\\dialogs\\link.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\link\\images\\anchor.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\link\\images\\anchor.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\link\\images\\hidpi\\anchor.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\link\\images\\hidpi\\anchor.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\liststyle\\dialogs\\liststyle.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\liststyle\\dialogs\\liststyle.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\magicline\\images\\hidpi\\icon-rtl.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\magicline\\images\\hidpi\\icon-rtl.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\magicline\\images\\hidpi\\icon.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\magicline\\images\\hidpi\\icon.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\magicline\\images\\icon-rtl.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\magicline\\images\\icon-rtl.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\magicline\\images\\icon.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\magicline\\images\\icon.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\pagebreak\\images\\pagebreak.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\pagebreak\\images\\pagebreak.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\pastefromword\\filter\\default.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\pastefromword\\filter\\default.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\preview\\preview.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\preview\\preview.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\scayt\\CHANGELOG.md",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\scayt\\CHANGELOG.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\scayt\\LICENSE.md",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\scayt\\LICENSE.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\scayt\\README.md",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\scayt\\README.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\scayt\\dialogs\\options.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\scayt\\dialogs\\options.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\scayt\\dialogs\\toolbar.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\scayt\\dialogs\\toolbar.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\scayt\\skins\\moono-lisa\\scayt.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\scayt\\skins\\moono-lisa\\scayt.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_address.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_address.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_blockquote.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_blockquote.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_div.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_div.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h1.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h1.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h2.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h2.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h3.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h3.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h4.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h4.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h5.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h5.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h6.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_h6.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_p.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_p.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_pre.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\showblocks\\images\\block_pre.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\dialogs\\smiley.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\dialogs\\smiley.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\angel_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\angel_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\angel_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\angel_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\angry_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\angry_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\angry_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\angry_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\broken_heart.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\broken_heart.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\broken_heart.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\broken_heart.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\confused_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\confused_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\confused_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\confused_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\cry_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\cry_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\cry_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\cry_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\devil_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\devil_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\devil_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\devil_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\embaressed_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\embaressed_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\embarrassed_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\embarrassed_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\embarrassed_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\embarrassed_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\envelope.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\envelope.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\envelope.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\envelope.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\heart.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\heart.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\heart.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\heart.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\kiss.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\kiss.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\kiss.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\kiss.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\lightbulb.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\lightbulb.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\lightbulb.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\lightbulb.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\omg_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\omg_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\omg_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\omg_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\regular_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\regular_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\regular_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\regular_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\sad_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\sad_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\sad_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\sad_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\shades_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\shades_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\shades_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\shades_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\teeth_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\teeth_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\teeth_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\teeth_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\thumbs_down.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\thumbs_down.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\thumbs_down.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\thumbs_down.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\thumbs_up.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\thumbs_up.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\thumbs_up.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\thumbs_up.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\tongue_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\tongue_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\tongue_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\tongue_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\tounge_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\tounge_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\whatchutalkingabout_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\whatchutalkingabout_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\whatchutalkingabout_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\whatchutalkingabout_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\wink_smile.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\wink_smile.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\wink_smile.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\smiley\\images\\wink_smile.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\_translationstatus.txt",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\_translationstatus.txt"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\af.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\af.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ar.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ar.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\az.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\az.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\bg.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\bg.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ca.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ca.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\cs.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\cs.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\cy.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\cy.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\da.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\da.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\de-ch.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\de-ch.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\de.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\de.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\el.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\el.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\en-gb.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\en-gb.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\en.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\en.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\eo.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\eo.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\es.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\es.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\et.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\et.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\eu.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\eu.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\fa.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\fa.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\fi.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\fi.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\fr-ca.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\fr-ca.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\fr.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\fr.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\gl.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\gl.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\he.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\he.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\hr.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\hr.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\hu.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\hu.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\id.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\id.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\it.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\it.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ja.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ja.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\km.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\km.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ko.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ko.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ku.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ku.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\lt.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\lt.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\lv.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\lv.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\nb.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\nb.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\nl.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\nl.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\no.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\no.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\oc.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\oc.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\pl.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\pl.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\pt-br.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\pt-br.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\pt.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\pt.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ru.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ru.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\si.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\si.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\sk.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\sk.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\sl.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\sl.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\sq.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\sq.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\sv.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\sv.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\th.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\th.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\tr.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\tr.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\tt.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\tt.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ug.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\ug.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\uk.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\uk.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\vi.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\vi.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\zh-cn.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\zh-cn.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\zh.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\lang\\zh.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\specialchar.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\specialchar\\dialogs\\specialchar.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\table\\dialogs\\table.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\table\\dialogs\\table.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\tabletools\\dialogs\\tableCell.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\tabletools\\dialogs\\tableCell.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\templates\\dialogs\\templates.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\templates\\dialogs\\templates.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\templates\\dialogs\\templates.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\templates\\dialogs\\templates.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\templates\\templates\\default.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\templates\\templates\\default.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\templates\\templates\\images\\template1.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\templates\\templates\\images\\template1.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\templates\\templates\\images\\template2.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\templates\\templates\\images\\template2.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\templates\\templates\\images\\template3.gif",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\templates\\templates\\images\\template3.gif"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\wsc\\LICENSE.md",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\wsc\\LICENSE.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\wsc\\README.md",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\wsc\\README.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\ciframe.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\ciframe.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\tmpFrameset.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\tmpFrameset.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\wsc.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\wsc.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\wsc.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\wsc.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\wsc_ie.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\wsc\\dialogs\\wsc_ie.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\plugins\\wsc\\skins\\moono-lisa\\wsc.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\plugins\\wsc\\skins\\moono-lisa\\wsc.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\css\\samples.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\css\\samples.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\img\\github-top.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\img\\github-top.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\img\\header-bg.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\img\\header-bg.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\img\\header-separator.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\img\\header-separator.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\img\\logo.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\img\\logo.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\img\\navigation-tip.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\img\\navigation-tip.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\index.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\index.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\js\\sample.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\js\\sample.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\js\\sf.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\js\\sf.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\ajax.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\ajax.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\api.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\api.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\appendto.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\appendto.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\assets\\inlineall\\logo.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\assets\\inlineall\\logo.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\assets\\outputxhtml\\outputxhtml.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\assets\\outputxhtml\\outputxhtml.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\assets\\posteddata.php",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\assets\\posteddata.php"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\assets\\sample.jpg",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\assets\\sample.jpg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\assets\\uilanguages\\languages.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\assets\\uilanguages\\languages.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\datafiltering.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\datafiltering.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\dialog\\assets\\my_dialog.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\dialog\\assets\\my_dialog.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\dialog\\dialog.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\dialog\\dialog.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\divreplace.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\divreplace.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\enterkey\\enterkey.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\enterkey\\enterkey.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\assets\\outputforflash\\outputforflash.fla",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\assets\\outputforflash\\outputforflash.fla"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\assets\\outputforflash\\outputforflash.swf",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\assets\\outputforflash\\outputforflash.swf"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\assets\\outputforflash\\swfobject.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\assets\\outputforflash\\swfobject.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\outputforflash.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\outputforflash.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\outputhtml.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\htmlwriter\\outputhtml.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\index.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\index.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\inlineall.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\inlineall.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\inlinebycode.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\inlinebycode.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\inlinetextarea.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\inlinetextarea.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\jquery.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\jquery.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\magicline\\magicline.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\magicline\\magicline.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\readonly.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\readonly.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\replacebyclass.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\replacebyclass.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\replacebycode.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\replacebycode.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\sample.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\sample.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\sample.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\sample.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\sample_posteddata.php",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\sample_posteddata.php"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\tabindex.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\tabindex.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\toolbar\\toolbar.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\toolbar\\toolbar.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\uicolor.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\uicolor.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\uilanguages.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\uilanguages.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\wysiwygarea\\fullpage.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\wysiwygarea\\fullpage.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\old\\xhtmlstyle.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\old\\xhtmlstyle.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\css\\fontello.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\css\\fontello.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\LICENSE.txt"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\config.json",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\config.json"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\fontello.eot",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\fontello.eot"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\fontello.svg",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\fontello.svg"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\fontello.ttf",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\fontello.ttf"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\fontello.woff",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\font\\fontello.woff"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\index.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\index.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\js\\abstracttoolbarmodifier.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\js\\abstracttoolbarmodifier.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\js\\fulltoolbareditor.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\js\\fulltoolbareditor.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\js\\toolbarmodifier.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\js\\toolbarmodifier.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\js\\toolbartextmodifier.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\js\\toolbartextmodifier.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\LICENSE",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\codemirror.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\codemirror.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\codemirror.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\codemirror.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\javascript.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\javascript.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\neo.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\neo.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\show-hint.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\show-hint.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\show-hint.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\samples\\toolbarconfigurator\\lib\\codemirror\\show-hint.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_ie.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_ie.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_ie7.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_ie7.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_ie8.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_ie8.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_iequirks.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_iequirks.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_opera.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\dialog_opera.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_gecko.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_gecko.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_ie.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_ie.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_ie7.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_ie7.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_ie8.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_ie8.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_iequirks.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\editor_iequirks.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\icons.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\icons.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\icons_hidpi.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\icons_hidpi.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\arrow.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\arrow.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\close.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\close.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\hidpi\\close.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\hidpi\\close.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\hidpi\\lock-open.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\hidpi\\lock-open.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\hidpi\\lock.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\hidpi\\lock.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\hidpi\\refresh.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\hidpi\\refresh.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\lock-open.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\lock-open.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\lock.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\lock.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\refresh.png",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\images\\refresh.png"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\readme.md",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\readme.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\sample\\bootstrapck-sample.html",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\sample\\bootstrapck-sample.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\sample\\css\\bootstrapck-sample.css",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\sample\\css\\bootstrapck-sample.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\sample\\js\\analytics.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\sample\\js\\analytics.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\sample\\js\\jquery-1.11.0.min.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\sample\\js\\jquery-1.11.0.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\gecko\\editor_gecko.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\gecko\\editor_gecko.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie7\\dialog_ie7.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie7\\dialog_ie7.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie7\\editor_ie7.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie7\\editor_ie7.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie8\\dialog_ie8.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie8\\dialog_ie8.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie8\\editor_ie8.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie8\\editor_ie8.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie\\dialog_ie.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie\\dialog_ie.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie\\editor_ie.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\ie\\editor_ie.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\iequirks\\dialog_iequirks.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\iequirks\\dialog_iequirks.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\iequirks\\editor_iequirks.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\iequirks\\editor_iequirks.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\opera\\dialog_opera.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\browser-specific\\opera\\dialog_opera.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_colorpanel.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_colorpanel.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_elementspath.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_elementspath.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_mainui.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_mainui.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_menu.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_menu.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_panel.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_panel.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_presets.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_presets.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_reset.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_reset.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_richcombo.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_richcombo.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_toolbar.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\_toolbar.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\editor.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\components\\editor.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\config\\_colors.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\config\\_colors.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\config\\_config.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\config\\_config.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\config\\_defaults.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\config\\_defaults.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\dialog\\dialog.scss",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\skins\\bootstrapck\\scss\\dialog\\dialog.scss"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\ckeditor\\styles.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\ckeditor\\styles.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\helpers\\gmaps.min.js",
+      "PackagePath": "staticwebassets\\js\\helpers\\gmaps.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\compAnimations.js",
+      "PackagePath": "staticwebassets\\js\\pages\\compAnimations.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\compCalendar.js",
+      "PackagePath": "staticwebassets\\js\\pages\\compCalendar.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\compCharts.js",
+      "PackagePath": "staticwebassets\\js\\pages\\compCharts.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\compMaps.js",
+      "PackagePath": "staticwebassets\\js\\pages\\compMaps.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\ecomDashboard.js",
+      "PackagePath": "staticwebassets\\js\\pages\\ecomDashboard.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\ecomOrders.js",
+      "PackagePath": "staticwebassets\\js\\pages\\ecomOrders.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\ecomProducts.js",
+      "PackagePath": "staticwebassets\\js\\pages\\ecomProducts.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\formsGeneral.js",
+      "PackagePath": "staticwebassets\\js\\pages\\formsGeneral.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\formsValidation.js",
+      "PackagePath": "staticwebassets\\js\\pages\\formsValidation.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\formsWizard.js",
+      "PackagePath": "staticwebassets\\js\\pages\\formsWizard.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\icons.js",
+      "PackagePath": "staticwebassets\\js\\pages\\icons.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\index.js",
+      "PackagePath": "staticwebassets\\js\\pages\\index.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\index2.js",
+      "PackagePath": "staticwebassets\\js\\pages\\index2.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\login.js",
+      "PackagePath": "staticwebassets\\js\\pages\\login.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\readyChat.js",
+      "PackagePath": "staticwebassets\\js\\pages\\readyChat.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\readyComingSoon.js",
+      "PackagePath": "staticwebassets\\js\\pages\\readyComingSoon.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\readyFiles.js",
+      "PackagePath": "staticwebassets\\js\\pages\\readyFiles.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\readyInbox.js",
+      "PackagePath": "staticwebassets\\js\\pages\\readyInbox.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\readyInboxCompose.js",
+      "PackagePath": "staticwebassets\\js\\pages\\readyInboxCompose.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\readyProfile.js",
+      "PackagePath": "staticwebassets\\js\\pages\\readyProfile.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\readyTasks.js",
+      "PackagePath": "staticwebassets\\js\\pages\\readyTasks.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\readyTickets.js",
+      "PackagePath": "staticwebassets\\js\\pages\\readyTickets.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\readyTimeline.js",
+      "PackagePath": "staticwebassets\\js\\pages\\readyTimeline.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\tablesDatatables.js",
+      "PackagePath": "staticwebassets\\js\\pages\\tablesDatatables.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\tablesGeneral.js",
+      "PackagePath": "staticwebassets\\js\\pages\\tablesGeneral.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\uiDraggable.js",
+      "PackagePath": "staticwebassets\\js\\pages\\uiDraggable.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\uiProgress.js",
+      "PackagePath": "staticwebassets\\js\\pages\\uiProgress.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\uiTypography.js",
+      "PackagePath": "staticwebassets\\js\\pages\\uiTypography.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\widgetsSocial.js",
+      "PackagePath": "staticwebassets\\js\\pages\\widgetsSocial.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\pages\\widgetsStats.js",
+      "PackagePath": "staticwebassets\\js\\pages\\widgetsStats.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\plugins.js",
+      "PackagePath": "staticwebassets\\js\\plugins.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\site.js",
+      "PackagePath": "staticwebassets\\js\\site.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\vendor\\bootstrap.min.js",
+      "PackagePath": "staticwebassets\\js\\vendor\\bootstrap.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\vendor\\jquery.min.js",
+      "PackagePath": "staticwebassets\\js\\vendor\\jquery.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\vendor\\modernizr.min.js",
+      "PackagePath": "staticwebassets\\js\\vendor\\modernizr.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\LICENSE",
+      "PackagePath": "staticwebassets\\lib\\bootstrap"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.min.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-grid.rtl.min.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.min.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-reboot.rtl.min.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.min.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap-utilities.rtl.min.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\css\\bootstrap.rtl.min.css.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.js.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.bundle.min.js.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.js.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.esm.min.js.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.js.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map",
+      "PackagePath": "staticwebassets\\lib\\bootstrap\\dist\\js\\bootstrap.min.js.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery-validation-unobtrusive\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\LICENSE.txt"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation-unobtrusive\\jquery.validate.unobtrusive.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery-validation\\LICENSE.md",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\LICENSE.md"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery-validation\\dist\\additional-methods.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\additional-methods.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery-validation\\dist\\jquery.validate.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery-validation\\dist\\jquery.validate.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery\\LICENSE.txt",
+      "PackagePath": "staticwebassets\\lib\\jquery\\LICENSE.txt"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery\\dist\\jquery.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery\\dist\\jquery.min.js",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.js"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\lib\\jquery\\dist\\jquery.min.map",
+      "PackagePath": "staticwebassets\\lib\\jquery\\dist\\jquery.min.map"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\test-png-overlay.html",
+      "PackagePath": "staticwebassets\\test-png-overlay.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\test-png.html",
+      "PackagePath": "staticwebassets\\test-png.html"
+    },
+    {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\test-simple.html",
+      "PackagePath": "staticwebassets\\test-simple.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.dashboardWIPHouse.props",
+      "PackagePath": "build\\dashboardWIPHouse.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.dashboardWIPHouse.props",
+      "PackagePath": "buildMultiTargeting\\dashboardWIPHouse.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.dashboardWIPHouse.props",
+      "PackagePath": "buildTransitive\\dashboardWIPHouse.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.dashboardWIPHouse.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

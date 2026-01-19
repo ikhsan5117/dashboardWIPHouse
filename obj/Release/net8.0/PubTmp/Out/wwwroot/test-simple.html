@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple PNG Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-box {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #333;
+            margin: 10px;
+            display: inline-block;
+            background-size: 60px 60px;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .expired { background-image: url('/img/stats/expired.png'); }
+        .near-expired { background-image: url('/img/stats/near_expired.png'); }
+        .shortage { background-image: url('/img/stats/shortage.png'); }
+        .over-stock { background-image: url('/img/stats/over_stock.png'); }
+        .normal { background-image: url('/img/stats/normal.png'); }
+        .status { margin: 20px 0; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>PNG Icons Test</h1>
+    
+    <div class="status" id="status">Testing PNG icons...</div>
+    
+    <h2>Icons:</h2>
+    <div class="test-box expired"></div>
+    <div class="test-box near-expired"></div>
+    <div class="test-box shortage"></div>
+    <div class="test-box over-stock"></div>
+    <div class="test-box normal"></div>
+    
+    <h2>Direct Links:</h2>
+    <ul>
+        <li><a href="/img/stats/expired.png" target="_blank">expired.png</a></li>
+        <li><a href="/img/stats/near_expired.png" target="_blank">near_expired.png</a></li>
+        <li><a href="/img/stats/shortage.png" target="_blank">shortage.png</a></li>
+        <li><a href="/img/stats/over_stock.png" target="_blank">over_stock.png</a></li>
+        <li><a href="/img/stats/normal.png" target="_blank">normal.png</a></li>
+    </ul>
+
+    <script>
+        // Test PNG loading
+        const images = [
+            { name: 'expired.png', url: '/img/stats/expired.png' },
+            { name: 'near_expired.png', url: '/img/stats/near_expired.png' },
+            { name: 'shortage.png', url: '/img/stats/shortage.png' },
+            { name: 'over_stock.png', url: '/img/stats/over_stock.png' },
+            { name: 'normal.png', url: '/img/stats/normal.png' }
+        ];
+        
+        let loaded = 0;
+        let failed = 0;
+        
+        images.forEach(img => {
+            const testImg = new Image();
+            testImg.onload = () => {
+                loaded++;
+                console.log('✓ Loaded:', img.name);
+                updateStatus();
+            };
+            testImg.onerror = () => {
+                failed++;
+                console.error('✗ Failed:', img.name);
+                updateStatus();
+            };
+            testImg.src = img.url;
+        });
+        
+        function updateStatus() {
+            const total = loaded + failed;
+            if (total === images.length) {
+                const status = document.getElementById('status');
+                if (failed === 0) {
+                    status.innerHTML = `✅ All ${loaded} PNG icons loaded successfully!`;
+                    status.style.background = '#d4edda';
+                    status.style.color = '#155724';
+                } else {
+                    status.innerHTML = `❌ ${failed} PNG icons failed to load. ${loaded} loaded successfully.`;
+                    status.style.background = '#f8d7da';
+                    status.style.color = '#721c24';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+

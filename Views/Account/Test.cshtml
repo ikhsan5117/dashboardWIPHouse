@@ -1,0 +1,42 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Test</title>
+</head>
+<body>
+    <h1>Login Test Page</h1>
+    
+    <h2>Current User Info:</h2>
+    <p>Is Authenticated: @User.Identity.IsAuthenticated</p>
+    <p>User Name: @User.Identity.Name</p>
+    <p>Database Claim: @User.FindFirst("Database")?.Value</p>
+    <p>Role: @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value</p>
+    
+    <h2>Session Info:</h2>
+    <p>RVI Username: @Context.Session.GetString("RVI_Username")</p>
+    <p>RVI User ID: @Context.Session.GetString("RVI_UserId")</p>
+    
+    <h2>Test Links:</h2>
+    <a href="/Account/Login">Go to Login</a><br>
+    <a href="/RVI/Index">Go to RVI Dashboard</a><br>
+    <a href="/Home/Index">Go to HOSE Dashboard</a><br>
+    
+    <h2>Test Forms:</h2>
+    <form method="post" action="/Account/Login">
+        <input type="hidden" name="database" value="RVI">
+        <input type="hidden" name="username" value="adminRVI">
+        <input type="hidden" name="password" value="rvi123">
+        <button type="submit">Test RVI Login</button>
+    </form>
+    
+    <form method="post" action="/Account/Login">
+        <input type="hidden" name="database" value="HOSE">
+        <input type="hidden" name="username" value="admin">
+        <input type="hidden" name="password" value="admin123">
+        <button type="submit">Test HOSE Login</button>
+    </form>
+</body>
+</html>
