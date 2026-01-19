@@ -1,0 +1,527 @@
+@{
+    ViewData["Title"] = "After Washing Input";
+}
+
+<!-- QR Code Scanner Library -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<style>
+    /* Blue Theme Colors */
+    :root {
+        --blue-primary: #2196F3;
+        --blue-dark: #1976D2;
+        --blue-light: #64B5F6;
+    }
+
+    .input-page-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .input-header {
+        background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-dark) 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px 10px 0 0;
+        margin: -20px -20px 20px -20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .input-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .tab-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        background: #f5f5f5;
+        cursor: pointer;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+        background: var(--blue-primary);
+        color: white;
+    }
+
+    .info-box {
+        background: #E3F2FD;
+        border-left: 4px solid var(--blue-primary);
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-box i {
+        color: var(--blue-primary);
+        font-size: 20px;
+    }
+
+    .transaction-type-section {
+        margin-bottom: 20px;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 8px;
+    }
+
+    .transaction-type-label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 20px;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .radio-option input[type="radio"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 45px 12px 45px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--blue-primary);
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
+
+    .scan-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--blue-primary);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .scan-btn:hover {
+        background: var(--blue-dark);
+    }
+
+    .date-input {
+        padding-right: 15px;
+    }
+
+    .row-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: var(--blue-primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 20px;
+    }
+
+    .submit-btn:hover {
+        background: var(--blue-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+    }
+
+    .planning-btn {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: var(--blue-primary);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.4);
+        transition: all 0.3s;
+        z-index: 1000;
+    }
+
+    .planning-btn:hover {
+        background: var(--blue-dark);
+        transform: scale(1.1);
+    }
+
+    #qr-reader {
+        border: 2px solid var(--blue-primary);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 90%;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .close-modal {
+        background: #f44336;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="input-page-container">
+    <div class="input-header">
+        <h2>🔵 AFTER WASHING</h2>
+        <i class="gi gi-history" style="font-size: 24px;"></i>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-container">
+        <button class="tab-btn active" data-tab="in">
+            <i class="gi gi-download"></i> INPUT IN
+        </button>
+        <button class="tab-btn" data-tab="out">
+            <i class="gi gi-upload"></i> INPUT OUT
+        </button>
+    </div>
+
+    <!-- Info Box -->
+    <div class="info-box">
+        <i class="gi gi-info_sign"></i>
+        <span id="info-text">Catat material yang masuk ke Rak After Washing</span>
+    </div>
+
+    <!-- Transaction Type (Only for INPUT IN) -->
+    <div class="transaction-type-section" id="transaction-type-section">
+        <label class="transaction-type-label">Transaction Type</label>
+        <div class="radio-group">
+            <label class="radio-option">
+                <input type="radio" name="transactionType" value="IN" checked>
+                <span>IN</span>
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="transactionType" value="SISA">
+                <span>SISA</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <form id="inputForm">
+        <input type="hidden" id="transactionTypeValue" value="IN">
+
+        <!-- Item Code -->
+        <div class="form-group">
+            <label class="form-label">Item Code *</label>
+            <div class="input-wrapper">
+                <i class="gi gi-barcode input-icon"></i>
+                <input type="text" class="form-input" id="itemCode" placeholder="Scan or enter item code" required>
+                <button type="button" class="scan-btn" onclick="openScanner('itemCode')">
+                    <i class="gi gi-qrcode"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Full QR -->
+        <div class="form-group">
+            <label class="form-label">Full QR *</label>
+            <div class="input-wrapper">
+                <i class="gi gi-qrcode input-icon"></i>
+                <input type="text" class="form-input" id="fullQR" placeholder="Scan or enter full QR code" required>
+                <button type="button" class="scan-btn" onclick="openScanner('fullQR')">
+                    <i class="gi gi-qrcode"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Production Date (Optional for INPUT OUT) -->
+        <div class="form-group" id="production-date-group">
+            <label class="form-label">Production Date</label>
+            <div class="input-wrapper">
+                <i class="gi gi-calendar input-icon"></i>
+                <input type="date" class="form-input date-input" id="productionDate">
+            </div>
+        </div>
+
+        <!-- Box Count & Qty Pcs -->
+        <div class="row-inputs">
+            <div class="form-group">
+                <label class="form-label">Box Count</label>
+                <div class="input-wrapper">
+                    <i class="gi gi-package input-icon"></i>
+                    <input type="number" class="form-input" id="boxCount" placeholder="0" min="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Qty Pcs *</label>
+                <div class="input-wrapper">
+                    <i class="gi gi-shopping_cart input-icon"></i>
+                    <input type="number" class="form-input" id="qtyPcs" placeholder="0" min="0" required>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn">
+            <i class="gi gi-floppy_disk"></i> SUBMIT INPUT IN
+        </button>
+    </form>
+</div>
+
+<!-- Planning Button (Placeholder for future feature) -->
+<button class="planning-btn" onclick="showPlanningMessage()" title="Planning">
+    <i class="gi gi-calendar"></i>
+</button>
+
+<!-- QR Scanner Modal -->
+<div class="modal" id="scannerModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Scan QR Code</h3>
+            <button class="close-modal" onclick="closeScanner()">✕</button>
+        </div>
+        <div id="qr-reader" style="width: 100%;"></div>
+    </div>
+</div>
+
+@@section Scripts {
+    <script>
+        let html5QrcodeScanner = null;
+        let currentScanField = null;
+        let currentTab = 'in';
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tab = this.dataset.tab;
+                switchTab(tab);
+            });
+        });
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            
+            if (tab === 'in') {
+                document.getElementById('info-text').textContent = 'Catat material yang masuk ke Rak After Washing';
+                document.querySelector('.submit-btn').innerHTML = '<i class="gi gi-floppy_disk"></i> SUBMIT INPUT IN';
+                document.getElementById('transaction-type-section').style.display = 'block';
+                document.getElementById('production-date-group').style.display = 'block';
+            } else {
+                document.getElementById('info-text').textContent = 'Catat material keluar ke Finishing';
+                document.querySelector('.submit-btn').innerHTML = '<i class="gi gi-floppy_disk"></i> SUBMIT INPUT OUT';
+                document.getElementById('transaction-type-section').style.display = 'none';
+                document.getElementById('production-date-group').style.display = 'none';
+            }
+        }
+
+        // Transaction type radio buttons
+        document.querySelectorAll('input[name="transactionType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('transactionTypeValue').value = this.value;
+            });
+        });
+
+        // QR Scanner
+        function openScanner(fieldId) {
+            currentScanField = fieldId;
+            document.getElementById('scannerModal').classList.add('active');
+            
+            html5QrcodeScanner = new Html5Qrcode("qr-reader");
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                onScanSuccess,
+                onScanError
+            );
+        }
+
+        function closeScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    document.getElementById('scannerModal').classList.remove('active');
+                    html5QrcodeScanner = null;
+                });
+            }
+        }
+
+        function onScanSuccess(decodedText) {
+            document.getElementById(currentScanField).value = decodedText;
+            closeScanner();
+            
+            // Auto-fill item code if scanning Full QR
+            if (currentScanField === 'fullQR') {
+                autoFillFromQR(decodedText);
+            }
+        }
+
+        function onScanError(error) {
+            // Ignore scan errors (too noisy)
+        }
+
+        // Auto-fill from QR code
+        function autoFillFromQR(qrCode) {
+            // Try to extract item code from QR
+            const parts = qrCode.split('-');
+            if (parts.length > 0 && !document.getElementById('itemCode').value) {
+                document.getElementById('itemCode').value = parts[0];
+            }
+        }
+
+        // Planning button (placeholder)
+        function showPlanningMessage() {
+            Swal.fire({
+                icon: 'info',
+                title: 'Planning Feature',
+                text: 'Planning feature will be available soon!',
+                confirmButtonColor: '#2196F3'
+            });
+        }
+
+        // Form submission
+        document.getElementById('inputForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const data = {
+                transactionType: currentTab === 'in' ? document.getElementById('transactionTypeValue').value : 'OUT',
+                itemCode: document.getElementById('itemCode').value,
+                fullQR: document.getElementById('fullQR').value,
+                productionDate: document.getElementById('productionDate').value || null,
+                boxCount: parseInt(document.getElementById('boxCount').value) || 0,
+                qtyPcs: parseInt(document.getElementById('qtyPcs').value) || 0
+            };
+
+            try {
+                const response = await fetch('/AfterWashing/SubmitAfterWashingInput', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: result.message,
+                        confirmButtonColor: '#2196F3'
+                    });
+                    this.reset();
+                    // Reset transaction type to IN
+                    document.querySelector('input[name="transactionType"][value="IN"]').checked = true;
+                    document.getElementById('transactionTypeValue').value = 'IN';
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to submit data: ' + error.message
+                });
+            }
+        });
+
+        // Set default date to today
+        document.getElementById('productionDate').valueAsDate = new Date();
+    </script>
+}

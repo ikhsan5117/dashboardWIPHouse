@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("dashboardWIPHouse")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0cf09a475aa4485effbbb36f5056af08e66d35f3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9203d4c52f2357d17857d8cf93012561cb4ab92d")]
 [assembly: System.Reflection.AssemblyProductAttribute("dashboardWIPHouse")]
 [assembly: System.Reflection.AssemblyTitleAttribute("dashboardWIPHouse")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

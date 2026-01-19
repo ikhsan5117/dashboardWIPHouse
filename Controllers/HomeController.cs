@@ -1615,6 +1615,117 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
             return standardExp <= 3 ? 1 : 3;
         }
 
+        // Green Hose Input Page
+        public async Task<IActionResult> GreenHoseInput()
+        {
+            ViewData["Title"] = "Green Hose Input";
+            return View();
+        }
+
+        // Get FIFO Recommendations for Green Hose
+        [HttpGet]
+        public async Task<JsonResult> GetFIFORecommendations(string searchTerm = "")
+        {
+            try
+            {
+                // Get items from storage_log with oldest production date (FIFO - First In First Out)
+                // Group by item_code and full_qr to get current stock
+                var recommendations = await _context.StorageLog
+                    .Where(s => s.ProductionDate.HasValue && s.BoxCount > 0)
+                    .Where(s => string.IsNullOrEmpty(searchTerm) || s.ItemCode.Contains(searchTerm))
+                    .GroupBy(s => new { s.ItemCode, s.FullQR })
+                    .Select(g => new
+                    {
+                        itemCode = g.Key.ItemCode,
+                        fullQr = g.Key.FullQR,
+                        productionDate = g.OrderBy(x => x.ProductionDate).First().ProductionDate,
+                        boxCount = g.Sum(x => x.BoxCount),
+                        qtyPcs = g.Sum(x => x.QtyPcs ?? 0),
+                        daysOld = g.OrderBy(x => x.ProductionDate).First().ProductionDate.HasValue 
+                            ? (DateTime.Now - g.OrderBy(x => x.ProductionDate).First().ProductionDate.Value).Days 
+                            : 0
+                    })
+                    .OrderBy(s => s.productionDate) // Oldest first (FIFO)
+                    .Take(10)
+                    .ToListAsync();
+
+                return Json(new { success = true, data = recommendations });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting FIFO recommendations");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // Submit Green Hose Input (IN/OUT)
+        [HttpPost]
+        public async Task<JsonResult> SubmitGreenHoseInput([FromBody] GreenHoseInputModel model)
+        {
+            try
+            {
+                if (model == null)
+                {
+                    return Json(new { success = false, message = "Invalid data" });
+                }
+
+                // Validate required fields
+                if (string.IsNullOrEmpty(model.ItemCode) || string.IsNullOrEmpty(model.FullQR))
+                {
+                    return Json(new { success = false, message = "Item Code and Full QR are required" });
+                }
+
+                if (model.TransactionType == "IN")
+                {
+                    // INPUT IN - Add to storage_log
+                    var storageLog = new StorageLog
+                    {
+                        ItemCode = model.ItemCode,
+                        FullQR = model.FullQR,
+                        StoredAt = DateTime.Now,
+                        BoxCount = model.BoxCount ?? 0,
+                        Tanggal = DateTime.Now.ToString("dd/MM/yyyy"),
+                        ProductionDate = model.ProductionDate,
+                        QtyPcs = model.QtyPcs
+                    };
+
+                    _context.StorageLog.Add(storageLog);
+                    await _context.SaveChangesAsync();
+
+                    return Json(new { success = true, message = "Data successfully saved to storage" });
+                }
+                else if (model.TransactionType == "OUT")
+                {
+                    // INPUT OUT - Add to supply_log
+                    var supplyLog = new SupplyLog
+                    {
+                        ItemCode = model.ItemCode,
+                        FullQR = model.FullQR,
+                        SuppliedAt = DateTime.Now,
+                        BoxCount = model.BoxCount ?? 0,
+                        Tanggal = DateTime.Now.ToString("dd/MM/yyyy"),
+                        // ProductionDate = model.ProductionDate, // Property not available in SupplyLog yet
+                        QtyPcs = model.QtyPcs,
+                        ToProcess = model.ToProcess ?? "Production"
+                    };
+
+                    _context.SupplyLog.Add(supplyLog);
+                    await _context.SaveChangesAsync();
+
+                    return Json(new { success = true, message = "Data successfully saved to supply log" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Invalid transaction type" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error submitting Green Hose input");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
         // Existing methods...
         public IActionResult Privacy()
         {
