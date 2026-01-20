@@ -258,6 +258,12 @@ namespace dashboardWIPHouse.Data
                     .HasMaxLength(100)
                     .IsRequired();
 
+                entity.Property(e => e.FullQR)
+                    .HasColumnName("full_qr")
+                    .HasMaxLength(300)
+                    .IsRequired(false);
+
+
                 entity.Property(e => e.SuppliedAt)
                     .HasColumnName("supplied_at")
                     .IsRequired();

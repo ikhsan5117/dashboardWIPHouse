@@ -254,47 +254,98 @@
 
     <!-- Menu Cards -->
     <div class="menu-container">
-        <!-- GREEN HOSE Card -->
-        <a href="@Url.Action("GreenHoseInput", "Home")" class="menu-card green">
-            <div class="menu-card-content">
-                <div class="menu-icon">
-                    <!-- Icon: Plant/Seedling (Custom SVG) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF">
-                        <path d="M80-160v-80h230q-22-85-83.5-146.5T80-470q20-5 39.5-7.5T160-480q134 0 227 93t93 227H80Zm480 0q0-42-9-83.5T525-323q42-71 114.5-114T800-480q21 0 40.5 2.5T880-470q-85 22-146 83.5T650-240h230v80H560Zm-80-239q0-65 24-122t66-100.5q42-43.5 98.5-69.5T789-719q-56 35-98 86t-65 114q-44 21-80.5 51.5T480-399Zm-73-75q-12-9-24-17t-25-16q0-6 1-12.5t1-12.5q0-76-24-144t-68-124q66 27 114.5 77.5T457-606q-18 30-31 63.5T407-474Z"/>
-                    </svg>
-                </div>
-                <div class="menu-text">
-                    <h2>GREENHOSE</h2>
-                    <p>Stock Storage & Management WIP<br>After Extrude</p>
-                </div>
-            </div>
-            <div class="menu-arrow">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF">
-                    <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-                </svg>
-            </div>
-        </a>
+        @{
+            var database = ViewBag.Database as string ?? "HOSE";
+        }
 
-        <!-- AFTER WASHING Card -->
-        <a href="@Url.Action("AfterWashingInput", "AfterWashing")" class="menu-card blue">
-            <div class="menu-card-content">
-                <div class="menu-icon">
-                    <!-- Icon: Broom/Brush (Custom SVG) -->
-                    <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF">
-                        <path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/>
+        @if (database == "HOSE")
+        {
+            <!-- GREEN HOSE Card -->
+            <a href="@Url.Action("GreenHoseInput", "Home")" class="menu-card green">
+                <div class="menu-card-content">
+                    <div class="menu-icon">
+                        <!-- Icon: Plant/Seedling (Custom SVG) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF">
+                            <path d="M80-160v-80h230q-22-85-83.5-146.5T80-470q20-5 39.5-7.5T160-480q134 0 227 93t93 227H80Zm480 0q0-42-9-83.5T525-323q42-71 114.5-114T800-480q21 0 40.5 2.5T880-470q-85 22-146 83.5T650-240h230v80H560Zm-80-239q0-65 24-122t66-100.5q42-43.5 98.5-69.5T789-719q-56 35-98 86t-65 114q-44 21-80.5 51.5T480-399Zm-73-75q-12-9-24-17t-25-16q0-6 1-12.5t1-12.5q0-76-24-144t-68-124q66 27 114.5 77.5T457-606q-18 30-31 63.5T407-474Z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-text">
+                        <h2>GREENHOSE</h2>
+                        <p>Stock Storage & Management WIP<br>After Extrude</p>
+                    </div>
+                </div>
+                <div class="menu-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF">
+                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
                     </svg>
                 </div>
-                <div class="menu-text">
-                    <h2>AFTER WASHING</h2>
-                    <p>Stock Storage & Management WIP<br>After Washing</p>
+            </a>
+
+            <!-- AFTER WASHING Card -->
+            <a href="@Url.Action("AfterWashingInput", "AfterWashing")" class="menu-card blue">
+                <div class="menu-card-content">
+                    <div class="menu-icon">
+                        <!-- Icon: Broom/Brush (Custom SVG) -->
+                        <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF">
+                            <path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-text">
+                        <h2>AFTER WASHING</h2>
+                        <p>Stock Storage & Management WIP<br>After Washing</p>
+                    </div>
                 </div>
-            </div>
-            <div class="menu-arrow">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF">
-                    <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-                </svg>
-            </div>
-        </a>
+                <div class="menu-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF">
+                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                    </svg>
+                </div>
+            </a>
+        }
+        else if (database == "RVI")
+        {
+            <!-- RVI INPUT Card -->
+            <a href="@Url.Action("RVIInput", "RVI")" class="menu-card green">
+                <div class="menu-card-content">
+                    <div class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF">
+                            <path d="M80-160v-80h230q-22-85-83.5-146.5T80-470q20-5 39.5-7.5T160-480q134 0 227 93t93 227H80Zm480 0q0-42-9-83.5T525-323q42-71 114.5-114T800-480q21 0 40.5 2.5T880-470q-85 22-146 83.5T650-240h230v80H560Zm-80-239q0-65 24-122t66-100.5q42-43.5 98.5-69.5T789-719q-56 35-98 86t-65 114q-44 21-80.5 51.5T480-399Zm-73-75q-12-9-24-17t-25-16q0-6 1-12.5t1-12.5q0-76-24-144t-68-124q66 27 114.5 77.5T457-606q-18 30-31 63.5T407-474Z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-text">
+                        <h2>RVI INPUT</h2>
+                        <p>Stock Storage & Management<br>RVI Database</p>
+                    </div>
+                </div>
+                <div class="menu-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF">
+                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                    </svg>
+                </div>
+            </a>
+        }
+        else if (database == "MOLDED")
+        {
+            <!-- MOLDED INPUT Card -->
+            <a href="@Url.Action("MoldedInput", "Molded")" class="menu-card blue">
+                <div class="menu-card-content">
+                    <div class="menu-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF">
+                            <path d="M120-40v-280q0-83 58.5-141.5T320-520h40v-320q0-33 23.5-56.5T440-920h80q33 0 56.5 23.5T600-840v320h40q83 0 141.5 58.5T840-320v280H120Zm80-80h80v-120q0-17 11.5-28.5T320-280q17 0 28.5 11.5T360-240v120h80v-120q0-17 11.5-28.5T480-280q17 0 28.5 11.5T520-240v120h80v-120q0-17 11.5-28.5T640-280q17 0 28.5 11.5T680-240v120h80v-200q0-50-35-85t-85-35H320q-50 0-85 35t-35 85v200Zm320-400v-320h-80v320h80Zm0 0h-80 80Z"/>
+                        </svg>
+                    </div>
+                    <div class="menu-text">
+                        <h2>MOLDED INPUT</h2>
+                        <p>Stock Storage & Management<br>MOLDED Database</p>
+                    </div>
+                </div>
+                <div class="menu-arrow">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF">
+                        <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+                    </svg>
+                </div>
+            </a>
+        }
     </div>
 </body>
 </html>

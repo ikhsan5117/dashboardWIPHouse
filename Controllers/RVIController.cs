@@ -1515,5 +1515,115 @@
                 if (!standardMax.HasValue) return false;
                 return currentStock >= standardMax.Value;
             }
+
+
+        // ==========================================
+        // RVI INPUT FEATURES
+        // ==========================================
+
+        [HttpGet]
+        public async Task<IActionResult> RVIInput()
+        {
+            var today = DateTime.Now.ToString("dd-MM-yyyy");
+            ViewBag.Date = today;
+            
+            // Get Items for Datalist
+            var items = await _context.ItemsRVI
+                .Select(i => i.ItemCode)
+                .Distinct()
+                .OrderBy(i => i)
+                .ToListAsync();
+            
+            ViewBag.ItemCodes = items;
+            
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitRVIInput(string transactionType, string itemCode, string fullQr, DateTime? productionDate, int boxCount, int qtyPcs, string toProcess = "Production")
+        {
+            try
+            {
+                var today = DateTime.Now.ToString("dd/MM/yyyy");
+
+                // Validate input
+                if (string.IsNullOrEmpty(itemCode))
+                    return Json(new { success = false, message = "Item Code is required" });
+
+                if (transactionType == "IN")
+                {
+                    var log = new StorageLogRVI
+                    {
+                        ItemCode = itemCode,
+                        FullQR = fullQr ?? "-",
+                        ProductionDate = productionDate,
+                        BoxCount = boxCount,
+                        QtyPcs = qtyPcs,
+                        Tanggal = today,
+                        StoredAt = DateTime.Now
+                    };
+                    _context.StorageLogRVI.Add(log);
+                }
+                else // OUT
+                {
+                    var log = new SupplyLogRVI
+                    {
+                        ItemCode = itemCode,
+                        // For OUT transaction, we might not always have FullQR if manually input
+                        FullQR = fullQr ?? "-", 
+                        BoxCount = boxCount,
+                        QtyPcs = qtyPcs,
+                        Tanggal = today,
+                        SuppliedAt = DateTime.Now,
+                        ProductionDate = productionDate
+                    };
+                    _context.SupplyLogRVI.Add(log);
+                }
+
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Data saved successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error submitting RVI input");
+                return Json(new { success = false, message = "Error saving data: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetRVIStockForFIFO()
+        {
+            try
+            {
+                // Get stock data for FIFO suggestions
+                // Prioritize older stock (First In First Out)
+                var stock = await _context.StockSummaryRVI
+                    .Where(s => s.CurrentBoxStock > 0)
+                    .Select(s => new {
+                        ItemCode = s.ItemCode,
+                        FullQR = s.FullQr,
+                        // Use parsed date if available, otherwise current date fallback
+                        ProductionDate = s.LastUpdated, 
+                        BoxCount = s.CurrentBoxStock
+                    })
+                    .ToListAsync();
+                
+                // Sort client-side because of string date parsing complexity in SQL
+                // Sort in memory with date parsing
+                var sortedStock = stock
+                    .OrderBy(s => {
+                        if (DateTime.TryParse(s.ProductionDate, out DateTime dt)) return dt;
+                        return DateTime.MinValue;
+                    })
+                    .ToList();
+
+
+                return Json(new { success = true, data = sortedStock });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message });
+            }
         }
     }
+}

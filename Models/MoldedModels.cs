@@ -412,4 +412,71 @@ namespace dashboardWIPHouse.Models
         public string Error { get; set; } = string.Empty;
         public string RowData { get; set; } = string.Empty;
     }
+
+    // MOLDED Storage Log Model
+    [Table("storage_log")]
+    public class StorageLogMolded
+    {
+        [Key]
+        [Column("log_id")]
+        public int LogId { get; set; }
+
+        [Column("item_code")]
+        public string ItemCode { get; set; } = string.Empty;
+
+        [Column("full_qr")]
+        public string FullQR { get; set; } = string.Empty;
+
+        [Column("stored_at")]
+        public DateTime StoredAt { get; set; }
+
+        [Column("box_count")]
+        public int BoxCount { get; set; }
+
+        [Column("tanggal")]
+        public string Tanggal { get; set; } = string.Empty;
+
+        [Column("production_date")]
+        public DateTime? ProductionDate { get; set; }
+
+        [Column("qty_pcs")]
+        public int? QtyPcs { get; set; }
+
+        // Navigation property to ItemMolded
+        public virtual ItemMolded? Item { get; set; }
+    }
+
+    // MOLDED Supply Log Model
+    [Table("supply_log")]
+    public class SupplyLogMolded
+    {
+        [Key]
+        [Column("log_id")]
+        public int LogId { get; set; }
+
+        [Column("item_code")]
+        public string ItemCode { get; set; } = string.Empty;
+
+        [Column("full_qr")]
+        public string FullQR { get; set; } = string.Empty;
+
+
+        [Column("supplied_at")]
+        public DateTime SuppliedAt { get; set; }
+
+        [Column("box_count")]
+        public int BoxCount { get; set; }
+
+        [Column("tanggal")]
+        public string Tanggal { get; set; } = string.Empty;
+
+        [Column("production_date")]
+        public DateTime? ProductionDate { get; set; }
+
+        [Column("qty_pcs")]
+        public int? QtyPcs { get; set; }
+
+        // Navigation property to ItemMolded
+        public virtual ItemMolded? Item { get; set; }
+    }
 }

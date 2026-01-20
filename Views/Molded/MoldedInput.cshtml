@@ -1,0 +1,567 @@
+@{
+    ViewData["Title"] = "Molded Input";
+}
+
+<!-- QR Code Scanner Library -->
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<style>
+    /* Purple Theme Colors for MOLDED */
+    :root {
+        --theme-primary: #667eea;
+        --theme-dark: #764ba2;
+        --theme-light: #a3bffa;
+        --theme-bg: #f0f2ff;
+    }
+
+    .input-page-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .input-header {
+        background: linear-gradient(135deg, var(--theme-primary) 0%, var(--theme-dark) 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 10px 10px 0 0;
+        margin: -20px -20px 20px -20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .input-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .tab-container {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        background: #f5f5f5;
+        cursor: pointer;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .tab-btn.active {
+        background: var(--theme-primary);
+        color: white;
+    }
+
+    .info-box {
+        background: var(--theme-bg);
+        border-left: 4px solid var(--theme-primary);
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .info-box i {
+        color: var(--theme-primary);
+        font-size: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 45px 12px 45px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--theme-primary);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .input-icon {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
+
+    .scan-btn {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--theme-primary);
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .scan-btn:hover {
+        background: var(--theme-dark);
+    }
+
+    .date-input {
+        padding-right: 15px;
+    }
+
+    .row-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: var(--theme-primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 20px;
+    }
+
+    .submit-btn:hover {
+        background: var(--theme-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .fifo-section {
+        background: #EDE7F6;
+        border: 2px solid #9575CD;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .fifo-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .fifo-header i {
+        color: #7E57C2;
+        font-size: 20px;
+    }
+
+    .fifo-list {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .fifo-item {
+        background: white;
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .fifo-item:hover {
+        background: #D1C4E9;
+        transform: translateX(5px);
+    }
+
+    #qr-reader {
+        border: 2px solid var(--theme-primary);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 500px;
+        width: 90%;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .close-modal {
+        background: #f44336;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+
+<div class="input-page-container">
+    <div class="input-header">
+        <h2>🟣 MOLDED INPUT</h2>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+        </svg>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-container">
+        <button class="tab-btn active" data-tab="in">
+            <i class="gi gi-download"></i> INPUT IN
+        </button>
+        <button class="tab-btn" data-tab="out">
+            <i class="gi gi-upload"></i> INPUT OUT
+        </button>
+    </div>
+
+    <!-- Info Box -->
+    <div class="info-box">
+        <i class="gi gi-info_sign"></i>
+        <span id="info-text">Catat material masuk Molded storage</span>
+    </div>
+
+    <!-- FIFO Recommendations (Only for OUTPUT) -->
+    <div class="fifo-section" id="fifo-section" style="display: none;">
+        <div class="fifo-header">
+            <i class="gi gi-warning_sign"></i>
+            <strong>Rekomendasi Item (FIFO Prioritas)</strong>
+            <button class="btn btn-sm btn-primary" onclick="refreshFIFO()">
+                <i class="gi gi-refresh"></i>
+            </button>
+        </div>
+        <input type="text" class="form-control" id="fifo-search" placeholder="Search Item Code..." style="margin-bottom: 10px;">
+        <div class="fifo-list" id="fifo-list">
+            <p class="text-center">Loading data...</p>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <form id="inputForm">
+        <input type="hidden" id="transactionType" value="IN">
+
+        <!-- Item Code -->
+        <div class="form-group">
+            <label class="form-label">Item Code *</label>
+            <div class="input-wrapper">
+                <i class="gi gi-barcode input-icon"></i>
+                <input type="text" class="form-input" id="itemCode" list="itemCodesList" placeholder="Scan or enter item code" required>
+                <datalist id="itemCodesList">
+                    @if (ViewBag.ItemCodes != null)
+                    {
+                        foreach (var code in ViewBag.ItemCodes)
+                        {
+                            <option value="@code"></option>
+                        }
+                    }
+                </datalist>
+                <button type="button" class="scan-btn" onclick="openScanner('itemCode')">
+                    <i class="gi gi-qrcode"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Full QR -->
+        <div class="form-group">
+            <label class="form-label">Full QR *</label>
+            <div class="input-wrapper">
+                <i class="gi gi-qrcode input-icon"></i>
+                <input type="text" class="form-input" id="fullQR" placeholder="Scan or enter full QR code" required>
+                <button type="button" class="scan-btn" onclick="openScanner('fullQR')">
+                    <i class="gi gi-qrcode"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Production Date -->
+        <div class="form-group">
+            <label class="form-label">Production Date (YYYY-MM-DD)</label>
+            <div class="input-wrapper">
+                <i class="gi gi-calendar input-icon"></i>
+                <input type="date" class="form-input date-input" id="productionDate">
+            </div>
+        </div>
+
+        <!-- Box Count & Qty Pcs -->
+        <div class="row-inputs">
+            <div class="form-group">
+                <label class="form-label">Box Count</label>
+                <div class="input-wrapper">
+                    <i class="gi gi-package input-icon"></i>
+                    <input type="number" class="form-input" id="boxCount" placeholder="0" min="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Qty Pcs (Total/Additional)</label>
+                <div class="input-wrapper">
+                    <i class="gi gi-shopping_cart input-icon"></i>
+                    <input type="number" class="form-input" id="qtyPcs" placeholder="0" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn">
+            <i class="gi gi-floppy_disk"></i> SUBMIT INPUT IN
+        </button>
+    </form>
+</div>
+
+<!-- QR Scanner Modal -->
+<div class="modal" id="scannerModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Scan QR Code</h3>
+            <button class="close-modal" onclick="closeScanner()">✕</button>
+        </div>
+        <div id="qr-reader" style="width: 100%;"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let html5QrcodeScanner = null;
+        let currentScanField = null;
+        let currentTab = 'in';
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tab = this.dataset.tab;
+                switchTab(tab);
+            });
+        });
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            
+            document.getElementById('transactionType').value = tab.toUpperCase();
+            
+            if (tab === 'in') {
+                document.getElementById('info-text').textContent = 'Catat material masuk Molded storage';
+                document.querySelector('.submit-btn').innerHTML = '<i class="gi gi-floppy_disk"></i> SUBMIT INPUT IN';
+                document.getElementById('fifo-section').style.display = 'none';
+            } else {
+                document.getElementById('info-text').textContent = 'Catat material keluar untuk supply';
+                document.querySelector('.submit-btn').innerHTML = '<i class="gi gi-floppy_disk"></i> SUBMIT INPUT OUT';
+                document.getElementById('fifo-section').style.display = 'block';
+                refreshFIFO();
+            }
+        }
+
+        // QR Scanner
+        function openScanner(fieldId) {
+            currentScanField = fieldId;
+            document.getElementById('scannerModal').classList.add('active');
+            
+            html5QrcodeScanner = new Html5Qrcode("qr-reader");
+            html5QrcodeScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                onScanSuccess,
+                onScanError
+            );
+        }
+
+        function closeScanner() {
+            if (html5QrcodeScanner) {
+                html5QrcodeScanner.stop().then(() => {
+                    document.getElementById('scannerModal').classList.remove('active');
+                    html5QrcodeScanner = null;
+                });
+            }
+        }
+
+        function onScanSuccess(decodedText) {
+            document.getElementById(currentScanField).value = decodedText;
+            closeScanner();
+            
+            // Auto-fill item code if scanning Full QR
+            if (currentScanField === 'fullQR') {
+                autoFillFromQR(decodedText);
+            }
+        }
+
+        function onScanError(error) {
+            // Ignore scan errors
+        }
+
+        // Auto-fill from QR code
+        function autoFillFromQR(qrCode) {
+            const parts = qrCode.split(/[- ]/);
+            if (parts.length > 0 && !document.getElementById('itemCode').value) {
+                document.getElementById('itemCode').value = parts[0];
+            }
+        }
+
+        // FIFO Recommendations
+        async function refreshFIFO() {
+            const searchTerm = document.getElementById('fifo-search').value;
+            try {
+                const response = await fetch('/Molded/GetMoldedStockForFIFO');
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    let items = result.data;
+                    
+                    if (searchTerm) {
+                        const term = searchTerm.toLowerCase();
+                        items = items.filter(i => 
+                            i.itemCode.toLowerCase().includes(term) || 
+                            (i.fullQr && i.fullQr.toLowerCase().includes(term))
+                        );
+                    }
+                    
+                    if (items.length > 0) {
+                        let html = '';
+                        items.forEach(item => {
+                            html += `
+                                <div class="fifo-item" onclick="selectFIFOItem('${item.itemCode}', '${item.fullQr || ''}', '${item.productionDate || ''}', ${item.boxCount})">
+                                    <strong>${item.itemCode}</strong><br>
+                                    <small>QR: ${item.fullQr || '-'} | Stock: ${item.boxCount} boxes</small>
+                                </div>
+                            `;
+                        });
+                        document.getElementById('fifo-list').innerHTML = html;
+                    } else {
+                        document.getElementById('fifo-list').innerHTML = '<p class="text-center">No matching stock found</p>';
+                    }
+                } else {
+                    document.getElementById('fifo-list').innerHTML = '<p class="text-center">Tidak ada stok tersimpan</p>';
+                }
+            } catch (error) {
+                console.error('Error fetching FIFO:', error);
+                document.getElementById('fifo-list').innerHTML = `<p class="text-center text-danger">Error: ${error.message}</p>`;
+            }
+        }
+
+        function selectFIFOItem(itemCode, fullQr, productionDate, boxCount) {
+            document.getElementById('itemCode').value = itemCode;
+            document.getElementById('fullQR').value = fullQr;
+            
+            if (productionDate) {
+                const dateVal = new Date(productionDate);
+                if (!isNaN(dateVal)) {
+                    document.getElementById('productionDate').value = dateVal.toISOString().split('T')[0];
+                }
+            }
+            document.getElementById('boxCount').value = Math.min(1, boxCount);
+        }
+
+        // FIFO search
+        document.getElementById('fifo-search').addEventListener('input', function() {
+            refreshFIFO();
+        });
+
+        // Form submission
+        document.getElementById('inputForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('transactionType', document.getElementById('transactionType').value);
+            formData.append('itemCode', document.getElementById('itemCode').value);
+            formData.append('fullQr', document.getElementById('fullQR').value);
+            
+            const prodDate = document.getElementById('productionDate').value;
+            if (prodDate) formData.append('productionDate', prodDate);
+            
+            formData.append('boxCount', document.getElementById('boxCount').value || 0);
+            formData.append('qtyPcs', document.getElementById('qtyPcs').value || 0);
+
+            try {
+                const response = await fetch('/Molded/SubmitMoldedInput', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: result.message,
+                        confirmButtonColor: '#667eea'
+                    });
+                    this.reset();
+                    document.getElementById('transactionType').value = currentTab.toUpperCase();
+                    document.getElementById('productionDate').valueAsDate = new Date();
+                    
+                    if (currentTab === 'out') {
+                        refreshFIFO();
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: result.message
+                    });
+                }
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to submit data: ' + error.message
+                });
+            }
+        });
+
+        // Set default date to today
+        document.getElementById('productionDate').valueAsDate = new Date();
+    </script>
+}

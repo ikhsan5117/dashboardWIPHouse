@@ -129,14 +129,19 @@ namespace DashboardWIPHouse.Controllers
                     HttpContext.Session.SetString("RVI_Username", user.Username);
                     HttpContext.Session.SetString("RVI_UserId", user.Id.ToString());
 
-                    // Log successful RVI login
-                    Console.WriteLine($"RVI Login successful for user: {user.Username}");
-                    Console.WriteLine($"Redirecting to RVI/Index");
+                    // Update Last_Login
+                    user.LastLogin = DateTime.Now;
+                    await _rviContext.SaveChangesAsync();
 
-                    // Set success message in TempData for debugging
-                    TempData["Success"] = $"RVI Login successful for {user.Username}";
-
-                    return RedirectToAction("Index", "RVI");
+                    // Redirect based on role
+                    if (role == "User")
+                    {
+                        return RedirectToAction("Index", "InputMenu");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "RVI");
+                    }
                 }
                 else if (database == "MOLDED")
                 {
@@ -175,14 +180,19 @@ namespace DashboardWIPHouse.Controllers
                     HttpContext.Session.SetString("MOLDED_Username", user.Username);
                     HttpContext.Session.SetString("MOLDED_UserId", user.Id.ToString());
 
-                    // Log successful MOLDED login
-                    Console.WriteLine($"MOLDED Login successful for user: {user.Username}");
-                    Console.WriteLine($"Redirecting to Molded/Index");
+                    // Update Last_Login
+                    user.LastLogin = DateTime.Now;
+                    await _moldedContext.SaveChangesAsync();
 
-                    // Set success message in TempData for debugging
-                    TempData["Success"] = $"MOLDED Login successful for {user.Username}";
-
-                    return RedirectToAction("Index", "Molded");
+                    // Redirect based on role
+                    if (role == "User")
+                    {
+                        return RedirectToAction("Index", "InputMenu");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Molded");
+                    }
                 }
                 else
                 {

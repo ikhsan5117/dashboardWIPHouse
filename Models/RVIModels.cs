@@ -416,6 +416,10 @@ namespace dashboardWIPHouse.Models
         [Column("item_code")]
         public string ItemCode { get; set; } = string.Empty;
 
+        [Column("full_qr")]
+        public string FullQR { get; set; } = string.Empty;
+
+
         [Column("supplied_at")]
         public DateTime SuppliedAt { get; set; }
 

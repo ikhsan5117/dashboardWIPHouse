@@ -78,12 +78,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW9sZGVkXEl0ZW1zLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/dashboardWIPHouse/Views/Molded/MoldedInput.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW9sZGVkXE1vbGRlZElucHV0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/dashboardWIPHouse/Views/RVI/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUlZJXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [E:/dashboardWIPHouse/Views/RVI/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUlZJXExvZ2luLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/dashboardWIPHouse/Views/RVI/RVIInput.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUlZJXFJWSUlucHV0LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [E:/dashboardWIPHouse/Views/Shared/Error.cshtml]

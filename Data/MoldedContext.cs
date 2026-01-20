@@ -16,6 +16,8 @@ namespace dashboardWIPHouse.Data
         public DbSet<UserMolded> UsersMolded { get; set; }
         public DbSet<ItemQCMolded> ItemsQCMolded { get; set; }
         public DbSet<ItemBCMolded> ItemsBCMolded { get; set; }
+        public DbSet<StorageLogMolded> StorageLogMolded { get; set; }
+        public DbSet<SupplyLogMolded> SupplyLogMolded { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -184,10 +186,109 @@ namespace dashboardWIPHouse.Data
                     .HasColumnName("max_capac_rak")
                     .IsRequired(false);
 
-                // Configure relationship with ItemMolded
+            // Configure relationship with ItemMolded
                 entity.HasOne(e => e.Item)
                       .WithMany()
                       .HasForeignKey(e => e.KodeItem)
+                      .HasPrincipalKey(i => i.ItemCode)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure StorageLogMolded
+            modelBuilder.Entity<StorageLogMolded>(entity =>
+            {
+                entity.HasKey(e => e.LogId);
+                entity.ToTable("storage_log");
+
+                entity.Property(e => e.LogId)
+                    .HasColumnName("log_id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.ItemCode)
+                    .HasColumnName("item_code")
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.FullQR)
+                    .HasColumnName("full_qr")
+                    .HasMaxLength(300)
+                    .IsRequired();
+
+                entity.Property(e => e.StoredAt)
+                    .HasColumnName("stored_at")
+                    .IsRequired();
+
+                entity.Property(e => e.BoxCount)
+                    .HasColumnName("box_count")
+                    .IsRequired();
+
+                entity.Property(e => e.Tanggal)
+                    .HasColumnName("tanggal")
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(e => e.ProductionDate)
+                    .HasColumnName("production_date")
+                    .IsRequired(false);
+
+                entity.Property(e => e.QtyPcs)
+                    .HasColumnName("qty_pcs")
+                    .IsRequired(false);
+
+                // Configure relationship with ItemMolded
+                entity.HasOne(e => e.Item)
+                      .WithMany()
+                      .HasForeignKey(e => e.ItemCode)
+                      .HasPrincipalKey(i => i.ItemCode)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure SupplyLogMolded
+            modelBuilder.Entity<SupplyLogMolded>(entity =>
+            {
+                entity.HasKey(e => e.LogId);
+                entity.ToTable("supply_log");
+
+                entity.Property(e => e.LogId)
+                    .HasColumnName("log_id")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.ItemCode)
+                    .HasColumnName("item_code")
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.FullQR)
+                    .HasColumnName("full_qr")
+                    .HasMaxLength(300)
+                    .IsRequired(false);
+
+
+                entity.Property(e => e.SuppliedAt)
+                    .HasColumnName("supplied_at")
+                    .IsRequired();
+
+                entity.Property(e => e.BoxCount)
+                    .HasColumnName("box_count")
+                    .IsRequired();
+
+                entity.Property(e => e.Tanggal)
+                    .HasColumnName("tanggal")
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(e => e.ProductionDate)
+                    .HasColumnName("production_date")
+                    .IsRequired(false);
+
+                entity.Property(e => e.QtyPcs)
+                    .HasColumnName("qty_pcs")
+                    .IsRequired(false);
+
+                // Configure relationship with ItemMolded
+                entity.HasOne(e => e.Item)
+                      .WithMany()
+                      .HasForeignKey(e => e.ItemCode)
                       .HasPrincipalKey(i => i.ItemCode)
                       .OnDelete(DeleteBehavior.Restrict);
             });

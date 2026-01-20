@@ -1009,6 +1009,111 @@ namespace dashboardWIPHouse.Controllers
             // Jika standard exp > 3 hari, maka nearly expired = 3 hari
             return standardExp <= 3 ? 1 : 3;
         }
+
+
+        // ==========================================
+        // MOLDED INPUT FEATURES
+        // ==========================================
+
+        [HttpGet]
+        public async Task<IActionResult> MoldedInput()
+        {
+            var today = DateTime.Now.ToString("dd-MM-yyyy");
+            ViewBag.Date = today;
+            
+            // Get Items for Datalist
+            var items = await _context.ItemsMolded
+                .Select(i => i.ItemCode)
+                .Distinct()
+                .OrderBy(i => i)
+                .ToListAsync();
+            
+            ViewBag.ItemCodes = items;
+            
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitMoldedInput(string transactionType, string itemCode, string fullQr, DateTime? productionDate, int boxCount, int qtyPcs, string toProcess = "Production")
+        {
+            try
+            {
+                var today = DateTime.Now.ToString("dd/MM/yyyy");
+
+                // Validate input
+                if (string.IsNullOrEmpty(itemCode))
+                    return Json(new { success = false, message = "Item Code is required" });
+
+                if (transactionType == "IN")
+                {
+                    var log = new StorageLogMolded
+                    {
+                        ItemCode = itemCode,
+                        FullQR = fullQr ?? "-",
+                        ProductionDate = productionDate,
+                        BoxCount = boxCount,
+                        QtyPcs = qtyPcs,
+                        Tanggal = today,
+                        StoredAt = DateTime.Now
+                    };
+                    _context.StorageLogMolded.Add(log);
+                }
+                else // OUT
+                {
+                    var log = new SupplyLogMolded
+                    {
+                        ItemCode = itemCode,
+                        FullQR = fullQr ?? "-", 
+                        BoxCount = boxCount,
+                        QtyPcs = qtyPcs,
+                        Tanggal = today,
+                        SuppliedAt = DateTime.Now,
+                        ProductionDate = productionDate
+                    };
+                    _context.SupplyLogMolded.Add(log);
+                }
+
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Data saved successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error submitting MOLDED input");
+                return Json(new { success = false, message = "Error saving data: " + ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetMoldedStockForFIFO()
+        {
+            try
+            {
+                // Get stock data for FIFO suggestions
+                var stock = await _context.StockSummaryMolded
+                    .Where(s => s.CurrentBoxStock > 0)
+                    .Select(s => new {
+                        ItemCode = s.ItemCode,
+                        FullQR = s.FullQr,
+                        ProductionDate = s.LastUpdated, 
+                        BoxCount = s.CurrentBoxStock
+                    })
+                    .ToListAsync();
+                
+                var sortedStock = stock
+                    .OrderBy(s => {
+                        if (DateTime.TryParse(s.ProductionDate, out DateTime dt)) return dt;
+                        return DateTime.MinValue;
+                    })
+                    .ToList();
+
+
+                return Json(new { success = true, data = sortedStock });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, error = ex.Message });
+            }
+        }
     }
 
     // Request models for Molded Items CRUD operations
