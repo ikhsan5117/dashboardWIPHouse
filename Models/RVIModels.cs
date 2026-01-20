@@ -96,33 +96,27 @@ namespace dashboardWIPHouse.Models
     public class ItemBCRVI
     {
         [Key]
-        [Column("kode_rak")]
-        public string KodeRak { get; set; } = string.Empty;
+        [Column("item_code")]
+        public string ItemCode { get; set; } = string.Empty;
 
-        [Column("kode_item")]
-        public string KodeItem { get; set; } = string.Empty;
+        [Column("qty_per_box")]
+        public int? QtyPerBox { get; set; }
 
-        [Column("qty")]
-        public decimal? Qty { get; set; }
+        [Column("standard_min")]
+        public int? StandardMin { get; set; }
 
-        [Column("type_box")]
-        public string? TypeBox { get; set; }
-
-        [Column("max_capac_rak")]
-        public int? MaxCapacRak { get; set; }
+        [Column("standard_max")]
+        public int? StandardMax { get; set; }
 
         // Helper properties for display with default values
         [NotMapped]
-        public decimal DisplayQty => Qty ?? 0;
+        public decimal DisplayQtyPerBox => QtyPerBox ?? 0;
 
         [NotMapped]
-        public int DisplayMaxCapacRak => MaxCapacRak ?? 0;
+        public int DisplayStandardMin => StandardMin ?? 0;
 
         [NotMapped]
-        public string DisplayTypeBox => TypeBox ?? "N/A";
-
-        // Navigation property to ItemRVI
-        public virtual ItemRVI? Item { get; set; }
+        public int DisplayStandardMax => StandardMax ?? 0;
     }
 
     // RVI Stock Summary View Model

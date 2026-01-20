@@ -255,9 +255,17 @@
                                         <span class="sidebar-nav-mini-hide">RVI Management</span>
                                     </li>
                                     <li>
-                                        <a href="#" onclick="alert('RVI Item Management - Coming Soon!')">
+                                        <a href="@Url.Action("Items", "RVI")"
+                                            class="@(currentController == "RVI" && ViewContext.RouteData.Values["action"]?.ToString() == "Items" ? "active" : "")">
                                             <i class="gi gi-table sidebar-nav-icon"></i>
                                             <span class="sidebar-nav-mini-hide">RVI Items</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("ItemsBC", "RVI")"
+                                            class="@(currentController == "RVI" && ViewContext.RouteData.Values["action"]?.ToString() == "ItemsBC" ? "active" : "")">
+                                            <i class="gi gi-check sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">Before Check Items</span>
                                         </a>
                                     </li>
                                 }

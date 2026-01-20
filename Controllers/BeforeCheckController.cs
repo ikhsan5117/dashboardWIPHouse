@@ -34,21 +34,19 @@ namespace dashboardWIPHouse.Controllers
                 _logger.LogInformation("=== Before Check Dashboard Load Started ===");
 
                 // Load from ItemsBCRVI table (Before Check)
-                var allBcItems = await _context.ItemsBCRVI
-                    .Include(bc => bc.Item)
-                    .ToListAsync();
+                var allBcItems = await _context.ItemsBCRVI.ToListAsync();
 
-                _logger.LogInformation($"Loaded {allBcItems.Count} BC items from database");
+                _logger.LogInformation($"Loaded {allBcItems.Count()} BC items from database");
 
-                // Calculate summary statistics using RVI logic (same as RVI dashboard)
+                // Calculate summary statistics
                 var summary = new BeforeCheckSummaryRVI
                 {
-                    TotalRaks = allBcItems.Count,
-                    TotalItems = allBcItems.Select(x => x.KodeItem).Distinct().Count(),
-                    TotalQty = allBcItems.Sum(x => x.DisplayQty),
-                    FullRaks = allBcItems.Count(x => IsFullRak(x.DisplayQty, x.DisplayMaxCapacRak)),
-                    EmptyRaks = allBcItems.Count(x => IsEmptyRak(x.DisplayQty)),
-                    PartialRaks = allBcItems.Count(x => IsPartialRak(x.DisplayQty, x.DisplayMaxCapacRak))
+                    TotalRaks = allBcItems.Count(),
+                    TotalItems = allBcItems.Select(x => x.ItemCode).Distinct().Count(),
+                    TotalQty = allBcItems.Sum(x => x.DisplayQtyPerBox),
+                    FullRaks = allBcItems.Count(x => IsFullRak(x.DisplayQtyPerBox, x.DisplayStandardMax)),
+                    EmptyRaks = allBcItems.Count(x => IsEmptyRak(x.DisplayQtyPerBox)),
+                    PartialRaks = allBcItems.Count(x => IsPartialRak(x.DisplayQtyPerBox, x.DisplayStandardMax))
                 };
 
                 _logger.LogInformation($"Before Check Summary calculated:");
@@ -83,23 +81,21 @@ namespace dashboardWIPHouse.Controllers
             {
                 _logger.LogInformation("=== Before Check GetTableData Started ===");
 
-                // Load from ItemsBCRVI table (Before Check)
-                var allBcItems = await _context.ItemsBCRVI
-                    .Include(bc => bc.Item)
-                    .ToListAsync();
+                // Load BC items for table
+                var allBcItems = await _context.ItemsBCRVI.ToListAsync();
 
-                _logger.LogInformation($"Loaded {allBcItems.Count} BC items for table data");
+                _logger.LogInformation($"Loaded {allBcItems.Count()} BC items for table data");
 
                 var tableData = allBcItems.Select((bc, index) => new BeforeCheckTableItemRVI
                 {
                     No = index + 1,
-                    KodeRak = bc.KodeRak,
-                    KodeItem = bc.KodeItem,
-                    Qty = bc.DisplayQty,
-                    TypeBox = bc.DisplayTypeBox,
-                    MaxCapacRak = bc.DisplayMaxCapacRak,
-                    Status = DetermineRakStatus(bc.DisplayQty, bc.DisplayMaxCapacRak),
-                    CapacityPercentage = CalculateCapacityPercentage(bc.DisplayQty, bc.DisplayMaxCapacRak)
+                    KodeRak = bc.ItemCode, // Using ItemCode as identifier
+                    KodeItem = bc.ItemCode,
+                    Qty = bc.DisplayQtyPerBox,
+                    TypeBox = "N/A",
+                    MaxCapacRak = bc.DisplayStandardMax,
+                    Status = DetermineRakStatus(bc.DisplayQtyPerBox, bc.DisplayStandardMax),
+                    CapacityPercentage = CalculateCapacityPercentage(bc.DisplayQtyPerBox, bc.DisplayStandardMax)
                 }).ToList();
 
                 _logger.LogInformation($"Processed {tableData.Count} items for table display");

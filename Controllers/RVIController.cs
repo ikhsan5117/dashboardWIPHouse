@@ -1625,5 +1625,271 @@
                 return Json(new { success = false, error = ex.Message });
             }
         }
+
+        // ==========================================
+        // RVI ITEMS MANAGEMENT (Regular Items)
+        // ==========================================
+
+        [HttpGet]
+        public IActionResult Items()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetRVIItems()
+        {
+            try
+            {
+                var items = await _context.ItemsRVI.ToListAsync();
+                var result = items.Select(i => new
+                {
+                    itemCode = i.ItemCode,
+                    qtyPerBox = (double)(i.QtyPerBox ?? 0),
+                    standardMin = i.StandardMin ?? 0,
+                    standardMax = i.StandardMax ?? 0
+                }).ToList();
+
+                return Json(new { data = result });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading RVI items");
+                return Json(new { data = new List<object>() });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreateRVIItem([FromBody] CreateRVIItemRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.ItemCode))
+                    return Json(new { success = false, message = "Item code is required" });
+
+                var exists = await _context.ItemsRVI.FindAsync(request.ItemCode);
+                if (exists != null)
+                    return Json(new { success = false, message = "Item code already exists" });
+
+                var item = new ItemRVI
+                {
+                    ItemCode = request.ItemCode,
+                    QtyPerBox = (decimal?)request.QtyPerBox,
+                    StandardMin = request.StandardMin,
+                    StandardMax = request.StandardMax
+                };
+
+                _context.ItemsRVI.Add(item);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Item created successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating RVI item");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateRVIItem([FromBody] UpdateRVIItemRequest request)
+        {
+            try
+            {
+                var item = await _context.ItemsRVI.FindAsync(request.ItemCode);
+                if (item == null)
+                    return Json(new { success = false, message = "Item not found" });
+
+                item.QtyPerBox = (decimal?)request.QtyPerBox;
+                item.StandardMin = request.StandardMin;
+                item.StandardMax = request.StandardMax;
+
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Item updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating RVI item");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> DeleteRVIItem([FromBody] DeleteRVIItemRequest request)
+        {
+            try
+            {
+                var item = await _context.ItemsRVI.FindAsync(request.ItemCode);
+                if (item == null)
+                    return Json(new { success = false, message = "Item not found" });
+
+                _context.ItemsRVI.Remove(item);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "Item deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting RVI item");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        // ==========================================
+        // BEFORE CHECK ITEMS MANAGEMENT
+        // ==========================================
+
+        [HttpGet]
+        public IActionResult ItemsBC()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetBCItems()
+        {
+            try
+            {
+                // EF query should work now that model matches database schema (int)
+                var items = await _context.ItemsBCRVI.ToListAsync();
+                
+                var result = items.Select(i => new
+                {
+                    itemCode = i.ItemCode,
+                    qtyPerBox = i.QtyPerBox ?? 0, // int
+                    standardMin = i.StandardMin ?? 0,
+                    standardMax = i.StandardMax ?? 0
+                }).ToList();
+
+                return Json(new { data = result });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading BC items");
+                return Json(new { data = new List<object>(), error = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> CreateBCItem([FromBody] CreateBCItemRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(request.ItemCode))
+                    return Json(new { success = false, message = "Item Code is required" });
+
+                var exists = await _context.ItemsBCRVI.FindAsync(request.ItemCode);
+                if (exists != null)
+                    return Json(new { success = false, message = "Item Code already exists" });
+
+                var item = new ItemBCRVI
+                {
+                    ItemCode = request.ItemCode,
+                    QtyPerBox = (int)request.QtyPerBox, // Cast to int
+                    StandardMin = request.StandardMin,
+                    StandardMax = request.StandardMax
+                };
+
+                _context.ItemsBCRVI.Add(item);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "BC Item created successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating BC item");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> UpdateBCItem([FromBody] UpdateBCItemRequest request)
+        {
+            try
+            {
+                var item = await _context.ItemsBCRVI.FindAsync(request.ItemCode);
+                if (item == null)
+                    return Json(new { success = false, message = "BC Item not found" });
+
+                item.QtyPerBox = (int)request.QtyPerBox;
+                item.StandardMin = request.StandardMin;
+                item.StandardMax = request.StandardMax;
+
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "BC Item updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating BC item");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> DeleteBCItem([FromBody] DeleteBCItemRequest request)
+        {
+            try
+            {
+                var item = await _context.ItemsBCRVI.FindAsync(request.ItemCode);
+                if (item == null)
+                    return Json(new { success = false, message = "BC Item not found" });
+
+                _context.ItemsBCRVI.Remove(item);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true, message = "BC Item deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting BC item");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+    }
+
+    // Request models for RVI Items
+    public class CreateRVIItemRequest
+    {
+        public string ItemCode { get; set; } = string.Empty;
+        public double QtyPerBox { get; set; }
+        public int StandardMin { get; set; }
+        public int StandardMax { get; set; }
+    }
+
+    public class UpdateRVIItemRequest
+    {
+        public string ItemCode { get; set; } = string.Empty;
+        public double QtyPerBox { get; set; }
+        public int StandardMin { get; set; }
+        public int StandardMax { get; set; }
+    }
+
+    public class DeleteRVIItemRequest
+    {
+        public string ItemCode { get; set; } = string.Empty;
+    }
+
+    // Request models for BC Items
+    public class CreateBCItemRequest
+    {
+        public string ItemCode { get; set; } = string.Empty;
+        public double QtyPerBox { get; set; }
+        public int StandardMin { get; set; }
+        public int StandardMax { get; set; }
+    }
+
+    public class UpdateBCItemRequest
+    {
+        public string ItemCode { get; set; } = string.Empty;
+        public double QtyPerBox { get; set; }
+        public int StandardMin { get; set; }
+        public int StandardMax { get; set; }
+    }
+
+    public class DeleteBCItemRequest
+    {
+        public string ItemCode { get; set; } = string.Empty;
     }
 }

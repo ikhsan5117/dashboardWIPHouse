@@ -1,0 +1,619 @@
+@{
+    ViewData["Title"] = "RVI Items Management";
+}
+
+@section Scripts {
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+    
+    <!-- DataTables Buttons -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+    <style>
+        /* Modern Header */
+        .modern-header {
+            background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(255, 152, 0, 0.3);
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .modern-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .modern-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.95;
+            font-size: 1.1rem;
+        }
+
+        /* Summary Cards */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #FF9800;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(255, 152, 0, 0.2);
+        }
+
+        .summary-card .icon {
+            font-size: 2.5rem;
+            color: #FF9800;
+            margin-bottom: 10px;
+        }
+
+        .summary-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin: 5px 0;
+        }
+
+        .summary-card .label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Modern Table Card */
+        .table-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .table-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .table-card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-card-title i {
+            color: #FF9800;
+        }
+
+        /* Enhanced Buttons */
+        .btn-modern {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn-modern:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: linear-gradient(135deg, #45a049 0%, #3d8b40 100%);
+        }
+
+        /* Editable Cell Enhancements */
+        .editable-cell {
+            cursor: pointer;
+            position: relative;
+            padding: 12px !important;
+            transition: all 0.2s ease;
+        }
+        
+        .editable-cell:hover {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%) !important;
+        }
+        
+        .editable-cell.editing {
+            padding: 4px !important;
+            background: linear-gradient(135deg, #fff3cd 0%, #ffe5a0 100%) !important;
+        }
+        
+        .inline-input {
+            width: 100%;
+            border: 2px solid #FF9800;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 13px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .inline-input:focus {
+            border-color: #F57C00;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.2);
+            outline: none;
+        }
+        
+        .row-editing {
+            background: rgba(255, 152, 0, 0.05) !important;
+        }
+
+        /* DataTable Enhancements */
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 20px;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: #FF9800;
+            box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.1);
+            outline: none;
+        }
+
+        table.dataTable thead th {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #FF9800 !important;
+        }
+
+        table.dataTable tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        table.dataTable tbody tr:hover {
+            background: rgba(255, 152, 0, 0.05) !important;
+        }
+
+        /* Animations */
+        @@keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Export Buttons */
+        .dt-buttons .btn {
+            margin-right: 8px;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .dt-buttons .btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+
+    <script>
+    $(document).ready(function() {
+        let table;
+        let currentEditingRow = null;
+        let originalRowData = null;
+
+        // Initialize DataTable
+        table = $('#rviItemsTable').DataTable({
+            "ajax": {
+                "url": "@Url.Action("GetRVIItems", "RVI")",
+                "type": "GET",
+                "dataSrc": "data"
+            },
+            "columns": [
+                {
+                    "data": null,
+                    "className": "text-center",
+                    "title": "NO",
+                    "orderable": false,
+                    "render": function(data, type, row, meta) {
+                        return meta.row + 1;
+                    }
+                },
+                { 
+                    "data": "itemCode", 
+                    "className": "text-center",
+                    "title": "Item Code"
+                },
+                { 
+                    "data": "qtyPerBox",
+                    "className": "text-center editable-cell",
+                    "title": "Qty Per Box",
+                    "render": function(data) {
+                        return '<span class="cell-content">' + data + '</span>';
+                    }
+                },
+                { 
+                    "data": "standardMin", 
+                    "className": "text-center editable-cell",
+                    "title": "Standard Min",
+                    "render": function(data) {
+                        return '<span class="cell-content">' + data + '</span>';
+                    }
+                },
+                { 
+                    "data": "standardMax", 
+                    "className": "text-center editable-cell",
+                    "title": "Standard Max",
+                    "render": function(data) {
+                        return '<span class="cell-content">' + data + '</span>';
+                    }
+                },
+                {
+                    "data": null,
+                    "className": "text-center",
+                    "title": "Actions",
+                    "orderable": false,
+                    "render": function(data, type, row) {
+                        return '<button class="btn btn-xs btn-danger delete-btn" data-item="' + row.itemCode + '"><i class="fa fa-trash"></i> Delete</button>';
+                    }
+                }
+            ],
+            "pageLength": 25,
+            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "order": [[1, "asc"]],
+            "dom": 'Bfrtip',
+            "buttons": [
+                {
+                    extend: 'excel',
+                    text: '<i class="fa fa-file-excel-o"></i> Excel',
+                    className: 'btn btn-success btn-sm'
+                },
+                {
+                    extend: 'pdf',
+                    text: '<i class="fa fa-file-pdf-o"></i> PDF',
+                    className: 'btn btn-danger btn-sm'
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i> Print',
+                    className: 'btn btn-warning btn-sm'
+                }
+            ],
+            "initComplete": function() {
+                var api = this.api();
+                var data = api.rows({page: 'all'}).data();
+                
+                $('#totalItems').text(data.length);
+                $('#activeItems').text(data.length);
+                
+                if (data.length > 0) {
+                    var totalQty = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        totalQty += data[i].qtyPerBox || 0;
+                    }
+                    $('#avgQtyPerBox').text(Math.round(totalQty / data.length));
+                } else {
+                    $('#avgQtyPerBox').text(0);
+                }
+            },
+            "drawCallback": function() {
+                var api = this.api();
+                var data = api.rows({page: 'all'}).data();
+                
+                $('#totalItems').text(data.length);
+                $('#activeItems').text(data.length);
+                
+                if (data.length > 0) {
+                    var totalQty = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        totalQty += data[i].qtyPerBox || 0;
+                    }
+                    $('#avgQtyPerBox').text(Math.round(totalQty / data.length));
+                } else {
+                    $('#avgQtyPerBox').text(0);
+                }
+            }
+        });
+
+        // Add New Button
+        $('#btnAddNew').click(function() {
+            showAddDialog();
+        });
+
+        function showAddDialog() {
+            const dialogHtml = `
+                <div id="customAddDialog" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 20px; border-radius: 8px; width: 400px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+                        <h3 style="margin-top: 0; margin-bottom: 20px; color: #FF9800;">Add New RVI Item</h3>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Item Code *:</label>
+                            <input type="text" id="dialogItemCode" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Qty Per Box:</label>
+                            <input type="number" id="dialogQtyPerBox" value="0" min="0" step="0.01" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Standard Min:</label>
+                            <input type="number" id="dialogStandardMin" value="0" min="0" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Standard Max:</label>
+                            <input type="number" id="dialogStandardMax" value="0" min="0" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        
+                        <div style="text-align: right;">
+                            <button id="dialogCancel" style="padding: 8px 16px; margin-right: 10px; border: 1px solid #ccc; background: #f8f8f8; cursor: pointer; border-radius: 4px;">Cancel</button>
+                            <button id="dialogSave" style="padding: 8px 16px; border: none; background: #FF9800; color: white; cursor: pointer; border-radius: 4px;">Save</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            $('body').append(dialogHtml);
+            $('#dialogItemCode').focus();
+            
+            $('#dialogCancel').click(function() {
+                $('#customAddDialog').remove();
+            });
+            
+            $('#dialogSave').click(function() {
+                const data = {
+                    ItemCode: $('#dialogItemCode').val(),
+                    QtyPerBox: parseFloat($('#dialogQtyPerBox').val()) || 0,
+                    StandardMin: parseInt($('#dialogStandardMin').val()) || 0,
+                    StandardMax: parseInt($('#dialogStandardMax').val()) || 0
+                };
+                
+                if (!data.ItemCode) {
+                    alert('Item Code is required!');
+                    return;
+                }
+                
+                $.ajax({
+                    url: '@Url.Action("CreateRVIItem", "RVI")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(data),
+                    success: function(response) {
+                        if (response.success) {
+                            table.ajax.reload();
+                            $('#customAddDialog').remove();
+                            alert('Item created successfully!');
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('An error occurred while saving.');
+                    }
+                });
+            });
+        }
+
+        // Inline editing
+        $(document).on('click', '.editable-cell', function() {
+            if (currentEditingRow !== null) return;
+            
+            const $cell = $(this);
+            const $row = $cell.closest('tr');
+            const rowData = table.row($row).data();
+            const columnIndex = table.cell(this).index().column;
+            const columnData = table.settings()[0].aoColumns[columnIndex].data;
+            
+            originalRowData = {...rowData};
+            currentEditingRow = $row;
+            $row.addClass('row-editing');
+            
+            let currentValue = rowData[columnData] || 0;
+            let inputHtml = `<input type="number" class="inline-input" value="${currentValue}" data-column="${columnData}" step="0.01" min="0">`;
+            inputHtml += `<div style="margin-top: 5px; text-align: center;">
+                <button class="btn btn-xs btn-success save-inline-btn">Save</button>
+                <button class="btn btn-xs btn-secondary cancel-inline-btn">Cancel</button>
+            </div>`;
+            
+            $cell.addClass('editing').html(inputHtml);
+            $cell.find('.inline-input').focus().select();
+        });
+
+        $(document).on('click', '.save-inline-btn', function(e) {
+            e.stopPropagation();
+            const $row = currentEditingRow;
+            const rowData = table.row($row).data();
+            const updatedData = {...rowData};
+            
+            $row.find('.inline-input').each(function() {
+                const column = $(this).data('column');
+                updatedData[column] = parseFloat($(this).val()) || 0;
+            });
+            
+            const apiData = {
+                ItemCode: updatedData.itemCode,
+                QtyPerBox: updatedData.qtyPerBox,
+                StandardMin: updatedData.standardMin,
+                StandardMax: updatedData.standardMax
+            };
+            
+            $.ajax({
+                url: '@Url.Action("UpdateRVIItem", "RVI")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(apiData),
+                success: function(response) {
+                    if (response.success) {
+                        table.ajax.reload(null, false);
+                        resetInlineEdit();
+                        alert('Updated successfully!');
+                    } else {
+                        alert('Error: ' + response.message);
+                        cancelInlineEdit();
+                    }
+                },
+                error: function() {
+                    alert('An error occurred.');
+                    cancelInlineEdit();
+                }
+            });
+        });
+
+        $(document).on('click', '.cancel-inline-btn', function(e) {
+            e.stopPropagation();
+            cancelInlineEdit();
+        });
+
+        function cancelInlineEdit() {
+            if (!currentEditingRow) return;
+            const $row = currentEditingRow;
+            $row.find('.editing').each(function() {
+                const $cell = $(this);
+                const columnIndex = table.cell(this).index().column;
+                const columnData = table.settings()[0].aoColumns[columnIndex].data;
+                const originalValue = originalRowData[columnData] || 0;
+                $cell.removeClass('editing').html('<span class="cell-content">' + originalValue + '</span>');
+            });
+            resetInlineEdit();
+        }
+
+        function resetInlineEdit() {
+            if (currentEditingRow) {
+                currentEditingRow.removeClass('row-editing');
+            }
+            currentEditingRow = null;
+            originalRowData = null;
+        }
+
+        // Delete
+        $(document).on('click', '.delete-btn', function() {
+            const itemCode = $(this).data('item');
+            if (!confirm('Delete item ' + itemCode + '?')) return;
+            
+            $.ajax({
+                url: '@Url.Action("DeleteRVIItem", "RVI")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ ItemCode: itemCode }),
+                success: function(response) {
+                    if (response.success) {
+                        table.ajax.reload();
+                        alert('Deleted successfully!');
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('An error occurred.');
+                }
+            });
+        });
+    });
+    </script>
+}
+
+<!-- Modern Gradient Header -->
+<div class="modern-header">
+    <h1>
+        <i class="gi gi-table"></i> RVI Items Management
+    </h1>
+    <p>📦 Manage master data for RVI transactions</p>
+</div>
+
+<!-- Summary Statistics Cards -->
+<div class="summary-cards">
+    <div class="summary-card">
+        <div class="icon"><i class="gi gi-table"></i></div>
+        <div class="value" id="totalItems">0</div>
+        <div class="label">Total Items</div>
+    </div>
+    <div class="summary-card">
+        <div class="icon"><i class="gi gi-check"></i></div>
+        <div class="value" id="activeItems">0</div>
+        <div class="label">Active Items</div>
+    </div>
+    <div class="summary-card">
+        <div class="icon"><i class="gi gi-stats"></i></div>
+        <div class="value" id="avgQtyPerBox">0</div>
+        <div class="label">Avg Qty/Box</div>
+    </div>
+</div>
+
+<!-- Modern Table Card -->
+<div class="table-card">
+    <div class="table-card-header">
+        <div class="table-card-title">
+            <i class="gi gi-list"></i>
+            <span>RVI Items Data</span>
+        </div>
+        <button id="btnAddNew" class="btn btn-modern btn-add">
+            <i class="fa fa-plus"></i> Add New Item
+        </button>
+    </div>
+    <div class="table-responsive">
+        <table id="rviItemsTable" class="table table-striped table-bordered table-vcenter">
+            <thead>
+                <tr>
+                    <th>NO</th>
+                    <th>Item Code</th>
+                    <th>Qty Per Box</th>
+                    <th>Standard Min</th>
+                    <th>Standard Max</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>

@@ -156,42 +156,28 @@ namespace dashboardWIPHouse.Data
                       .OnDelete(DeleteBehavior.Restrict);
             });
 
-            // Configure ItemBCRVI (Before Check - new)
+            // Configure ItemBCRVI (Before Check - using same structure as items table)
             modelBuilder.Entity<ItemBCRVI>(entity =>
             {
-                entity.HasKey(e => e.KodeRak);
+                entity.HasKey(e => e.ItemCode);
                 entity.ToTable("items_bc");
 
-                entity.Property(e => e.KodeRak)
-                    .HasColumnName("kode_rak")
-                    .HasMaxLength(10)
-                    .IsRequired();
-
-                entity.Property(e => e.KodeItem)
-                    .HasColumnName("kode_item")
-                    .HasMaxLength(10)
-                    .IsRequired();
-
-                entity.Property(e => e.Qty)
-                    .HasColumnName("qty")
-                    .HasColumnType("decimal(10,2)")
-                    .IsRequired(false);
-
-                entity.Property(e => e.TypeBox)
-                    .HasColumnName("type_box")
+                entity.Property(e => e.ItemCode)
+                    .HasColumnName("item_code")
                     .HasMaxLength(20)
+                    .IsRequired();
+
+                entity.Property(e => e.QtyPerBox)
+                    .HasColumnName("qty_per_box")
                     .IsRequired(false);
 
-                entity.Property(e => e.MaxCapacRak)
-                    .HasColumnName("max_capac_rak")
+                entity.Property(e => e.StandardMin)
+                    .HasColumnName("standard_min")
                     .IsRequired(false);
 
-                // Configure relationship with ItemRVI
-                entity.HasOne(e => e.Item)
-                      .WithMany()
-                      .HasForeignKey(e => e.KodeItem)
-                      .HasPrincipalKey(i => i.ItemCode)
-                      .OnDelete(DeleteBehavior.Restrict);
+                entity.Property(e => e.StandardMax)
+                    .HasColumnName("standard_max")
+                    .IsRequired(false);
             });
 
             // Configure StorageLogRVI
