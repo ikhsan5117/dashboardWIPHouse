@@ -1,0 +1,271 @@
+@{
+    ViewData["Title"] = "Input Menu";
+    Layout = null; // No sidebar layout
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .settings-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: #1976D2;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .settings-icon:hover {
+            background: #1565C0;
+            transform: scale(1.05);
+        }
+
+        .settings-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        .logo-container {
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .logo-box {
+            width: 180px;
+            height: 180px;
+            background: white;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        .logo-box svg {
+            width: 140px;
+            height: 140px;
+        }
+
+        .app-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1565C0;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .app-subtitle {
+            font-size: 16px;
+            color: #757575;
+            font-weight: 400;
+        }
+
+        .menu-container {
+            margin-top: 60px;
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .menu-card {
+            background: linear-gradient(135deg, var(--card-color-1) 0%, var(--card-color-2) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.2);
+        }
+
+        .menu-card.green {
+            --card-color-1: #66BB6A;
+            --card-color-2: #43A047;
+        }
+
+        .menu-card.blue {
+            --card-color-1: #42A5F5;
+            --card-color-2: #1E88E5;
+        }
+
+        .menu-card-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .menu-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: white;
+        }
+
+        .menu-text h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        .menu-text p {
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .menu-arrow {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-arrow svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        @@media (max-width: 480px) {
+            .app-title {
+                font-size: 28px;
+            }
+            
+            .menu-card {
+                padding: 24px;
+            }
+            
+            .menu-text h2 {
+                font-size: 20px;
+            }
+            
+            .menu-text p {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Settings Icon -->
+    <div class="settings-icon" onclick="window.location.href='/Account/Logout'">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+        </svg>
+    </div>
+
+    <!-- Logo & Title -->
+    <div class="logo-container">
+        <div class="logo-box">
+            <img src="~/img/supply-app-logo.png" alt="Supply App Logo" style="width: 120px; height: auto;">
+        </div>
+        <h1 class="app-title">SUPPLY APP</h1>
+        <p class="app-subtitle">Stock Management System</p>
+    </div>
+
+    <!-- Menu Cards -->
+    <div class="menu-container">
+        <!-- GREEN HOSE Card -->
+        <a href="@Url.Action("GreenHoseInput", "Home")" class="menu-card green">
+            <div class="menu-card-content">
+                <div class="menu-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12,2C6.48,2,2,6.48,2,12s4.48,10,10,10s10-4.48,10-10S17.52,2,12,2z M12,20c-4.41,0-8-3.59-8-8s3.59-8,8-8s8,3.59,8,8 S16.41,20,12,20z M7,13h10v-2H7V13z"/>
+                    </svg>
+                </div>
+                <div class="menu-text">
+                    <h2>GREENHOSE</h2>
+                    <p>Stock Storage & Management WIP<br>After Extrude</p>
+                </div>
+            </div>
+            <div class="menu-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M8.59,16.59L13.17,12L8.59,7.41L10,6l6,6l-6,6L8.59,16.59z"/>
+                </svg>
+            </div>
+        </a>
+
+        <!-- AFTER WASHING Card -->
+        <a href="@Url.Action("AfterWashingInput", "AfterWashing")" class="menu-card blue">
+            <div class="menu-card-content">
+                <div class="menu-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M20,11H4V8h16V11z M20,15H4v-2h16V15z M20,19H4v-2h16V19z M4,4h16v2H4V4z"/>
+                    </svg>
+                </div>
+                <div class="menu-text">
+                    <h2>AFTER WASHING</h2>
+                    <p>Stock Storage & Management WIP<br>After Washing</p>
+                </div>
+            </div>
+            <div class="menu-arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M8.59,16.59L13.17,12L8.59,7.41L10,6l6,6l-6,6L8.59,16.59z"/>
+                </svg>
+            </div>
+        </a>
+    </div>
+</body>
+</html>

@@ -82,7 +82,15 @@ namespace DashboardWIPHouse.Controllers
                     user.LastLogin = DateTime.Now;
                     await _context.SaveChangesAsync();
 
-                    return RedirectToAction("Index", "Home");
+                    // Redirect based on role
+                    if (role == "User")
+                    {
+                        return RedirectToAction("Index", "InputMenu");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
                 }
                 else if (database == "RVI")
                 {

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using dashboardWIPHouse.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using dashboardWIPHouse.Models;
+using DashboardWIPHouse.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +97,43 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         Console.WriteLine($"✗ HOSE Database connection error: {ex.Message}");
+    }
+    
+    // Seed HOSE Users if connected
+    if (dbContext.Database.CanConnect())
+    {
+        try
+        {
+            // Check for 'admin'
+            if (!dbContext.Users.Any(u => u.Username == "admin"))
+            {
+                dbContext.Users.Add(new User
+                {
+                    Username = "admin",
+                    Password = "admin123",
+                    CreatedDate = DateTime.Now
+                });
+                dbContext.SaveChanges();
+                Console.WriteLine("✓ Created default 'admin' user");
+            }
+
+            // Check for 'user'
+            if (!dbContext.Users.Any(u => u.Username == "user"))
+            {
+                dbContext.Users.Add(new User
+                {
+                    Username = "user",
+                    Password = "user123",
+                    CreatedDate = DateTime.Now
+                });
+                dbContext.SaveChanges();
+                Console.WriteLine("✓ Created default 'user' user");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"! Error Seeding HOSE Users: {ex.Message}");
+        }
     }
 
     // Test RVI database

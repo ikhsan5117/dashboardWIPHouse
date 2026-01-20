@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "7UsVseOz+YBrBpo9f3pnXedOSU97CwUO5g+Uf0B6jxs=",
+  "Hash": "h6evXktxMs+I6v4cG5gHjRlhd4EDDAT5XCX4XYvWr/Y=",
   "Source": "dashboardWIPHouse",
   "BasePath": "_content/dashboardWIPHouse",
   "Mode": "Default",
@@ -3340,6 +3340,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\img\\stats\\shortage.png"
+    },
+    {
+      "Identity": "E:\\dashboardWIPHouse\\wwwroot\\img\\supply-app-logo.png",
+      "SourceId": "dashboardWIPHouse",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\dashboardWIPHouse\\wwwroot\\",
+      "BasePath": "_content/dashboardWIPHouse",
+      "RelativePath": "img/supply-app-logo.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\img\\supply-app-logo.png"
     },
     {
       "Identity": "E:\\dashboardWIPHouse\\wwwroot\\js\\app.js",

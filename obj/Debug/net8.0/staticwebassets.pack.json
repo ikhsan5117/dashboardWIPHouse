@@ -697,6 +697,10 @@
       "PackagePath": "staticwebassets\\img\\stats\\shortage.png"
     },
     {
+      "Id": "E:\\dashboardWIPHouse\\wwwroot\\img\\supply-app-logo.png",
+      "PackagePath": "staticwebassets\\img\\supply-app-logo.png"
+    },
+    {
       "Id": "E:\\dashboardWIPHouse\\wwwroot\\js\\app.js",
       "PackagePath": "staticwebassets\\js\\app.js"
     },

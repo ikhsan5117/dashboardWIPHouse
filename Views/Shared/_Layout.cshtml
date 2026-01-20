@@ -206,24 +206,6 @@
                                     </a>
                                 </li>
 
-                                <!-- Input Data Menu -->
-                                <li class="sidebar-header">
-                                    <span class="sidebar-nav-mini-hide">Input Data</span>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("GreenHoseInput", "Home")" 
-                                       class="@(currentController == "Home" && currentAction == "GreenHoseInput" ? "active" : "")">
-                                        <i class="gi gi-circle_arrow_right sidebar-nav-icon"></i>
-                                        <span class="sidebar-nav-mini-hide">GREEN HOSE</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("AfterWashingInput", "AfterWashing")"
-                                       class="@(currentController == "AfterWashing" && currentAction == "AfterWashingInput" ? "active" : "")">
-                                        <i class="gi gi-circle_arrow_right sidebar-nav-icon"></i>
-                                        <span class="sidebar-nav-mini-hide">AFTER WASHING</span>
-                                    </a>
-                                </li>
 
                                 @if (User.IsInRole("Admin"))
                                 {
