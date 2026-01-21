@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using dashboardWIPHouse.Data;
 using dashboardWIPHouse.Models;
@@ -7,6 +8,7 @@ using System.Globalization;
 
 namespace dashboardWIPHouse.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -18,6 +20,7 @@ namespace dashboardWIPHouse.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             try
@@ -153,6 +156,7 @@ namespace dashboardWIPHouse.Controllers
         }
         
         [HttpPost]
+        [Authorize(Roles = "Admin")]
 public async Task<JsonResult> UploadExcel(IFormFile file, string uploadType = "storage")
 {
     var result = new ExcelUploadResult();
@@ -1130,6 +1134,7 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
 }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult DownloadTemplate(string uploadType = "storage")
         {
             try
@@ -1736,6 +1741,82 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+        [Authorize]
+        public IActionResult History()
+        {
+            return View("GreenHoseHistory");
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetHistoryData(string type, DateTime? date = null)
+        {
+            try
+            {
+                if (type == "in")
+                {
+                    var query = _context.StorageLog.AsQueryable();
+                    
+                    if (date.HasValue)
+                    {
+                        var targetDate = date.Value.Date;
+                        query = query.Where(x => x.StoredAt.HasValue && x.StoredAt.Value.Date == targetDate);
+                    }
+
+                    var data = await query
+                        .OrderByDescending(x => x.StoredAt)
+                        .Take(100)
+                        .Select(x => new {
+                            date = x.StoredAt.HasValue ? x.StoredAt.Value.ToString("dd-MM-yyyy HH:mm") : "-",
+                            item = x.ItemCode,
+                            qty = x.BoxCount ?? 0,
+                            status = "IN"
+                        })
+                        .ToListAsync();
+                    return Json(new { success = true, data });
+                }
+                else if (type == "out")
+                {
+                    var query = _context.SupplyLog.AsQueryable();
+
+                    if (date.HasValue)
+                    {
+                        var targetDate = date.Value.Date;
+                        query = query.Where(x => x.SuppliedAt.HasValue && x.SuppliedAt.Value.Date == targetDate);
+                    }
+
+                    var data = await query
+                        .OrderByDescending(x => x.SuppliedAt)
+                        .Take(100)
+                        .Select(x => new {
+                            date = x.SuppliedAt.HasValue ? x.SuppliedAt.Value.ToString("dd-MM-yyyy HH:mm") : "-",
+                            item = x.ItemCode,
+                            qty = x.BoxCount ?? 0,
+                            status = "OUT"
+                        })
+                        .ToListAsync();
+                    return Json(new { success = true, data });
+                }
+                else if (type == "stock")
+                {
+                    var allStock = await _context.StockSummary.ToListAsync();
+                    var grouped = allStock
+                        .GroupBy(x => x.ItemCode)
+                        .Select(g => new {
+                            itemCode = g.Key,
+                            description = g.FirstOrDefault()?.Item?.Mesin ?? "Aggregated Stock",
+                            qty = g.Sum(x => x.CurrentBoxStock ?? 0)
+                        })
+                        .OrderBy(x => x.itemCode)
+                        .ToList();
+                    return Json(new { success = true, data = grouped });
+                }
+                return Json(new { success = false, message = "Invalid type" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
 }

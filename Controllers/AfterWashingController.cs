@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using dashboardWIPHouse.Data;
 using dashboardWIPHouse.Models;
@@ -7,6 +8,7 @@ using System.Globalization;
 
 namespace dashboardWIPHouse.Controllers
 {
+    [Authorize]
     public class AfterWashingController : Controller
     {
         private readonly ILogger<AfterWashingController> _logger;
@@ -18,6 +20,7 @@ namespace dashboardWIPHouse.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             try
@@ -131,6 +134,7 @@ namespace dashboardWIPHouse.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<JsonResult> UploadExcel(IFormFile file)
         {
             var result = new ExcelUploadResult();
@@ -740,6 +744,121 @@ namespace dashboardWIPHouse.Controllers
             {
                 _logger.LogError(ex, "Error submitting After Washing input");
                 return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+        [Authorize]
+        public IActionResult History()
+        {
+            return View("AfterWashingHistory");
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetHistoryData(string type, DateTime? date = null)
+        {
+            try
+            {
+                if (type == "in")
+                {
+                    var query = _context.StorageLogAW.AsQueryable();
+
+                    if (date.HasValue)
+                    {
+                        var targetDate = date.Value.Date;
+                        query = query.Where(x => x.StoredAt.HasValue && x.StoredAt.Value.Date == targetDate);
+                    }
+
+                    var data = await query
+                        .OrderByDescending(x => x.StoredAt)
+                        .Take(100)
+                        .Select(x => new {
+                            date = x.StoredAt.HasValue ? x.StoredAt.Value.ToString("dd-MM-yyyy HH:mm") : "-",
+                            item = x.ItemCode,
+                            qty = x.BoxCount ?? 0,
+                            status = "IN"
+                        })
+                        .ToListAsync();
+                    return Json(new { success = true, data });
+                }
+                else if (type == "out")
+                {
+                    // If After Washing doesn't have its own Supply Log yet, return empty list
+                    return Json(new { success = true, data = new List<object>() });
+                }
+                else if (type == "stock")
+                {
+                    var allStock = await _context.StockSummaryAW.ToListAsync();
+                    var grouped = allStock
+                        .GroupBy(x => x.ItemCode)
+                        .Select(g => new {
+                            itemCode = g.Key,
+                            description = g.FirstOrDefault()?.Item?.Mesin ?? "Aggregated Stock",
+                            qty = g.Sum(x => x.CurrentBoxStock ?? 0)
+                        })
+                        .OrderBy(x => x.itemCode)
+                        .ToList();
+                    return Json(new { success = true, data = grouped });
+                }
+                return Json(new { success = false, message = "Invalid type" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // Planning Finishing Page
+        [HttpGet]
+        public IActionResult Planning()
+        {
+            return View();
+        }
+
+        // Get Planning Data API
+        [HttpGet]
+        public async Task<JsonResult> GetPlanningData(string? mesin = null)
+        {
+            try
+            {
+                var query = _context.PlanningFinishing.AsQueryable();
+
+                // Filter by mesin if provided
+                if (!string.IsNullOrEmpty(mesin) && mesin != "Semua Mesin")
+                {
+                    query = query.Where(p => p.NoMesin == mesin);
+                }
+
+                // Get current date to filter only relevant planning
+                var today = DateTime.Now.Date;
+
+                var planningData = await query
+                    .OrderBy(p => p.LoadTime)
+                    .ThenBy(p => p.NoMesin)
+                    .Select(p => new
+                    {
+                        mesin = p.NoMesin,
+                        itemCode = p.KodeItem,
+                        qty = p.QtyPlan,
+                        tanggal = p.LoadTime.HasValue ? p.LoadTime.Value.ToString("yyyy-MM-dd") : null,
+                        shift = p.Shift,
+                        keterangan = p.Keterangan
+                    })
+                    .Take(100) // Limit to 100 recent records
+                    .ToListAsync();
+
+                // Get unique mesin list for filter
+                var mesinList = await _context.PlanningFinishing
+                    .Where(p => p.NoMesin != null)
+                    .Select(p => p.NoMesin)
+                    .Distinct()
+                    .OrderBy(m => m)
+                    .ToListAsync();
+
+                return Json(new { success = true, data = planningData, mesinList });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting planning data");
+                return Json(new { success = false, message = ex.Message });
             }
         }
     }

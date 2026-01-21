@@ -1,0 +1,649 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>History & Stock - RVI</title>
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/plugins.css">
+    <link rel="stylesheet" href="~/css/main.css">
+    <link rel="stylesheet" href="~/css/themes.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --theme-primary: #9C27B0;
+            --theme-dark: #7B1FA2;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f0f2f5; 
+            margin: 0; 
+            padding: 0;
+            color: #333;
+        }
+
+        .history-header {
+            background: var(--theme-primary);
+            color: white;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .tabs-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            padding-bottom: 5px;
+            flex: 1;
+        }
+
+        .tab-item i {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .tab-item.active {
+            color: white;
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: white;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .sub-header {
+            margin-top: 135px;
+            background: #F3E5F5;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .action-icon {
+            color: #444;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .calendar-wrapper {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .search-container {
+            padding: 10px 20px;
+            background: white;
+            display: none;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 45px;
+            border: 1px solid #eee;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            background: #fdfdfd;
+        }
+
+        .content-area {
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+
+        .loader-container {
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--theme-primary);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Card Styling */
+        .cards-container {
+            display: none;
+        }
+
+        .history-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+
+        .history-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 24px;
+        }
+
+        .card-icon.in {
+            background: #F3E5F5;
+            color: #9C27B0;
+        }
+
+        .card-icon.out {
+            background: #FFEBEE;
+            color: #F44336;
+        }
+
+        .card-content {
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 6px;
+        }
+
+        .card-details {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .card-detail-row {
+            display: flex;
+            gap: 4px;
+        }
+
+        .card-label {
+            font-weight: 500;
+            color: #888;
+        }
+
+        .no-data-card {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-data-card i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Stock Card Styling */
+        .stock-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+        }
+
+        .stock-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+
+        .stock-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .stock-item-code {
+            font-size: 16px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .stock-qty {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--theme-primary);
+        }
+
+        .stock-description {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Pagination Styling */
+        .pagination-area {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 20px;
+            flex-wrap: wrap;
+            display: none;
+        }
+
+        .page-btn {
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            color: #444;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--theme-primary);
+            color: var(--theme-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-btn.active {
+            background: var(--theme-primary);
+            color: white;
+            border-color: var(--theme-primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="history-header">
+        <div class="header-top">
+            <button class="back-btn" onclick="window.history.back()">
+                <i class="gi gi-chevron-left"></i>
+            </button>
+            <div class="header-title">History & Stock</div>
+        </div>
+        
+        <div class="tabs-nav">
+            <div class="tab-item active" onclick="switchTab('in', this)">
+                <i class="gi gi-download"></i>
+                <span>IN</span>
+            </div>
+            <div class="tab-item" onclick="switchTab('out', this)">
+                <i class="gi gi-upload"></i>
+                <span>OUT</span>
+            </div>
+            <div class="tab-item" onclick="switchTab('stock', this)">
+                <i class="gi gi-package"></i>
+                <span>STOCK</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="sub-header" id="sub-header">
+        <span id="sub-title">All dates</span>
+        <div class="action-icons">
+            <div class="calendar-wrapper" id="calendar-icon-container">
+                <i class="gi gi-calendar action-icon"></i>
+                <input type="date" class="calendar-input" id="dateFilter" onchange="handleDateFilter(this.value)">
+            </div>
+            <i class="gi gi-refresh action-icon" onclick="refreshData()"></i>
+        </div>
+    </div>
+
+    <div class="search-container" id="search-container">
+        <div class="search-wrapper">
+            <i class="gi gi-search"></i>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search Item Code..." onkeyup="handleSearch()">
+        </div>
+    </div>
+
+    <div class="content-area">
+        <div id="loader" class="loader-container">
+            <div class="loader"></div>
+            <div style="margin-top: 10px; font-size: 12px; color: #888;">Fetching data...</div>
+        </div>
+
+        <div id="cards-container" class="cards-container"></div>
+
+        <div id="pagination-container" class="pagination-area"></div>
+    </div>
+
+    <script src="~/js/vendor/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        let currentTab = 'in';
+        let selectedDate = '';
+        let masterData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        const pageSize = 25;
+
+        function switchTab(tab, element) {
+            currentTab = tab;
+            selectedDate = '';
+            $('#dateFilter').val('');
+            $('#searchInput').val('');
+            
+            $('.tab-item').removeClass('active');
+            $(element).addClass('active');
+
+            if (tab === 'stock') {
+                $('#sub-title').text('Current Stock Summary');
+                $('#calendar-icon-container').hide();
+                $('#search-container').fadeIn();
+                $('.sub-header').css('background', '#FFF9C4');
+            } else {
+                $('#sub-title').text('All dates');
+                $('#calendar-icon-container').show();
+                $('#search-container').hide();
+                $('.sub-header').css('background', '#F3E5F5');
+            }
+
+            loadData();
+        }
+
+        function handleDateFilter(val) {
+            if (val) {
+                selectedDate = val;
+                let d = new Date(val);
+                let formatted = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+                $('#sub-title').text(formatted);
+            } else {
+                selectedDate = '';
+                $('#sub-title').text('All dates');
+            }
+            loadData();
+        }
+
+        function loadData() {
+            $('#cards-container').hide();
+            $('#pagination-container').hide();
+            $('#loader').show();
+
+            $.ajax({
+                url: '@Url.Action("GetHistoryData", "RVI")',
+                type: 'GET',
+                data: { type: currentTab, date: selectedDate },
+                success: function(response) {
+                    $('#loader').hide();
+                    if (response.success) {
+                        masterData = response.data;
+                        filteredData = [...masterData];
+                        currentPage = 1;
+                        renderUI();
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    $('#loader').hide();
+                    Swal.fire('Error', 'Connection failed', 'error');
+                }
+            });
+        }
+
+        function handleSearch() {
+            let filter = $('#searchInput').val().toUpperCase();
+            if (filter) {
+                filteredData = masterData.filter(item => 
+                    (item.itemCode || item.item || "").toUpperCase().indexOf(filter) > -1
+                );
+            } else {
+                filteredData = [...masterData];
+            }
+            currentPage = 1;
+            renderUI();
+        }
+
+        function renderUI() {
+            renderCards();
+            renderPagination();
+            $('#cards-container').fadeIn();
+        }
+
+        function renderCards() {
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredData.slice(start, end);
+            let html = '';
+
+            if (currentTab === 'stock') {
+                if (filteredData.length === 0) {
+                    html = `<div class="no-data-card">
+                        <i class="gi gi-package"></i>
+                        <div>Belum ada data stock</div>
+                    </div>`;
+                } else {
+                    pageData.forEach(item => {
+                        html += `
+                            <div class="stock-card">
+                                <div class="stock-card-header">
+                                    <div class="stock-item-code">${item.itemCode}</div>
+                                    <div class="stock-qty">${item.qty}</div>
+                                </div>
+                                <div class="stock-description">${item.description || '-'}</div>
+                            </div>
+                        `;
+                    });
+                }
+            } else {
+                if (filteredData.length === 0) {
+                    html = `<div class="no-data-card">
+                        <i class="gi gi-time"></i>
+                        <div>Tidak ada history untuk periode ini</div>
+                    </div>`;
+                } else {
+                    pageData.forEach(item => {
+                        const iconClass = currentTab === 'in' ? 'in' : 'out';
+                        const icon = currentTab === 'in' ? 'gi-download' : 'gi-upload';
+                        
+                        const dateTime = item.date.split(' ');
+                        const datePart = dateTime[0] || '';
+                        const timePart = dateTime[1] || '';
+                        
+                        html += `
+                            <div class="history-card">
+                                <div class="card-icon ${iconClass}">
+                                    <i class="gi ${icon}"></i>
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-title">${item.item}</div>
+                                    <div class="card-details">
+                                        <div class="card-detail-row">
+                                            <span class="card-label">Box:</span>
+                                            <span>${item.qty}</span>
+                                        </div>
+                                        <div class="card-detail-row">
+                                            <span class="card-label">Date:</span>
+                                            <span>${datePart}</span>
+                                        </div>
+                                        ${timePart ? `<div class="card-detail-row">
+                                            <span class="card-label">Time:</span>
+                                            <span>${timePart}</span>
+                                        </div>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            }
+
+            $('#cards-container').html(html);
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredData.length / pageSize);
+            const container = $('#pagination-container');
+            
+            if (totalPages <= 1) {
+                container.hide();
+                return;
+            }
+
+            let html = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
+                            <i class="gi gi-chevron-left"></i>
+                        </button>`;
+            // Smart Pagination Logic
+            const range = [];
+            const delta = 1;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+                    range.push(i);
+                }
+            }
+
+            let prev = 0;
+            for (const i of range) {
+                if (prev) {
+                    if (i - prev === 2) {
+                        html += `<button class="page-btn" onclick="changePage(${prev + 1})">${prev + 1}</button>`;
+                    } else if (i - prev !== 1) {
+                        html += `<span style="padding: 0 5px; color: #888;">...</span>`;
+                    }
+                }
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                prev = i;
+            }
+            html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
+                        <i class="gi gi-chevron-right"></i>
+                    </button>`;
+            
+            container.html(html).css('display', 'flex').hide().fadeIn();
+        }
+
+        function changePage(p) {
+            currentPage = p;
+            renderUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function refreshData() { loadData(); }
+        $(document).ready(function() { loadData(); });
+    </script>
+</body>
+</html>

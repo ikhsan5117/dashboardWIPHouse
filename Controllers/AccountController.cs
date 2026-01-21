@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using dashboardWIPHouse.Data;
 using DashboardWIPHouse.Models;
+using dashboardWIPHouse.Models; // Add this line
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
@@ -207,6 +208,14 @@ namespace DashboardWIPHouse.Controllers
             }
         }
 
+
+
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return Content("Access Denied: You do not have permission to access this resource.");
+        }
 
         [HttpGet]
         public async Task<IActionResult> Logout()

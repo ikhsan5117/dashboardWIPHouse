@@ -187,22 +187,37 @@
 
                             @if (currentDatabase == "HOSE")
                             {
-                                <!-- HOSE Database Navigation -->
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <!-- HOSE Database Navigation -->
+                                    <li class="sidebar-header">
+                                        <span class="sidebar-nav-mini-hide">HOSE Dashboard</span>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "Home")"
+                                            class="@(currentController == "Home" ? "active" : "")">
+                                            <i class="gi gi-stopwatch sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">Green Hose</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "AfterWashing")"
+                                            class="@(currentController == "AfterWashing" ? "active" : "")">
+                                            <i class="gi gi-leaf sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">After Washing</span>
+                                        </a>
+                                    </li>
+                                }
+
+                                <!-- Stock Input Menu (For All Users) -->
                                 <li class="sidebar-header">
-                                    <span class="sidebar-nav-mini-hide">HOSE Dashboard</span>
+                                    <span class="sidebar-nav-mini-hide">Stock Input</span>
                                 </li>
                                 <li>
-                                    <a href="@Url.Action("Index", "Home")"
-                                        class="@(currentController == "Home" ? "active" : "")">
-                                        <i class="gi gi-stopwatch sidebar-nav-icon"></i>
-                                        <span class="sidebar-nav-mini-hide">Green Hose</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index", "AfterWashing")"
-                                        class="@(currentController == "AfterWashing" ? "active" : "")">
-                                        <i class="gi gi-leaf sidebar-nav-icon"></i>
-                                        <span class="sidebar-nav-mini-hide">After Washing</span>
+                                    <a href="@Url.Action("Index", "InputMenu")"
+                                        class="@(currentController == "InputMenu" ? "active" : "")">
+                                        <i class="gi gi-circle_plus sidebar-nav-icon"></i>
+                                        <span class="sidebar-nav-mini-hide">Supply App</span>
                                     </a>
                                 </li>
 
@@ -230,22 +245,37 @@
                             }
                             else if (currentDatabase == "RVI")
                             {
-                                <!-- RVI Database Navigation -->
-                                <li class="sidebar-header">
-                                    <span class="sidebar-nav-mini-hide">RVI Dashboard</span>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index", "RVI")"
-                                        class="@(currentController == "RVI" ? "active" : "")">
-                                        <i class="gi gi-cogwheel sidebar-nav-icon"></i>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <!-- RVI Database Navigation -->
+                                    <li class="sidebar-header">
                                         <span class="sidebar-nav-mini-hide">RVI Dashboard</span>
-                                    </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "RVI")"
+                                            class="@(currentController == "RVI" ? "active" : "")">
+                                            <i class="gi gi-cogwheel sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">RVI Dashboard</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "BeforeCheck")"
+                                            class="@(currentController == "BeforeCheck" ? "active" : "")">
+                                            <i class="gi gi-check sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">Before Check</span>
+                                        </a>
+                                    </li>
+                                }
+                                
+                                <!-- Stock Input Menu (For All Users) -->
+                                <li class="sidebar-header">
+                                    <span class="sidebar-nav-mini-hide">Stock Input</span>
                                 </li>
                                 <li>
-                                    <a href="@Url.Action("Index", "BeforeCheck")"
-                                        class="@(currentController == "BeforeCheck" ? "active" : "")">
-                                        <i class="gi gi-check sidebar-nav-icon"></i>
-                                        <span class="sidebar-nav-mini-hide">Before Check</span>
+                                    <a href="@Url.Action("Index", "InputMenu")"
+                                        class="@(currentController == "InputMenu" ? "active" : "")">
+                                        <i class="gi gi-circle_plus sidebar-nav-icon"></i>
+                                        <span class="sidebar-nav-mini-hide">Supply App</span>
                                     </a>
                                 </li>
                                 
@@ -272,22 +302,37 @@
                             }
                             else if (currentDatabase == "MOLDED")
                             {
-                                <!-- MOLDED Database Navigation -->
-                                <li class="sidebar-header">
-                                    <span class="sidebar-nav-mini-hide">MOLDED Dashboard</span>
-                                </li>
-                                <li>
-                                    <a href="@Url.Action("Index", "Molded")"
-                                        class="@(currentController == "Molded" && ViewContext.RouteData.Values["action"]?.ToString() != "Items" ? "active" : "")">
-                                        <i class="gi gi-cogwheel sidebar-nav-icon"></i>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <!-- MOLDED Database Navigation -->
+                                    <li class="sidebar-header">
                                         <span class="sidebar-nav-mini-hide">MOLDED Dashboard</span>
-                                    </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "Molded")"
+                                            class="@(currentController == "Molded" && ViewContext.RouteData.Values["action"]?.ToString() != "Items" ? "active" : "")">
+                                            <i class="gi gi-cogwheel sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">MOLDED Dashboard</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Items", "Molded")"
+                                            class="@(currentController == "Molded" && ViewContext.RouteData.Values["action"]?.ToString() == "Items" ? "active" : "")">
+                                            <i class="gi gi-table sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">Molded Items</span>
+                                        </a>
+                                    </li>
+                                }
+                                
+                                <!-- Stock Input Menu (For All Users) -->
+                                <li class="sidebar-header">
+                                    <span class="sidebar-nav-mini-hide">Stock Input</span>
                                 </li>
                                 <li>
-                                    <a href="@Url.Action("Items", "Molded")"
-                                        class="@(currentController == "Molded" && ViewContext.RouteData.Values["action"]?.ToString() == "Items" ? "active" : "")">
-                                        <i class="gi gi-table sidebar-nav-icon"></i>
-                                        <span class="sidebar-nav-mini-hide">Molded Items</span>
+                                    <a href="@Url.Action("Index", "InputMenu")"
+                                        class="@(currentController == "InputMenu" ? "active" : "")">
+                                        <i class="gi gi-circle_plus sidebar-nav-icon"></i>
+                                        <span class="sidebar-nav-mini-hide">Supply App</span>
                                     </a>
                                 </li>
                             }

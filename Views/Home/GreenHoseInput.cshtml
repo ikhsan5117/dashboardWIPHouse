@@ -1,11 +1,26 @@
 @{
     ViewData["Title"] = "Green Hose Input";
+    Layout = null;
 }
 
-<!-- QR Code Scanner Library -->
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/plugins.css">
+    <link rel="stylesheet" href="~/css/main.css">
+    <link rel="stylesheet" href="~/css/themes.css">
+    <!-- QR Code Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8f9fa !important; color: #333 !important; margin: 0; padding: 20px; padding-top: 90px; }
     /* Green Theme Colors */
     :root {
         --green-primary: #4CAF50;
@@ -34,6 +49,27 @@
         margin: 0;
         font-size: 24px;
         font-weight: 600;
+    }
+
+    .back-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .back-btn:hover {
+        background: white;
+        color: var(--green-primary);
+        transform: translateX(-3px);
     }
 
     .tab-container {
@@ -245,12 +281,43 @@
         border-radius: 5px;
         cursor: pointer;
     }
+    .history-btn {
+        background: none;
+        border: none;
+        color: var(--green-primary);
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        transition: transform 0.2s, background-color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 10px;
+    }
+    .history-btn:hover {
+        background-color: rgba(76, 175, 80, 0.1);
+        transform: scale(1.1);
+    }
 </style>
+</head>
+<body>
+    <header style="position: fixed; top: 0; left: 0; right: 0; height: 70px; z-index: 1030; background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-dark) 100%); box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; padding: 0 20px;">
+        <div style="font-size: 20px; font-weight: 700; color: white; display: flex; align-items: center; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+            <i class="gi gi-leaf" style="margin-right: 10px;"></i> GREEN HOSE
+        </div>
+        <div>
+            <a href="@Url.Action("Index", "InputMenu")" class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; font-weight: 600;">
+                <i class="gi gi-arrow_left"></i> Back to Menu
+            </a>
+        </div>
+    </header>
 
 <div class="input-page-container">
-    <div class="input-header">
-        <h2>🟢 GREEN HOSE</h2>
-        <i class="gi gi-history" style="font-size: 24px;"></i>
+    <div class="input-header" style="display: flex; align-items: center;">
+        <h2 style="margin: 0;">🟢 GREEN HOSE</h2>
+        <button onclick="showHistory()" class="history-btn" title="History Input">
+             <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Zm112-192L440-464v-216h80v184l128 128-56 56Z"/></svg>
+        </button>
     </div>
 
     <!-- Tabs -->
@@ -357,7 +424,7 @@
     </div>
 </div>
 
-@section Scripts {
+
     <script>
         let html5QrcodeScanner = null;
         let currentScanField = null;
@@ -377,6 +444,18 @@
             document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
             
             document.getElementById('transactionType').value = tab.toUpperCase();
+            
+            // Clear form when switching tabs to prevent data contamination
+            document.getElementById('itemCode').value = '';
+            document.getElementById('fullQR').value = '';
+            document.getElementById('boxCount').value = '';
+            if (document.getElementById('qtyEcer')) {
+                document.getElementById('qtyEcer').value = '';
+            }
+            
+            // Set production date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('productionDate').value = today;
             
             if (tab === 'in') {
                 document.getElementById('info-text').textContent = 'Catat material masuk storage';
@@ -464,6 +543,18 @@
         }
 
         function selectFIFOItem(itemCode, fullQr, productionDate, boxCount) {
+            // Only fill form if we're in OUTPUT mode
+            const transactionType = document.getElementById('transactionType').value;
+            console.log('FIFO clicked - Transaction Type:', transactionType); // Debug log
+            
+            // Strict check: must be exactly 'OUT'
+            if (transactionType !== 'OUT' && transactionType !== 'out') {
+                console.log('FIFO blocked - Not in OUTPUT mode'); // Debug log
+                alert('FIFO Priority hanya bisa digunakan saat mode OUTPUT');
+                return; // Don't fill if not in OUTPUT mode
+            }
+            
+            console.log('FIFO allowed - Filling form'); // Debug log
             document.getElementById('itemCode').value = itemCode;
             document.getElementById('fullQR').value = fullQr;
             if (productionDate) {
@@ -531,4 +622,10 @@
         // Set default date to today
         document.getElementById('productionDate').valueAsDate = new Date();
     </script>
-}
+<script>
+    function showHistory() {
+        window.location.href = '@Url.Action("History", "Home")';
+    }
+</script>
+</body>
+</html>

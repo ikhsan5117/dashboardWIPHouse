@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using dashboardWIPHouse.Data;
 using dashboardWIPHouse.Models;
@@ -6,6 +7,7 @@ using System.Security.Claims;
 
 namespace dashboardWIPHouse.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class BeforeCheckController : Controller
     {
         private readonly RVIContext _context;

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "h6evXktxMs+I6v4cG5gHjRlhd4EDDAT5XCX4XYvWr/Y=",
+  "Hash": "GP+Bqt8F6hOezzZ9WPtcEcRNOPyHjzQOAMcL4EEvWSI=",
   "Source": "dashboardWIPHouse",
   "BasePath": "_content/dashboardWIPHouse",
   "Mode": "Default",
@@ -53,6 +53,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "E:\\dashboardWIPHouse\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\dashboardWIPHouse.bundle.scp.css"
+    },
+    {
+      "Identity": "E:\\dashboardWIPHouse\\wwwroot\\camera-test.html",
+      "SourceId": "dashboardWIPHouse",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\dashboardWIPHouse\\wwwroot\\",
+      "BasePath": "_content/dashboardWIPHouse",
+      "RelativePath": "camera-test.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\camera-test.html"
     },
     {
       "Identity": "E:\\dashboardWIPHouse\\wwwroot\\css\\bootstrap.min.css",

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Test - Dashboard WIP House</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .status.info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border-left: 4px solid #1976d2;
+        }
+
+        .status.success {
+            background: #e8f5e9;
+            color: #388e3c;
+            border-left: 4px solid #388e3c;
+        }
+
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .status.warning {
+            background: #fff3e0;
+            color: #f57c00;
+            border-left: 4px solid #f57c00;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        button.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        button.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        button.secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        button.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #video {
+            width: 100%;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+            background: #000;
+        }
+
+        .info-box {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .info-box h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 5px;
+        }
+
+        .info-box code {
+            background: #e0e0e0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .badge.https {
+            background: #4caf50;
+            color: white;
+        }
+
+        .badge.http {
+            background: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📷 Camera Test</h1>
+        <p class="subtitle">Dashboard WIP House - Tablet Camera Scanner Test</p>
+
+        <div id="protocolStatus"></div>
+        <div id="status" class="status info">
+            Klik tombol di bawah untuk test akses kamera
+        </div>
+
+        <button id="startBtn" class="primary" onclick="startCamera()">
+            🎥 Start Camera Test
+        </button>
+
+        <button id="stopBtn" class="secondary" onclick="stopCamera()" style="display: none;">
+            ⏹️ Stop Camera
+        </button>
+
+        <video id="video" autoplay playsinline></video>
+
+        <div class="info-box">
+            <h3>ℹ️ Informasi</h3>
+            <p><strong>Protocol:</strong> <span id="protocol"></span></p>
+            <p><strong>Browser:</strong> <span id="browser"></span></p>
+            <p><strong>Device:</strong> <span id="device"></span></p>
+        </div>
+
+        <div class="info-box" style="margin-top: 15px;">
+            <h3>✅ Requirements</h3>
+            <p>• Wajib menggunakan <code>HTTPS</code> untuk akses kamera</p>
+            <p>• Allow camera permission saat diminta</p>
+            <p>• Gunakan Chrome browser (recommended)</p>
+            <p>• Install certificate jika ada warning</p>
+        </div>
+    </div>
+
+    <script>
+        let stream = null;
+        const video = document.getElementById('video');
+        const status = document.getElementById('status');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const protocolStatus = document.getElementById('protocolStatus');
+
+        // Check protocol
+        window.addEventListener('load', () => {
+            const protocol = window.location.protocol;
+            const isHttps = protocol === 'https:';
+            
+            document.getElementById('protocol').innerHTML = 
+                `<span class="badge ${isHttps ? 'https' : 'http'}">${protocol.toUpperCase()}</span>`;
+            
+            if (!isHttps) {
+                protocolStatus.innerHTML = `
+                    <div class="status warning">
+                        ⚠️ <strong>WARNING:</strong> Anda menggunakan HTTP. Camera access memerlukan HTTPS!<br>
+                        Akses via: <code>https://YOUR_IP:7160</code>
+                    </div>
+                `;
+            } else {
+                protocolStatus.innerHTML = `
+                    <div class="status success">
+                        ✅ <strong>HTTPS Detected:</strong> Camera access tersedia!
+                    </div>
+                `;
+            }
+
+            // Detect browser
+            const userAgent = navigator.userAgent;
+            let browserName = 'Unknown';
+            
+            if (userAgent.indexOf('Chrome') > -1) browserName = 'Chrome';
+            else if (userAgent.indexOf('Safari') > -1) browserName = 'Safari';
+            else if (userAgent.indexOf('Firefox') > -1) browserName = 'Firefox';
+            else if (userAgent.indexOf('Edge') > -1) browserName = 'Edge';
+            
+            document.getElementById('browser').textContent = browserName;
+
+            // Detect device
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent);
+            const isTablet = /iPad|Android/i.test(userAgent) && !/Mobile/i.test(userAgent);
+            
+            let deviceType = 'Desktop';
+            if (isTablet) deviceType = 'Tablet';
+            else if (isMobile) deviceType = 'Mobile';
+            
+            document.getElementById('device').textContent = deviceType;
+        });
+
+        async function startCamera() {
+            try {
+                status.className = 'status info';
+                status.textContent = '⏳ Meminta akses kamera...';
+                startBtn.disabled = true;
+
+                // Check if getUserMedia is supported
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('getUserMedia tidak didukung di browser ini');
+                }
+
+                // Request camera access
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment', // Use back camera on mobile
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    }
+                });
+
+                // Success!
+                video.srcObject = stream;
+                video.style.display = 'block';
+                
+                status.className = 'status success';
+                status.innerHTML = `
+                    ✅ <strong>SUCCESS!</strong> Camera berhasil diakses!<br>
+                    Anda sekarang bisa menggunakan fitur scanner.
+                `;
+
+                startBtn.style.display = 'none';
+                stopBtn.style.display = 'block';
+
+            } catch (error) {
+                console.error('Camera error:', error);
+                
+                status.className = 'status error';
+                
+                if (error.name === 'NotAllowedError') {
+                    status.innerHTML = `
+                        ❌ <strong>Permission Denied!</strong><br>
+                        Anda menolak akses kamera. Silakan:<br>
+                        1. Refresh halaman<br>
+                        2. Allow camera permission saat diminta
+                    `;
+                } else if (error.name === 'NotFoundError') {
+                    status.innerHTML = `
+                        ❌ <strong>Camera Not Found!</strong><br>
+                        Tidak ada kamera yang terdeteksi di device ini.
+                    `;
+                } else if (error.name === 'NotReadableError') {
+                    status.innerHTML = `
+                        ❌ <strong>Camera In Use!</strong><br>
+                        Kamera sedang digunakan aplikasi lain.
+                    `;
+                } else if (window.location.protocol !== 'https:') {
+                    status.innerHTML = `
+                        ❌ <strong>HTTPS Required!</strong><br>
+                        Camera access memerlukan HTTPS.<br>
+                        Akses via: <code>https://YOUR_IP:7160</code>
+                    `;
+                } else {
+                    status.innerHTML = `
+                        ❌ <strong>Error:</strong> ${error.message}<br>
+                        <small>${error.name}</small>
+                    `;
+                }
+
+                startBtn.disabled = false;
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+                video.style.display = 'none';
+                stream = null;
+            }
+
+            status.className = 'status info';
+            status.textContent = 'Camera stopped. Klik tombol untuk test lagi.';
+
+            startBtn.style.display = 'block';
+            startBtn.disabled = false;
+            stopBtn.style.display = 'none';
+        }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            stopCamera();
+        });
+    </script>
+</body>
+</html>

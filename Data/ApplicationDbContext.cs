@@ -20,6 +20,7 @@ namespace dashboardWIPHouse.Data
         public DbSet<StockSummary> StockSummary { get; set; }
         public DbSet<ItemAW> ItemAW { get; set; }
         public DbSet<StockSummaryAW> StockSummaryAW { get; set; }
+        public DbSet<PlanningFinishing> PlanningFinishing { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -167,6 +168,21 @@ namespace dashboardWIPHouse.Data
                     .HasForeignKey(s => s.ItemCode)
                     .HasPrincipalKey(i => i.ItemCode)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configure PlanningFinishing (View)
+            modelBuilder.Entity<PlanningFinishing>(entity =>
+            {
+                entity.ToView("vw_planning_aw");
+                // Use composite key because View doesn't have a single PK
+                entity.HasKey(e => new { e.NoMesin, e.KodeItem, e.LoadTime });
+                
+                entity.Property(e => e.NoMesin).HasColumnName("No_Mesin");
+                entity.Property(e => e.KodeItem).HasColumnName("Kode_Item");
+                entity.Property(e => e.QtyPlan).HasColumnName("Qty_Plan");
+                entity.Property(e => e.LoadTime).HasColumnName("LOAD_TIME");
+                entity.Property(e => e.Shift).HasColumnName("Shift");
+                entity.Property(e => e.Keterangan).HasColumnName("Keterangan");
             });
         }
 

@@ -23,6 +23,20 @@ Open your browser and navigate to:
 | **RVI** | `adminRVI` | `rvi123` |
 | **MOLDED** | `adminMolded` | `molded321` |
 
+### **📱 Access from Tablet (with Camera Scanner)**
+
+For camera/scanner functionality, HTTPS is **required**:
+
+```bash
+# Run setup script as Administrator
+.\setup-https.ps1
+```
+
+Then access from tablet:
+- **HTTPS URL:** https://YOUR_IP:7160
+- **Documentation:** [SETUP_HTTPS_TABLET.md](SETUP_HTTPS_TABLET.md)
+- **Quick Reference:** [TABLET_ACCESS_CARD.txt](TABLET_ACCESS_CARD.txt)
+
 ---
 
 ## 🏗️ Architecture

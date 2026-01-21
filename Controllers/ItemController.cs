@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using dashboardWIPHouse.Data;
 using dashboardWIPHouse.Models;
 
 namespace dashboardWIPHouse.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ItemsController : Controller
     {
         private readonly ApplicationDbContext _context;

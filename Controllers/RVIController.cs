@@ -1,4 +1,5 @@
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.EntityFrameworkCore;
     using dashboardWIPHouse.Data;
     using dashboardWIPHouse.Models;
@@ -8,8 +9,9 @@
 
     namespace dashboardWIPHouse.Controllers
     {
-        public class RVIController : Controller
-        {
+    [Authorize]
+    public class RVIController : Controller
+    {
             private readonly ILogger<RVIController> _logger;
             private readonly RVIContext _context;
 
@@ -22,7 +24,8 @@
             // RVI Login is now handled by AccountController
 
             // GET: RVI Dashboard
-            public async Task<IActionResult> Index()
+            [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Index()
             {
                 // Check if user is logged in and has RVI database claim
                 _logger.LogInformation($"RVI Index - User authenticated: {User.Identity.IsAuthenticated}");
@@ -255,6 +258,7 @@
             }
 
             [HttpPost]
+            [Authorize(Roles = "Admin")]
             public async Task<JsonResult> UploadExcel(IFormFile file, string uploadType = "storage")
             {
                 var result = new ExcelUploadResultRVI();
@@ -1631,6 +1635,7 @@
         // ==========================================
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult Items()
         {
             return View();
@@ -1741,6 +1746,7 @@
         // ==========================================
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult ItemsBC()
         {
             return View();
@@ -1845,6 +1851,82 @@
             {
                 _logger.LogError(ex, "Error deleting BC item");
                 return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+        [Authorize]
+        public IActionResult History()
+        {
+            return View("RVIHistory");
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetHistoryData(string type, DateTime? date = null)
+        {
+            try
+            {
+                if (type == "in")
+                {
+                    var query = _context.StorageLogRVI.AsQueryable();
+
+                    if (date.HasValue)
+                    {
+                        var targetDate = date.Value.Date;
+                        query = query.Where(x => x.StoredAt.Date == targetDate);
+                    }
+
+                    var data = await query
+                        .OrderByDescending(x => x.StoredAt)
+                        .Take(100)
+                        .Select(x => new {
+                            date = x.StoredAt.ToString("dd-MM-yyyy HH:mm"),
+                            item = x.ItemCode,
+                            qty = x.BoxCount,
+                            status = "IN"
+                        })
+                        .ToListAsync();
+                    return Json(new { success = true, data });
+                }
+                else if (type == "out")
+                {
+                    var query = _context.SupplyLogRVI.AsQueryable();
+
+                    if (date.HasValue)
+                    {
+                        var targetDate = date.Value.Date;
+                        query = query.Where(x => x.SuppliedAt.Date == targetDate);
+                    }
+
+                    var data = await query
+                        .OrderByDescending(x => x.SuppliedAt)
+                        .Take(100)
+                        .Select(x => new {
+                            date = x.SuppliedAt.ToString("dd-MM-yyyy HH:mm"),
+                            item = x.ItemCode,
+                            qty = x.BoxCount,
+                            status = "OUT"
+                        })
+                        .ToListAsync();
+                    return Json(new { success = true, data });
+                }
+                else if (type == "stock")
+                {
+                    var allStock = await _context.StockSummaryRVI.ToListAsync();
+                    var grouped = allStock
+                        .GroupBy(x => x.ItemCode)
+                        .Select(g => new {
+                            itemCode = g.Key,
+                            description = "Aggregated Stock", // ItemRVI has no Machine property
+                            qty = g.Sum(x => x.CurrentBoxStock ?? 0)
+                        })
+                        .OrderBy(x => x.itemCode)
+                        .ToList();
+                    return Json(new { success = true, data = grouped });
+                }
+                return Json(new { success = false, message = "Invalid type" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
             }
         }
     }
