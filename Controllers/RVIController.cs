@@ -1941,6 +1941,7 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                             date = x.StoredAt.ToString("dd-MM-yyyy HH:mm"),
                             item = x.ItemCode,
                             qty = x.BoxCount,
+                            qtyPcs = x.QtyPcs ?? 0,
                             status = "IN"
                         })
                         .ToListAsync();
@@ -1963,6 +1964,7 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                             date = x.SuppliedAt.ToString("dd-MM-yyyy HH:mm"),
                             item = x.ItemCode,
                             qty = x.BoxCount,
+                            qtyPcs = x.QtyPcs ?? 0,
                             status = "OUT"
                         })
                         .ToListAsync();
@@ -1971,15 +1973,52 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                 else if (type == "stock")
                 {
                     var allStock = await _context.StockSummaryRVI.ToListAsync();
+                    var itemsDict = await _context.ItemsRVI.ToDictionaryAsync(i => i.ItemCode);
+
                     var grouped = allStock
                         .GroupBy(x => x.ItemCode)
-                        .Select(g => new {
-                            itemCode = g.Key,
-                            description = "Aggregated Stock", // ItemRVI has no Machine property
-                            qty = g.Sum(x => x.CurrentBoxStock ?? 0)
+                        .ToList()
+                        .Select(g => {
+                            var item = itemsDict.ContainsKey(g.Key) ? itemsDict[g.Key] : null;
+                            var totalStock = g.Sum(x => x.CurrentBoxStock ?? 0);
+                            
+                            // Pcs Calc
+                            var totalPcs = item?.QtyPerBox.HasValue == true ? 
+                                          Math.Round((decimal)totalStock * item.QtyPerBox.Value, 0) : 0;
+                            
+                            // Last Updated
+                            var lastUpdatedStr = g.Select(s => s.LastUpdated)
+                                                  .Where(d => !string.IsNullOrEmpty(d))
+                                                  .OrderByDescending(d => d) // String sort might be rough but sufficient for now
+                                                  .FirstOrDefault();
+
+                            // Use ParsedLastUpdated logic from model if possible, or simple parse
+                            DateTime lastUpdated = DateTime.MinValue;
+                            
+                            // Try to get max date from group using ParsedLastUpdated logic
+                            var maxDateRecord = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                                .OrderByDescending(s => s.ParsedLastUpdated)
+                                                .FirstOrDefault();
+                            
+                            if (maxDateRecord != null)
+                            {
+                                lastUpdated = maxDateRecord.ParsedLastUpdated.Value;
+                            }
+                            
+                            // Status Logic
+                            string displayStatus = DetermineItemStatus(totalStock, lastUpdated, item);
+
+                            return new {
+                                itemCode = g.Key,
+                                description = displayStatus,
+                                qty = totalStock,
+                                qtyPcs = totalPcs,
+                                lastUpdated = lastUpdated != DateTime.MinValue ? lastUpdated.ToString("dd-MM-yyyy HH:mm") : "-"
+                            };
                         })
                         .OrderBy(x => x.itemCode)
                         .ToList();
+
                     return Json(new { success = true, data = grouped });
                 }
                 return Json(new { success = false, message = "Invalid type" });

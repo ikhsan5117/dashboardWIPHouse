@@ -877,12 +877,48 @@ namespace dashboardWIPHouse.Controllers
                 else if (type == "stock")
                 {
                     var allStock = await _context.StockSummaryAW.ToListAsync();
+                    var allItems = await _context.ItemAW.ToDictionaryAsync(i => i.ItemCode);
+                    
                     var grouped = allStock
                         .GroupBy(x => x.ItemCode)
-                        .Select(g => new {
-                            itemCode = g.Key,
-                            description = g.FirstOrDefault()?.Item?.Mesin ?? "Aggregated Stock",
-                            qty = g.Sum(x => x.CurrentBoxStock ?? 0)
+                        .Select(g => {
+                            // Logic untuk ambil status terbaru
+                            var latestRecord = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                               .OrderByDescending(s => s.ParsedLastUpdated)
+                                               .FirstOrDefault();
+
+                            var totalStock = g.Sum(x => x.CurrentBoxStock ?? 0);
+                            var statusExpired = latestRecord?.StatusExpired;
+                            var lastUpdated = latestRecord?.ParsedLastUpdated ?? DateTime.MinValue;
+                            
+                            // Get Item info
+                            var item = allItems.ContainsKey(g.Key) ? allItems[g.Key] : null;
+
+                            // Calculate Pcs
+                            var totalPcs = item?.QtyPerBox.HasValue == true ? 
+                                           Math.Round((decimal)totalStock * item.QtyPerBox.Value, 0) : 0;
+
+                            // Determine display status
+                            string displayStatus = "Normal";
+                            if (item != null) 
+                            {
+                                displayStatus = DetermineItemStatus(totalStock, lastUpdated, item, statusExpired);
+                            }
+                            else if (!string.IsNullOrEmpty(statusExpired))
+                            {
+                                if (statusExpired.Equals("expired", StringComparison.OrdinalIgnoreCase)) displayStatus = "Already Expired";
+                                else if (statusExpired.Contains("hampir", StringComparison.OrdinalIgnoreCase)) displayStatus = "Near Expired";
+                                else if (statusExpired.Equals("ok", StringComparison.OrdinalIgnoreCase)) displayStatus = "Normal";
+                                else displayStatus = statusExpired; 
+                            }
+
+                            return new {
+                                itemCode = g.Key,
+                                description = displayStatus,
+                                qty = totalStock,
+                                qtyPcs = totalPcs,
+                                lastUpdated = lastUpdated != DateTime.MinValue ? lastUpdated.ToString("dd-MM-yyyy HH:mm") : "-"
+                            };
                         })
                         .OrderBy(x => x.itemCode)
                         .ToList();
