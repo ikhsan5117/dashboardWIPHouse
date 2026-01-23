@@ -5432,7 +5432,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\megi.vlt00553\\.nuget\\packages\\": {}
+    "C:\\Users\\ikhsa\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -5440,11 +5440,11 @@
       "projectUniqueName": "E:\\dashboardWIPHouse\\dashboardWIPHouse.csproj",
       "projectName": "dashboardWIPHouse",
       "projectPath": "E:\\dashboardWIPHouse\\dashboardWIPHouse.csproj",
-      "packagesPath": "C:\\Users\\megi.vlt00553\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\ikhsa\\.nuget\\packages\\",
       "outputPath": "E:\\dashboardWIPHouse\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\megi.vlt00553\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\ikhsa\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -5521,7 +5521,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.417/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.416/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

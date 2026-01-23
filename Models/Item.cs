@@ -62,6 +62,10 @@ namespace dashboardWIPHouse.Models
         [Column("last_updated")]
         public string? LastUpdated { get; set; }
 
+        // Status expired from database view
+        [Column("status_expired")]
+        public string? StatusExpired { get; set; }
+
         // Navigation property to Item
         public virtual Item? Item { get; set; }
 

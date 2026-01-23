@@ -534,6 +534,10 @@ namespace dashboardWIPHouse.Controllers
                         LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
                                      .OrderByDescending(s => s.ParsedLastUpdated)
                                      .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                        // Get status_expired from the most recent record
+                        StatusExpired = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.StatusExpired,
                         RecordCount = g.Count()
                     });
 
@@ -543,6 +547,7 @@ namespace dashboardWIPHouse.Controllers
                     var stockData = hasStockData ? stockSummaryGrouped[item.ItemCode] : null;
                     var currentBoxStock = stockData?.TotalCurrentBoxStock ?? 0;
                     var lastUpdated = stockData?.LastUpdated ?? DateTime.MinValue;
+                    var statusExpired = stockData?.StatusExpired; // Get from database
 
                     return new
                     {
@@ -553,7 +558,7 @@ namespace dashboardWIPHouse.Controllers
                         CurrentBoxStock = currentBoxStock,
                         Pcs = item.QtyPerBox.HasValue ?
                               Math.Round((decimal)currentBoxStock * item.QtyPerBox.Value, 2) : 0,
-                        Status = DetermineItemStatus(currentBoxStock, lastUpdated, item),
+                        Status = DetermineItemStatus(currentBoxStock, lastUpdated, item, statusExpired),
                         LastUpdatedDate = lastUpdated,
                         StandardExp = item.StandardExp,
                         QtyPerBox = item.QtyPerBox,
@@ -631,9 +636,38 @@ namespace dashboardWIPHouse.Controllers
             }
         }
 
-        // Helper methods - SAMA SEPERTI HomeController
-        private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, ItemAW item)
+        // Helper methods - Now uses status_expired from database when available
+        private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, ItemAW item, string? statusExpired = null)
         {
+            // If database provides status_expired, use it for expiry-related status
+            if (!string.IsNullOrEmpty(statusExpired))
+            {
+                // Map database status to our status strings
+                // Database values: "tidak ada stok", "expired", "hampir expired", "normal", etc.
+                
+                // Check for expired status
+                if (statusExpired.Equals("expired", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "Already Expired";
+                }
+                
+                // Check for near expired status
+                if (statusExpired.Contains("hampir", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "Near Expired";
+                }
+
+                // Check for ok status
+                if (statusExpired.Equals("ok", StringComparison.OrdinalIgnoreCase) ||
+                    statusExpired.Equals("normal", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "Normal";
+                }
+                
+                // "tidak ada stok" means no stock, handled by shortage logic below
+            }
+
+            // Fallback to manual calculation if database status not available or for stock-level status
             // Jika stok box dan pcs adalah 0, anggap sebagai Out of Stock atau Normal
             if (currentBoxStock == 0 && (item.QtyPerBox.HasValue && currentBoxStock * item.QtyPerBox.Value == 0))
             {
@@ -705,6 +739,61 @@ namespace dashboardWIPHouse.Controllers
             return View();
         }
 
+        // Get Item Codes for Autocomplete
+        [HttpGet]
+        public async Task<JsonResult> GetItemCodes(string search = "")
+        {
+            try
+            {
+                var query = _context.ItemAW.AsQueryable();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(i => i.ItemCode.Contains(search));
+                }
+
+                var itemCodes = await query
+                    .Select(i => new { id = i.ItemCode, text = i.ItemCode })
+                    .Take(50)
+                    .ToListAsync();
+
+                return Json(new { results = itemCodes });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting item codes");
+                return Json(new { results = new List<object>() });
+            }
+        }
+
+        // Get Full QR Codes for Autocomplete
+        [HttpGet]
+        public async Task<JsonResult> GetFullQRCodes(string search = "")
+        {
+            try
+            {
+                var query = _context.RaksAW.AsQueryable();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(r => r.FullQR.Contains(search));
+                }
+
+                var fullQRCodes = await query
+                    .Select(r => new { id = r.FullQR, text = r.FullQR })
+                    .Distinct()
+                    .Take(50)
+                    .ToListAsync();
+
+                return Json(new { results = fullQRCodes });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting full QR codes");
+                return Json(new { results = new List<object>() });
+            }
+        }
+
         // Submit After Washing Input (IN/SISA)
         [HttpPost]
         public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInputModel model)
@@ -774,6 +863,7 @@ namespace dashboardWIPHouse.Controllers
                             date = x.StoredAt.HasValue ? x.StoredAt.Value.ToString("dd-MM-yyyy HH:mm") : "-",
                             item = x.ItemCode,
                             qty = x.BoxCount ?? 0,
+                            qtyPcs = x.QtyPcs ?? 0,
                             status = "IN"
                         })
                         .ToListAsync();

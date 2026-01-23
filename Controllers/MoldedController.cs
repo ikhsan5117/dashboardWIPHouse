@@ -223,6 +223,10 @@ namespace dashboardWIPHouse.Controllers
                         LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
                                      .OrderByDescending(s => s.ParsedLastUpdated)
                                      .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                        // Get status_expired from the most recent record
+                        StatusExpired = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.StatusExpired,
                         RecordCount = g.Count()
                     });
 
@@ -232,6 +236,7 @@ namespace dashboardWIPHouse.Controllers
                     var stockData = hasStockData ? stockSummaryGrouped[item.ItemCode] : null;
                     var currentBoxStock = stockData?.TotalCurrentBoxStock ?? 0;
                     var lastUpdated = stockData?.LastUpdated ?? DateTime.MinValue;
+                    var statusExpired = stockData?.StatusExpired; // Get from database
 
                     return new
                     {
@@ -242,7 +247,7 @@ namespace dashboardWIPHouse.Controllers
                         CurrentBoxStock = currentBoxStock,
                         Pcs = item.QtyPerBox.HasValue ? 
                               Math.Round((decimal)currentBoxStock * item.QtyPerBox.Value, 2) : 0,
-                        Status = DetermineItemStatus(currentBoxStock, lastUpdated, item),
+                        Status = DetermineItemStatus(currentBoxStock, lastUpdated, item, statusExpired),
                         LastUpdatedDate = lastUpdated,
                         StandardExp = item.StandardExp,
                         QtyPerBox = item.QtyPerBox,
@@ -935,32 +940,61 @@ namespace dashboardWIPHouse.Controllers
         }
 
         // IMPROVED: Helper method untuk menentukan status item dengan logika yang benar (same as HomeController)
-        private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, ItemMolded item)
+// Now uses status_expired from database when available
+private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, ItemMolded item, string? statusExpired = null)
+{
+    // If database provides status_expired, use it for expiry-related status
+    if (!string.IsNullOrEmpty(statusExpired))
+    {
+        // Map database status to our status strings
+        // Database values: "tidak ada stok", "expired", "hampir expired", "normal", etc.
+        
+        // Check for expired status
+        if (statusExpired.Equals("expired", StringComparison.OrdinalIgnoreCase))
         {
-            // Jika stok box dan pcs adalah 0, anggap sebagai Out of Stock atau Normal
-            if (currentBoxStock == 0 && (item.QtyPerBox.HasValue && currentBoxStock * item.QtyPerBox.Value == 0))
-            {
-                return "Out of Stock"; // Atau "Normal" sesuai kebutuhan
-            }
-
-            // Prioritas 1: Check for expired (hanya jika stok > 0)
-            if (currentBoxStock > 0 && IsExpired(lastUpdated, item.StandardExp))
-                return "Already Expired";
-
-            // Prioritas 2: Check for near expired (hanya jika stok > 0)
-            if (currentBoxStock > 0 && IsNearExpired(lastUpdated, item.StandardExp))
-                return "Near Expired";
-
-            // Prioritas 3: Check stock levels
-            if (IsShortage(currentBoxStock, item.StandardMin))
-                return "Shortage";
-
-            if (IsAboveMax(currentBoxStock, item.StandardMax))
-                return "Over Stock";
-
+            return "Already Expired";
+        }
+        
+        // Check for near expired status
+        if (statusExpired.Contains("hampir", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Near Expired";
+        }
+        
+        // Check for ok status
+        if (statusExpired.Equals("ok", StringComparison.OrdinalIgnoreCase) ||
+            statusExpired.Equals("normal", StringComparison.OrdinalIgnoreCase))
+        {
             return "Normal";
         }
+        
+        // "tidak ada stok" means no stock, handled by shortage logic below
+    }
 
+    // Fallback to manual calculation if database status not available or for stock-level status
+    // Jika stok box dan pcs adalah 0, anggap sebagai Out of Stock atau Normal
+    if (currentBoxStock == 0 && (item.QtyPerBox.HasValue && currentBoxStock * item.QtyPerBox.Value == 0))
+    {
+        return "Out of Stock"; // Atau "Normal" sesuai kebutuhan
+    }
+
+    // Prioritas 1: Check for expired (hanya jika stok > 0)
+    if (currentBoxStock > 0 && IsExpired(lastUpdated, item.StandardExp))
+        return "Already Expired";
+
+    // Prioritas 2: Check for near expired (hanya jika stok > 0)
+    if (currentBoxStock > 0 && IsNearExpired(lastUpdated, item.StandardExp))
+        return "Near Expired";
+
+    // Prioritas 3: Check stock levels
+    if (IsShortage(currentBoxStock, item.StandardMin))
+        return "Shortage";
+
+    if (IsAboveMax(currentBoxStock, item.StandardMax))
+        return "Over Stock";
+
+    return "Normal";
+}
         // IMPROVED: Helper methods dengan logika yang lebih jelas (same as HomeController)
         private double CalculateDaysUntilExpiry(DateTime lastUpdated, int? standardExp)
         {
@@ -1036,6 +1070,61 @@ namespace dashboardWIPHouse.Controllers
             ViewBag.ItemCodes = items;
             
             return View();
+        }
+
+        // Get Item Codes for Autocomplete
+        [HttpGet]
+        public async Task<JsonResult> GetItemCodes(string search = "")
+        {
+            try
+            {
+                var query = _context.ItemsMolded.AsQueryable();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(i => i.ItemCode.Contains(search));
+                }
+
+                var itemCodes = await query
+                    .Select(i => new { id = i.ItemCode, text = i.ItemCode })
+                    .Take(50)
+                    .ToListAsync();
+
+                return Json(new { results = itemCodes });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting item codes");
+                return Json(new { results = new List<object>() });
+            }
+        }
+
+        // Get Full QR Codes for Autocomplete
+        [HttpGet]
+        public async Task<JsonResult> GetFullQRCodes(string search = "")
+        {
+            try
+            {
+                var query = _context.Raks.AsQueryable();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(r => r.FullQR.Contains(search));
+                }
+
+                var fullQRCodes = await query
+                    .Select(r => new { id = r.FullQR, text = r.FullQR })
+                    .Distinct()
+                    .Take(50)
+                    .ToListAsync();
+
+                return Json(new { results = fullQRCodes });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting full QR codes");
+                return Json(new { results = new List<object>() });
+            }
         }
 
         [HttpPost]

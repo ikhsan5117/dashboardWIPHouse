@@ -11,6 +11,7 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Core CSS -->
     <link rel="stylesheet" href="~/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/plugins.css">
@@ -149,22 +150,166 @@
         color: #666;
     }
 
-    .scan-btn {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: var(--theme-primary);
-        color: white;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.3s;
+    /* HARD RESET for Enhanced Inputs to prevent default browser styles */
+    .input-wrapper-enhanced input.form-input-enhanced {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+        height: 100% !important;
+        width: 100% !important;
+        flex: 1;
+        padding: 0 15px;
+        margin: 0;
+        font-size: 16px;
+        color: #333;
+        -webkit-appearance: none;
+        appearance: none;
     }
 
-    .scan-btn:hover {
-        background: var(--theme-dark);
+    .input-wrapper-enhanced input:focus {
+        outline: none !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Ensure wrapper handles the border, not the input */
+    .input-wrapper-enhanced {
+        position: relative;
+        display: flex;
+        align-items: center;
+        background: white;
+        border: 2px solid #C5CAE9;
+        border-radius: 8px;
+        height: 50px;
+        overflow: visible;
+        z-index: 10;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    
+    .input-wrapper-enhanced:focus-within {
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        z-index: 20;
+    }
+
+    .input-icon-left {
+        width: 45px;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid #f0f0f0;
+    }
+    
+    .input-icon-left svg {
+        width: 24px;
+        height: 24px;
+        fill: #5C6BC0; /* Indigo 400 */
+        opacity: 0.7;
+    }
+
+    /* Fix Scan Button */
+    .scan-btn-enhanced {
+        width: 50px;
+        height: 100%;
+        border: none !important;
+        background: linear-gradient(135deg, #C5CAE9, #667eea) !important;
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.2s;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .scan-btn-enhanced:hover {
+        opacity: 0.9;
+    }
+    
+    .scan-btn-enhanced svg {
+        fill: white !important;
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Dropdown Fix */
+    .autocomplete-dropdown {
+        position: absolute;
+        top: 100%;
+        left: -2px;
+        right: -2px;
+        background: white;
+        border: 2px solid #667eea;
+        border-top: none;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        z-index: 1000;
+        margin-top: 0;
+        max-height: 250px;
+        overflow-y: auto;
+        display: none;
+    }
+
+    .autocomplete-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    
+    .autocomplete-item:hover, .autocomplete-item.selected {
+        background-color: #EDE7F6;
+        color: #512DA8;
+    }
+    
+    /* Ghost Input for Inline Autocomplete */
+    .ghost-input {
+        position: absolute;
+        left: 45px; /* Matches Icon Width */
+        top: 0;
+        height: 100%;
+        width: calc(100% - 95px); /* 100% - (Icon 45px + Btn 50px) */
+        border: none !important;
+        background: transparent !important;
+        padding: 0 15px; /* Matches Input Padding */
+        font-size: 16px; /* Matches Input Font */
+        font-family: 'Inter', sans-serif;
+        color: #BDBDBD; /* Grey Text (Ghost) */
+        z-index: 5; /* Below main input */
+        pointer-events: none; /* Let clicks pass through */
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    
+    .input-wrapper-enhanced input.form-input-enhanced {
+        z-index: 10;
+        position: relative;
+    }
+
+    /* Date Input Specific Fix */
+    input[type="date"].form-input {
+        appearance: none;
+        -webkit-appearance: none;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 10px 15px 10px 45px; /* Adjusted padding-left for icon */
+        height: 50px;
+        width: 100%;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    input[type="date"].form-input:focus {
+         border-color: #667eea;
+         outline: none;
+    }
+    
+    /* Legacy styles replaced above but kept placeholder for cleaner diff */
+    .scan-btn-legacy {
+        display: none;
     }
 
     .date-input {
@@ -359,20 +504,19 @@
         <!-- Item Code -->
         <div class="form-group">
             <label class="form-label">Item Code *</label>
-            <div class="input-wrapper">
-                <i class="gi gi-barcode input-icon"></i>
-                <input type="text" class="form-input" id="itemCode" list="itemCodesList" placeholder="Scan or enter item code" required>
-                <datalist id="itemCodesList">
-                    @if (ViewBag.ItemCodes != null)
-                    {
-                        foreach (var code in ViewBag.ItemCodes)
-                        {
-                            <option value="@code"></option>
-                        }
-                    }
-                </datalist>
-                <button type="button" class="scan-btn" onclick="openScanner('itemCode')">
-                    <i class="gi gi-qrcode"></i>
+            <div class="input-wrapper-enhanced">
+                <div class="input-icon-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"/></svg>
+                </div>
+                <input type="text" 
+                       class="form-input-enhanced autocomplete-input" 
+                       id="itemCode" 
+                       placeholder="Scan or enter item code" 
+                       autocomplete="off"
+                       required>
+                <div class="autocomplete-dropdown" id="itemCode-dropdown"></div>
+                <button type="button" class="scan-btn-enhanced" onclick="openScanner('itemCode')" title="Scan QR Code">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M80-680v-200h200v80H160v120H80Zm0 600v-200h80v120h120v80H80Zm600 0v-80h120v-120h80v200H680Zm120-600v-120H680v-80h200v200h-80ZM700-260h60v60h-60v-60Zm0-120h60v60h-60v-60Zm-60 60h60v60h-60v-60Zm-60 60h60v60h-60v-60Zm-60-60h60v60h-60v-60Zm120-120h60v60h-60v-60Zm-60 60h60v60h-60v-60Zm-60-60h60v60h-60v-60Zm240-320v240H520v-240h240ZM440-440v240H200v-240h240Zm0-320v240H200v-240h240Zm-60 500v-120H260v120h120Zm0-320v-120H260v120h120Zm320 0v-120H580v120h120Z"/></svg>
                 </button>
             </div>
         </div>
@@ -380,11 +524,19 @@
         <!-- Full QR -->
         <div class="form-group">
             <label class="form-label">Full QR *</label>
-            <div class="input-wrapper">
-                <i class="gi gi-qrcode input-icon"></i>
-                <input type="text" class="form-input" id="fullQR" placeholder="Scan or enter full QR code" required>
-                <button type="button" class="scan-btn" onclick="openScanner('fullQR')">
-                    <i class="gi gi-qrcode"></i>
+            <div class="input-wrapper-enhanced">
+                <div class="input-icon-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M40-120v-200h80v120h120v80H40Zm680 0v-80h120v-120h80v200H720ZM160-240v-480h80v480h-80Zm120 0v-480h40v480h-40Zm120 0v-480h80v480h-80Zm120 0v-480h120v480H520Zm160 0v-480h40v480h-40Zm80 0v-480h40v480h-40ZM40-640v-200h200v80H120v120H40Zm800 0v-120H720v-80h200v200h-80Z"/></svg>
+                </div>
+                <input type="text" 
+                       class="form-input-enhanced autocomplete-input" 
+                       id="fullQR" 
+                       placeholder="Scan or enter full QR code" 
+                       autocomplete="off"
+                       required>
+                <div class="autocomplete-dropdown" id="fullQR-dropdown"></div>
+                <button type="button" class="scan-btn-enhanced" onclick="openScanner('fullQR')" title="Scan QR Code">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF"><path d="M80-680v-200h200v80H160v120H80Zm0 600v-200h80v120h120v80H80Zm600 0v-80h120v-120h80v200H680Zm120-600v-120H680v-80h200v200h-80ZM700-260h60v60h-60v-60Zm0-120h60v60h-60v-60Zm-60 60h60v60h-60v-60Zm-60 60h60v60h-60v-60Zm-60-60h60v60h-60v-60Zm120-120h60v60h-60v-60Zm-60 60h60v60h-60v-60Zm-60-60h60v60h-60v-60Zm240-320v240H520v-240h240ZM440-440v240H200v-240h240Zm0-320v240H200v-240h240Zm-60 500v-120H260v120h120Zm0-320v-120H260v120h120Zm320 0v-120H580v120h120Z"/></svg>
                 </button>
             </div>
         </div>
@@ -476,6 +628,146 @@
             }
         }
 
+        // Initialize Autocomplete
+        $(document).ready(function() {
+            setupAutocomplete('itemCode', '@Url.Action("GetItemCodes", "Molded")');
+            setupAutocomplete('fullQR', '@Url.Action("GetFullQRCodes", "Molded")');
+        });
+
+        function setupAutocomplete(inputId, url) {
+            const $input = $('#' + inputId);
+            const $dropdown = $('#' + inputId + '-dropdown');
+            
+            // Create Ghost Input dynamically if not exists
+            let $ghost = $input.siblings('.ghost-input');
+            if ($ghost.length === 0) {
+                $ghost = $('<input type="text" class="ghost-input" readonly tabindex="-1">');
+                $input.before($ghost);
+            }
+
+            let debounceTimer;
+
+            $input.on('input', function() {
+                const query = $(this).val();
+                $ghost.val(''); // Clear ghost on typing
+                clearTimeout(debounceTimer);
+
+                if (query.length < 1) {
+                    $dropdown.removeClass('show').html('');
+                    return;
+                }
+
+                debounceTimer = setTimeout(() => {
+                    fetchData(query);
+                }, 300);
+            });
+
+            // Show dropdown when input is focused or clicked
+            $input.on('focus click', function() {
+                fetchData($(this).val());
+            });
+
+            // Handle Key Navigation & Ghost Text
+            $input.on('keydown', function(e) {
+                const $items = $dropdown.find('.autocomplete-item');
+                const $active = $dropdown.find('.autocomplete-item.active');
+                const ghostVal = $ghost.val();
+
+                // TAB or Right Arrow to accept Ghost Text
+                if ((e.key === 'Tab' || e.key === 'ArrowRight') && ghostVal) {
+                    if ($input.val().toLowerCase() !== ghostVal.toLowerCase()) {
+                         e.preventDefault();
+                         $input.val(ghostVal);
+                         $ghost.val('');
+                         $dropdown.removeClass('show');
+                         return;
+                    }
+                }
+                
+                if (e.key === 'ArrowDown') {
+                    if ($items.length > 0) e.preventDefault();
+                    if ($active.length === 0) {
+                        $items.first().addClass('active');
+                    } else {
+                        $active.removeClass('active').next().addClass('active');
+                    }
+                } else if (e.key === 'ArrowUp') {
+                     if ($items.length > 0) e.preventDefault();
+                    if ($active.length === 0) {
+                        $items.last().addClass('active');
+                    } else {
+                        $active.removeClass('active').prev().addClass('active');
+                    }
+                } else if (e.key === 'Enter') {
+                    if ($active.length > 0) {
+                        e.preventDefault();
+                        $active.click();
+                    }
+                } else if (e.key === 'Escape') {
+                    $dropdown.removeClass('show');
+                    $ghost.val('');
+                }
+            });
+
+            // Close dropdown when clicking outside
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.input-wrapper-enhanced').length) {
+                    $dropdown.removeClass('show');
+                    $ghost.val('');
+                }
+            });
+
+            function fetchData(query) {
+                $dropdown.addClass('show').html('<div class="autocomplete-loading">Loading...</div>');
+
+                $.ajax({
+                    url: url,
+                    data: { search: query },
+                    success: function(response) {
+                        renderDropdown(response.results, query);
+                    },
+                    error: function() {
+                        //$dropdown.html('<div class="autocomplete-no-results">Error loading data</div>');
+                         $dropdown.html('');
+                    }
+                });
+            }
+
+            function renderDropdown(items, query) {
+                if (!items || items.length === 0) {
+                    $dropdown.html('<div class="autocomplete-no-results">No matches found</div>');
+                    $ghost.val('');
+                    return;
+                }
+
+                // Ghost Text Logic
+                if (query && items.length > 0) {
+                    const topMatch = items[0].text;
+                    if (topMatch.toLowerCase().startsWith(query.toLowerCase())) {
+                        $ghost.val(topMatch);
+                    } else {
+                        $ghost.val('');
+                    }
+                } else {
+                    $ghost.val('');
+                }
+
+                let html = '';
+                items.forEach(item => {
+                    html += `<div class="autocomplete-item" data-value="${item.id}">${item.text}</div>`;
+                });
+
+                $dropdown.html(html);
+
+                $dropdown.find('.autocomplete-item').on('click', function() {
+                    const value = $(this).data('value');
+                    $input.val(value);
+                    $ghost.val('');
+                    $dropdown.removeClass('show');
+                });
+            }
+        }
+
         // QR Scanner
         function openScanner(fieldId) {
             currentScanField = fieldId;
@@ -500,25 +792,21 @@
         }
 
         function onScanSuccess(decodedText) {
-            document.getElementById(currentScanField).value = decodedText;
+            const $input = $('#' + currentScanField);
+            $input.val(decodedText);
             closeScanner();
             
-            // Auto-fill item code if scanning Full QR
+            // Auto-fill logic from QR
             if (currentScanField === 'fullQR') {
-                autoFillFromQR(decodedText);
+                 const parts = decodedText.split(/[- ]/);
+                 if (parts.length > 0 && !$('#itemCode').val()) {
+                     $('#itemCode').val(parts[0]);
+                 }
             }
         }
 
         function onScanError(error) {
             // Ignore scan errors
-        }
-
-        // Auto-fill from QR code
-        function autoFillFromQR(qrCode) {
-            const parts = qrCode.split(/[- ]/);
-            if (parts.length > 0 && !document.getElementById('itemCode').value) {
-                document.getElementById('itemCode').value = parts[0];
-            }
         }
 
         // FIFO Recommendations

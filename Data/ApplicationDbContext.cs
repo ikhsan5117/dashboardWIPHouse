@@ -21,6 +21,8 @@ namespace dashboardWIPHouse.Data
         public DbSet<ItemAW> ItemAW { get; set; }
         public DbSet<StockSummaryAW> StockSummaryAW { get; set; }
         public DbSet<PlanningFinishing> PlanningFinishing { get; set; }
+        public DbSet<Rak> Raks { get; set; }
+        public DbSet<RakAW> RaksAW { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -58,6 +58,10 @@ namespace dashboardWIPHouse.Controllers
                         LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
                                      .OrderByDescending(s => s.ParsedLastUpdated)
                                      .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                        // Get status_expired from the most recent record
+                        StatusExpired = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.StatusExpired,
                         RecordCount = g.Count(),
                         Records = g.ToList(), // Keep all records for debugging
                         UniqueFullQRCount = g.Select(r => r.FullQr).Distinct().Count()
@@ -1350,6 +1354,10 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                         LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
                                      .OrderByDescending(s => s.ParsedLastUpdated)
                                      .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                        // Get status_expired from the most recent record
+                        StatusExpired = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.StatusExpired,
                         RecordCount = g.Count(),
                         Records = g.ToList(), // Keep all records for debugging
                         UniqueFullQRCount = g.Select(r => r.FullQr).Distinct().Count()
@@ -1382,6 +1390,7 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                     var stockData = hasStockData ? stockSummaryGrouped[item.ItemCode] : null;
                     var currentBoxStock = stockData?.TotalCurrentBoxStock ?? 0;
                     var lastUpdated = stockData?.LastUpdated ?? DateTime.MinValue;
+                    var statusExpired = stockData?.StatusExpired; // Get from database
 
                     return new
                     {
@@ -1392,7 +1401,7 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                         CurrentBoxStock = currentBoxStock,
                         Pcs = item.QtyPerBox.HasValue ? 
                               Math.Round((decimal)currentBoxStock * item.QtyPerBox.Value, 2) : 0,
-                        Status = DetermineItemStatus(currentBoxStock, lastUpdated, item),
+                        Status = DetermineItemStatus(currentBoxStock, lastUpdated, item, statusExpired),
                         LastUpdatedDate = lastUpdated,
                         StandardExp = item.StandardExp,
                         QtyPerBox = item.QtyPerBox,
@@ -1545,8 +1554,39 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
         }
 
         // IMPROVED: Helper method untuk menentukan status item dengan logika yang benar
-        private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, Item item)
+        // Now uses status_expired from database when available
+        private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, Item item, string? statusExpired = null)
 {
+    // If database provides status_expired, use it for expiry-related status
+    if (!string.IsNullOrEmpty(statusExpired))
+    {
+        // Map database status to our status strings
+        // Database values: "tidak ada stok", "expired", "hampir expired", "normal", etc.
+        
+        // Check for expired status
+        if (statusExpired.Equals("expired", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Already Expired";
+        }
+        
+        // Check for near expired status
+        if (statusExpired.Contains("hampir", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Near Expired";
+        }
+
+        // Check for ok status
+        if (statusExpired.Equals("ok", StringComparison.OrdinalIgnoreCase) ||
+            statusExpired.Equals("normal", StringComparison.OrdinalIgnoreCase))
+        {
+            return "Normal";
+        }
+        
+        // "tidak ada stok" means no stock, which should be handled by shortage logic below
+        // So we continue to manual calculation for stock-level status
+    }
+
+    // Fallback to manual calculation if database status not available or for stock-level status
     // Prioritas 1: Check for expired (hanya jika stok > 0)
     if (currentBoxStock > 0 && IsExpired(lastUpdated, item.StandardExp))
         return "Already Expired";
@@ -1731,6 +1771,62 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
             }
         }
 
+        // Get Item Codes for Select2 Autocomplete
+        [HttpGet]
+        public async Task<JsonResult> GetItemCodes(string search = "")
+        {
+            try
+            {
+                var query = _context.Items.AsQueryable();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(i => i.ItemCode.Contains(search));
+                }
+
+                var itemCodes = await query
+                    .Select(i => new { id = i.ItemCode, text = i.ItemCode })
+                    .Take(50)
+                    .ToListAsync();
+
+                return Json(new { results = itemCodes });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting item codes");
+                return Json(new { results = new List<object>() });
+            }
+        }
+
+        // Get Full QR Codes for Select2 Autocomplete
+        [HttpGet]
+        public async Task<JsonResult> GetFullQRCodes(string search = "")
+        {
+            try
+            {
+                var query = _context.Set<Rak>().AsQueryable();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(r => r.FullQR.Contains(search));
+                }
+
+                var fullQRCodes = await query
+                    .Select(r => new { id = r.FullQR, text = r.FullQR })
+                    .Distinct()
+                    .Take(50)
+                    .ToListAsync();
+
+                return Json(new { results = fullQRCodes });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting full QR codes");
+                return Json(new { results = new List<object>() });
+            }
+        }
+
+
         // Existing methods...
         public IActionResult Privacy()
         {
@@ -1770,6 +1866,7 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                             date = x.StoredAt.HasValue ? x.StoredAt.Value.ToString("dd-MM-yyyy HH:mm") : "-",
                             item = x.ItemCode,
                             qty = x.BoxCount ?? 0,
+                            qtyPcs = x.QtyPcs ?? 0,
                             status = "IN"
                         })
                         .ToListAsync();
@@ -1792,6 +1889,7 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                             date = x.SuppliedAt.HasValue ? x.SuppliedAt.Value.ToString("dd-MM-yyyy HH:mm") : "-",
                             item = x.ItemCode,
                             qty = x.BoxCount ?? 0,
+                            qtyPcs = x.QtyPcs ?? 0,
                             status = "OUT"
                         })
                         .ToListAsync();
@@ -1800,12 +1898,51 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                 else if (type == "stock")
                 {
                     var allStock = await _context.StockSummary.ToListAsync();
+                    var allItems = await _context.Items.ToDictionaryAsync(i => i.ItemCode); // Fetch items for Pcs calc
+                    
+                    // Group similar to GetTableData logic
                     var grouped = allStock
                         .GroupBy(x => x.ItemCode)
-                        .Select(g => new {
-                            itemCode = g.Key,
-                            description = g.FirstOrDefault()?.Item?.Mesin ?? "Aggregated Stock",
-                            qty = g.Sum(x => x.CurrentBoxStock ?? 0)
+                        .Select(g => {
+                            // Logic untuk ambil status terbaru
+                            var latestRecord = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                               .OrderByDescending(s => s.ParsedLastUpdated)
+                                               .FirstOrDefault();
+                            
+                            var totalStock = g.Sum(x => x.CurrentBoxStock ?? 0);
+                            var statusExpired = latestRecord?.StatusExpired;
+                            var lastUpdated = latestRecord?.ParsedLastUpdated ?? DateTime.MinValue;
+                            
+                            // Get Item info from dictionary based on ItemCode
+                            var item = allItems.ContainsKey(g.Key) ? allItems[g.Key] : null;
+                            
+                            // Calculate Pcs
+                            var qtyPerBox = item?.QtyPerBox ?? 0;
+                            var totalPcs = item?.QtyPerBox.HasValue == true ? 
+                                           Math.Round((decimal)totalStock * item.QtyPerBox.Value, 0) : 0;
+                            
+                            // Determine display status
+                            string displayStatus = "Normal";
+                            if (item != null) 
+                            {
+                                displayStatus = DetermineItemStatus(totalStock, lastUpdated, item, statusExpired);
+                            }
+                            else if (!string.IsNullOrEmpty(statusExpired))
+                            {
+                                // If no item data but we have database status, use basic mapping
+                                if (statusExpired.Equals("expired", StringComparison.OrdinalIgnoreCase)) displayStatus = "Already Expired";
+                                else if (statusExpired.Contains("hampir", StringComparison.OrdinalIgnoreCase)) displayStatus = "Near Expired";
+                                else if (statusExpired.Equals("ok", StringComparison.OrdinalIgnoreCase)) displayStatus = "Normal";
+                                else displayStatus = statusExpired; 
+                            }
+
+                            return new {
+                                itemCode = g.Key,
+                                description = displayStatus,
+                                qty = totalStock,
+                                qtyPcs = totalPcs, // Added Pcs
+                                lastUpdated = lastUpdated != DateTime.MinValue ? lastUpdated.ToString("dd-MM-yyyy HH:mm") : "-" // Added LastUpdated
+                            };
                         })
                         .OrderBy(x => x.itemCode)
                         .ToList();

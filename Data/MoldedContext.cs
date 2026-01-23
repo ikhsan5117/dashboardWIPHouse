@@ -18,6 +18,7 @@ namespace dashboardWIPHouse.Data
         public DbSet<ItemBCMolded> ItemsBCMolded { get; set; }
         public DbSet<StorageLogMolded> StorageLogMolded { get; set; }
         public DbSet<SupplyLogMolded> SupplyLogMolded { get; set; }
+        public DbSet<RakMolded> Raks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

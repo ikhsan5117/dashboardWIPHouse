@@ -141,6 +141,9 @@ namespace dashboardWIPHouse.Models
         [Column("last_updated")]
         public string? LastUpdated { get; set; }
 
+        [Column("status_expired")]
+        public string? StatusExpired { get; set; }
+
         // Navigation property to ItemRVI
         public virtual ItemRVI? Item { get; set; }
 

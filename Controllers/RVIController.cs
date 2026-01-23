@@ -73,6 +73,10 @@
                         LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
                                      .OrderByDescending(s => s.ParsedLastUpdated)
                                      .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                        // Get status_expired from the most recent record (for consistency, though RVI doesn't use it)
+                        StatusExpired = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.StatusExpired,
                         RecordCount = g.Count(),
                         Records = g.ToList(), // Keep all records for debugging
                         UniqueFullQRCount = g.Select(r => r.FullQr).Distinct().Count()
@@ -1486,18 +1490,19 @@
             }
 
             // Helper methods - adapted for RVI (no expiry tracking)
-            private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, ItemRVI item)
-            {
-                // RVI status logic: shortage (≤standard_min), normal (>standard_min & <standard_max), overstock (≥standard_max)
-                if (IsShortage(currentBoxStock, item.StandardMin))
-                    return "Shortage";
-                if (IsOverStock(currentBoxStock, item.StandardMax))
-                    return "Over Stock";
-                if (IsNormal(currentBoxStock, item.StandardMin, item.StandardMax))
-                    return "Normal";
-                
-                return "Normal"; // Default to Normal if no standard values
-            }
+private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, ItemRVI item, string? statusExpired = null)
+{
+    // RVI doesn't track expiry, so statusExpired is ignored
+    // RVI status logic: shortage (≤standard_min), normal (>standard_min & <standard_max), overstock (≥standard_max)
+    if (IsShortage(currentBoxStock, item.StandardMin))
+        return "Shortage";
+    if (IsOverStock(currentBoxStock, item.StandardMax))
+        return "Over Stock";
+    if (IsNormal(currentBoxStock, item.StandardMin, item.StandardMax))
+        return "Normal";
+    
+    return "Normal"; // Default to Normal if no standard values
+}
 
             private bool IsShortage(int currentStock, int? standardMin)
             {
@@ -1541,6 +1546,61 @@
             ViewBag.ItemCodes = items;
             
             return View();
+        }
+
+        // Get Item Codes for Autocomplete
+        [HttpGet]
+        public async Task<JsonResult> GetItemCodes(string search = "")
+        {
+            try
+            {
+                var query = _context.ItemsRVI.AsQueryable();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(i => i.ItemCode.Contains(search));
+                }
+
+                var itemCodes = await query
+                    .Select(i => new { id = i.ItemCode, text = i.ItemCode })
+                    .Take(50)
+                    .ToListAsync();
+
+                return Json(new { results = itemCodes });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting item codes");
+                return Json(new { results = new List<object>() });
+            }
+        }
+
+        // Get Full QR Codes for Autocomplete
+        [HttpGet]
+        public async Task<JsonResult> GetFullQRCodes(string search = "")
+        {
+            try
+            {
+                var query = _context.Raks.AsQueryable();
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(r => r.FullQR.Contains(search));
+                }
+
+                var fullQRCodes = await query
+                    .Select(r => new { id = r.FullQR, text = r.FullQR })
+                    .Distinct()
+                    .Take(50)
+                    .ToListAsync();
+
+                return Json(new { results = fullQRCodes });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting full QR codes");
+                return Json(new { results = new List<object>() });
+            }
         }
 
         [HttpPost]
