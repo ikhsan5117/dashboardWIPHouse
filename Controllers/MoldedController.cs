@@ -1237,6 +1237,7 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                             date = x.StoredAt.ToString("dd-MM-yyyy HH:mm"),
                             item = x.ItemCode,
                             qty = x.BoxCount,
+                            qtyPcs = x.QtyPcs ?? 0,
                             status = "IN"
                         })
                         .ToListAsync();
@@ -1259,6 +1260,7 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                             date = x.SuppliedAt.ToString("dd-MM-yyyy HH:mm"),
                             item = x.ItemCode,
                             qty = x.BoxCount,
+                            qtyPcs = x.QtyPcs ?? 0,
                             status = "OUT"
                         })
                         .ToListAsync();
@@ -1267,12 +1269,32 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                 else if (type == "stock")
                 {
                     var allStock = await _context.StockSummaryMolded.ToListAsync();
+                    var items = await _context.ItemsMolded.ToDictionaryAsync(x => x.ItemCode, x => x);
+
                     var grouped = allStock
                         .GroupBy(x => x.ItemCode)
-                        .Select(g => new {
-                            itemCode = g.Key,
-                            description = "Aggregated Stock", // ItemMolded has no Machine property
-                            qty = g.Sum(x => x.CurrentBoxStock ?? 0)
+                        .Select(g => {
+                            var item = items.ContainsKey(g.Key) ? items[g.Key] : new ItemMolded { QtyPerBox = 0 };
+                            var totalQty = g.Sum(x => x.CurrentBoxStock ?? 0);
+                            
+                            // Calculate total PCS
+                            var totalPcs = (long)Math.Round((decimal)totalQty * (item.QtyPerBox ?? 0));
+
+                             // Find latest update
+                            var validDates = g.Where(x => x.ParsedLastUpdated.HasValue).Select(x => x.ParsedLastUpdated.Value).ToList();
+                            var latestUpdate = validDates.Any() ? validDates.Max() : DateTime.MinValue;
+
+                            // Determine status using existing helper (pass null for statusExpired as we aggregate multiple rows)
+                            // Or use the status from the latest record? Let's rely on calculation for aggregation
+                            var displayStatus = DetermineItemStatus(totalQty, latestUpdate, item, null);
+
+                            return new {
+                                itemCode = g.Key,
+                                description = displayStatus,
+                                qty = totalQty,
+                                qtyPcs = totalPcs,
+                                lastUpdated = latestUpdate != DateTime.MinValue ? latestUpdate.ToString("dd-MM-yyyy HH:mm") : "-"
+                            };
                         })
                         .OrderBy(x => x.itemCode)
                         .ToList();

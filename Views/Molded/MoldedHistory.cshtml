@@ -15,8 +15,8 @@
     
     <style>
         :root {
-            --theme-primary: #FF9800;
-            --theme-dark: #F57C00;
+            --theme-primary: #667eea;
+            --theme-dark: #764ba2;
         }
 
         body { 
@@ -236,8 +236,8 @@
         }
 
         .card-icon.in {
-            background: #FFF3E0;
-            color: #FF9800;
+            background: #EDE7F6;
+            color: #5E35B1;
         }
 
         .card-icon.out {
@@ -318,9 +318,41 @@
             color: var(--theme-primary);
         }
 
-        .stock-description {
-            font-size: 13px;
+        .stock-pcs {
+            font-size: 14px;
             color: #666;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+
+        .stock-details {
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 8px;
+        }
+
+        .stock-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .status-normal { background-color: #E8F5E9; color: #2E7D32; }
+        .status-shortage { background-color: #FFEBEE; color: #C62828; }
+        .status-overstock { background-color: #E3F2FD; color: #1565C0; }
+        .status-expired { background-color: #FFCDD2; color: #B71C1C; } /* Added for Molded */
+
+        .stock-date {
+            font-size: 11px;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
         /* Pagination Styling */
@@ -538,13 +570,25 @@
                     </div>`;
                 } else {
                     pageData.forEach(item => {
+                        let statusClass = 'status-normal';
+                        const desc = (item.description || '').toLowerCase();
+                        if (desc.includes('shortage')) statusClass = 'status-shortage';
+                        else if (desc.includes('over')) statusClass = 'status-overstock';
+                        else if (desc.includes('expired')) statusClass = 'status-expired';
+
                         html += `
                             <div class="stock-card">
                                 <div class="stock-card-header">
                                     <div class="stock-item-code">${item.itemCode}</div>
-                                    <div class="stock-qty">${item.qty}</div>
+                                    <div>
+                                         <span class="stock-qty">${item.qty} Box</span>
+                                         <span class="stock-pcs">(${item.qtyPcs || 0} Pcs)</span>
+                                    </div>
                                 </div>
-                                <div class="stock-description">${item.description || '-'}</div>
+                                <div class="stock-details">
+                                    <div class="stock-status ${statusClass}">${item.description || '-'}</div>
+                                    <div class="stock-date"><i class="gi gi-clock"></i> Updated: ${item.lastUpdated || '-'}</div>
+                                </div>
                             </div>
                         `;
                     });
@@ -573,12 +617,13 @@
                                     <div class="card-title">${item.item}</div>
                                     <div class="card-details">
                                         <div class="card-detail-row">
-                                            <span class="card-label">Box:</span>
-                                            <span>${item.qty}</span>
+                                            <span>${datePart}</span>
                                         </div>
                                         <div class="card-detail-row">
-                                            <span class="card-label">Date:</span>
-                                            <span>${datePart}</span>
+                                            <span class="card-label">Box:</span>
+                                            <span>${item.qty}</span>
+                                            <span class="card-label" style="margin-left: 12px;">Pcs:</span>
+                                            <span>${item.qtyPcs || 0}</span>
                                         </div>
                                         ${timePart ? `<div class="card-detail-row">
                                             <span class="card-label">Time:</span>
