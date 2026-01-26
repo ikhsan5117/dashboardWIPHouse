@@ -1251,7 +1251,6 @@
                                 SuppliedAt = row.Timestamp ?? DateTime.Now,
                                 BoxCount = row.JmlBox,
                                 Tanggal = row.Timestamp?.ToString("dd/MM/yyyy") ?? DateTime.Now.ToString("dd/MM/yyyy"),
-                                ProductionDate = row.ProductionDate,
                                 QtyPcs = row.QtyPcs
                             };
 
@@ -1604,7 +1603,7 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitRVIInput(string transactionType, string itemCode, string fullQr, DateTime? productionDate, int boxCount, int qtyPcs, string toProcess = "Production")
+        public async Task<IActionResult> SubmitRVIInput(string transactionType, string itemCode, string fullQr, int boxCount, int qtyPcs, string toProcess = "Production")
         {
             try
             {
@@ -1620,7 +1619,6 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                     {
                         ItemCode = itemCode,
                         FullQR = fullQr ?? "-",
-                        ProductionDate = productionDate,
                         BoxCount = boxCount,
                         QtyPcs = qtyPcs,
                         Tanggal = today,
@@ -1639,7 +1637,7 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                         QtyPcs = qtyPcs,
                         Tanggal = today,
                         SuppliedAt = DateTime.Now,
-                        ProductionDate = productionDate
+                        ToProcess = toProcess
                     };
                     _context.SupplyLogRVI.Add(log);
                 }

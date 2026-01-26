@@ -216,29 +216,70 @@ namespace dashboardWIPHouse.Models
         public decimal TotalPcs => Item?.QtyPerBox.HasValue == true ? 
                                   Math.Round((decimal)TotalCurrentBoxStock * Item.QtyPerBox.Value, 2) : 0;
 
-        // MOLDED Status determination methods (no expiry logic)
+        // Status determination methods
         [NotMapped]
-        public bool IsShortage => Item?.StandardMin.HasValue == true && 
-                                 TotalCurrentBoxStock <= Item.StandardMin.Value;
+        public bool IsExpired => Item?.StandardExp.HasValue == true && 
+                                LastUpdated != DateTime.MinValue &&
+                                CalculateDaysUntilExpiry() < 0;
 
         [NotMapped]
-        public bool IsNormal => Item?.StandardMin.HasValue == true && Item?.StandardMax.HasValue == true && 
-                               TotalCurrentBoxStock > Item.StandardMin.Value && TotalCurrentBoxStock < Item.StandardMax.Value;
+        public bool IsNearExpired => Item?.StandardExp.HasValue == true && 
+                                    LastUpdated != DateTime.MinValue &&
+                                    CalculateDaysUntilExpiry() >= 0 && 
+                                    CalculateDaysUntilExpiry() <= GetNearExpiredThreshold();
 
         [NotMapped]
-        public bool IsOverStock => Item?.StandardMax.HasValue == true && 
-                                  TotalCurrentBoxStock >= Item.StandardMax.Value;
+        public bool IsBelowMin => Item?.StandardMin.HasValue == true && 
+                                 TotalCurrentBoxStock < Item.StandardMin.Value;
+
+        [NotMapped]
+        public bool IsAboveMax => Item?.StandardMax.HasValue == true && 
+                                 TotalCurrentBoxStock > Item.StandardMax.Value;
+                                 
+        // Keep IsShortage for backward compatibility if needed, but IsBelowMin is the new standard
+        [NotMapped]
+        public bool IsShortage => IsBelowMin;
+
+        [NotMapped]
+        public bool IsOverStock => IsAboveMax;
+
+        [NotMapped]
+        public bool IsNormal => !IsExpired && !IsNearExpired && !IsBelowMin && !IsAboveMax;
 
         [NotMapped]
         public string Status
         {
             get
             {
-                if (IsShortage) return "Shortage";
-                if (IsOverStock) return "Over Stock";
-                if (IsNormal) return "Normal";
-                return "Normal"; // Default to Normal if no standard values
+                if (IsExpired) return "Already Expired";
+                if (IsNearExpired) return "Near Expired";
+                if (IsBelowMin) return "Standard Min"; // Using "Standard Min" to match Green Hose display text for shortage
+                if (IsAboveMax) return "Standard Maximal";
+                return "Normal";
             }
+        }
+
+        [NotMapped]
+        public double DaysUntilExpiry => CalculateDaysUntilExpiry();
+
+        // Helper method for expiry calculation
+        private double CalculateDaysUntilExpiry()
+        {
+            if (!Item?.StandardExp.HasValue == true || LastUpdated == DateTime.MinValue) 
+                return 0;
+            
+            var daysSinceLastUpdate = (DateTime.Now - LastUpdated).TotalDays;
+            return Item.StandardExp.Value - daysSinceLastUpdate;
+        }
+
+        // Helper method to get near expired threshold based on standard exp
+        private int GetNearExpiredThreshold()
+        {
+            if (!Item?.StandardExp.HasValue == true) return 3;
+            
+            // Jika standard exp <= 3 hari, maka nearly expired = 1 hari
+            // Jika standard exp > 3 hari, maka nearly expired = 3 hari
+            return Item.StandardExp.Value <= 3 ? 1 : 3;
         }
     }
 
@@ -287,6 +328,8 @@ namespace dashboardWIPHouse.Models
         public string Status { get; set; } = string.Empty;
         public DateTime LastUpdatedDate { get; set; }
         public decimal? QtyPerBox { get; set; }
+        public int? StandardExp { get; set; }
+        public double DaysUntilExpiry { get; set; }
     }
 
     // MOLDED Quality Check Dashboard Summary Model (kept for backward compatibility)
@@ -473,8 +516,7 @@ namespace dashboardWIPHouse.Models
         [Column("tanggal")]
         public string Tanggal { get; set; } = string.Empty;
 
-        [Column("production_date")]
-        public DateTime? ProductionDate { get; set; }
+
 
         [Column("qty_pcs")]
         public int? QtyPcs { get; set; }

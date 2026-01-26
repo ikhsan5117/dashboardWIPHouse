@@ -1319,21 +1319,22 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
         }
         
         // Check for ok status
+        // Check for ok status
         if (statusExpired.Equals("ok", StringComparison.OrdinalIgnoreCase) ||
             statusExpired.Equals("normal", StringComparison.OrdinalIgnoreCase))
         {
-            return "Normal";
+            // Don't return "Normal" yet, check stock levels first
         }
         
         // "tidak ada stok" means no stock, handled by shortage logic below
     }
 
     // Fallback to manual calculation if database status not available or for stock-level status
-    // Jika stok box dan pcs adalah 0, anggap sebagai Out of Stock atau Normal
-    if (currentBoxStock == 0 && (item.QtyPerBox.HasValue && currentBoxStock * item.QtyPerBox.Value == 0))
-    {
-        return "Out of Stock"; // Atau "Normal" sesuai kebutuhan
-    }
+    // IMPORTANT: status strings here must match the ones used by dashboard cards / DataTable filter
+    // - "Shortage"  : 0 stock
+    // - "Below Min" : 0 < stock < StandardMin
+    if (IsShortage(currentBoxStock, item.StandardMin))
+        return "Shortage";
 
     // Prioritas 1: Check for expired (hanya jika stok > 0)
     if (currentBoxStock > 0 && IsExpired(lastUpdated, item.StandardExp))
@@ -1344,8 +1345,8 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
         return "Near Expired";
 
     // Prioritas 3: Check stock levels
-    if (IsShortage(currentBoxStock, item.StandardMin))
-        return "Shortage";
+    if (IsBelowMin(currentBoxStock, item.StandardMin))
+        return "Below Min";
 
     if (IsAboveMax(currentBoxStock, item.StandardMax))
         return "Over Stock";
@@ -1378,19 +1379,18 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
             return daysUntilExpiry >= 0 && daysUntilExpiry <= nearExpiredThreshold;
         }
 
-        // NEW: Method untuk shortage (0 <= currentStock <= standardMin)
+        // Shortage = 0 stock (separate from Below Min)
         private bool IsShortage(int currentStock, int? standardMin)
         {
-            if (!standardMin.HasValue) return false;
-            return currentStock >= 0 && currentStock <= standardMin.Value;
+            _ = standardMin; // kept for signature compatibility
+            return currentStock <= 0;
         }
 
-        // UPDATED: Method untuk below min sudah tidak digunakan karena digantikan shortage
+        // Below Min = 0 < stock < StandardMin
         private bool IsBelowMin(int totalStock, int? standardMin)
         {
-            // Ini sekarang tidak digunakan karena sudah digantikan oleh IsShortage
-            // Tapi tetap ada untuk backward compatibility
-            return false; // Always return false since we use Shortage now
+            if (!standardMin.HasValue) return false;
+            return totalStock > 0 && totalStock < standardMin.Value;
         }
 
         private bool IsAboveMax(int totalStock, int? standardMax)
@@ -1459,7 +1459,47 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
             return View();
         }
 
-        // Get Item Codes for Autocomplete
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteHistory(int id, string type)
+        {
+            try
+            {
+                if (type == "in")
+                {
+                    var log = await _context.StorageLogMolded.FindAsync(id);
+                    if (log == null)
+                    {
+                        return Json(new { success = false, message = "Storage Log not found" });
+                    }
+                    _context.StorageLogMolded.Remove(log);
+                    _logger.LogInformation($"Deleted Molded Storage log ID: {id}");
+                }
+                else if (type == "out")
+                {
+                    var log = await _context.SupplyLogMolded.FindAsync(id);
+                    if (log == null)
+                    {
+                        return Json(new { success = false, message = "Supply Log not found" });
+                    }
+                    _context.SupplyLogMolded.Remove(log);
+                    _logger.LogInformation($"Deleted Molded Supply log ID: {id}");
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Invalid log type" });
+                }
+
+                await _context.SaveChangesAsync();
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error deleting Molded log ID: {id}, Type: {type}");
+                return Json(new { success = false, message = "Error deleting log: " + ex.Message });
+            }
+        }
+
         [HttpGet]
         public async Task<JsonResult> GetItemCodes(string search = "")
         {
@@ -1548,8 +1588,8 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                         BoxCount = boxCount,
                         QtyPcs = qtyPcs,
                         Tanggal = today,
-                        SuppliedAt = DateTime.Now,
-                        ProductionDate = productionDate
+                        SuppliedAt = DateTime.Now
+                        // ProductionDate removed - column doesn't exist in supply_log table
                     };
                     _context.SupplyLogMolded.Add(log);
                 }
@@ -1560,7 +1600,12 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error submitting MOLDED input");
-                return Json(new { success = false, message = "Error saving data: " + ex.Message });
+                var errorMessage = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    errorMessage += " Details: " + ex.InnerException.Message;
+                }
+                return Json(new { success = false, message = "Error saving data: " + errorMessage });
             }
         }
 
@@ -1715,37 +1760,7 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
 
         }
 
-        [HttpPost]
-        public async Task<JsonResult> DeleteHistory(int id, string type)
-        {
-            try
-            {
-                if (type == "in")
-                {
-                    var log = await _context.StorageLogMolded.FindAsync(id);
-                    if (log == null) return Json(new { success = false, message = "Record not found" });
-                    _context.StorageLogMolded.Remove(log);
-                }
-                else if (type == "out")
-                {
-                    var log = await _context.SupplyLogMolded.FindAsync(id);
-                    if (log == null) return Json(new { success = false, message = "Record not found" });
-                    _context.SupplyLogMolded.Remove(log);
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Invalid type" });
-                }
 
-                await _context.SaveChangesAsync();
-                return Json(new { success = true, message = "Record deleted successfully" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error deleting history");
-                return Json(new { success = false, message = "Error: " + ex.Message });
-            }
-        }
     }
 
     // Request models for Molded Items CRUD operations

@@ -282,9 +282,7 @@ namespace dashboardWIPHouse.Data
                     .HasMaxLength(20)
                     .IsRequired();
 
-                entity.Property(e => e.ProductionDate)
-                    .HasColumnName("production_date")
-                    .IsRequired(false);
+
 
                 entity.Property(e => e.QtyPcs)
                     .HasColumnName("qty_pcs")

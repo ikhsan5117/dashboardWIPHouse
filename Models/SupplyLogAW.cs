@@ -17,8 +17,6 @@ namespace dashboardWIPHouse.Models
         [Column("full_qr")]
         public string FullQr { get; set; }
 
-        [Column("production_date")]
-        public DateTime? ProductionDate { get; set; }
 
         [Column("box_count")]
         public int? BoxCount { get; set; }

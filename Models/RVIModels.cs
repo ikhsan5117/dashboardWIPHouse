@@ -426,11 +426,14 @@ namespace dashboardWIPHouse.Models
         [Column("tanggal")]
         public string Tanggal { get; set; } = string.Empty;
 
-        [Column("production_date")]
-        public DateTime? ProductionDate { get; set; }
-
         [Column("qty_pcs")]
         public int? QtyPcs { get; set; }
+
+        [Column("to_process")]
+        public string? ToProcess { get; set; }
+
+        [Column("storage_log_id")]
+        public int? StorageLogId { get; set; }
 
         // Navigation property to ItemRVI
         public virtual ItemRVI? Item { get; set; }

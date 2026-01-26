@@ -1379,24 +1379,13 @@
 </button>
 
 @section Scripts {
-    <!-- Include DataTables CSS and JS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
-
-    <!-- Include DataTables Buttons for Excel export -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap4.min.css">
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap4.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-
     <script>
         let stockTable; // Global variable to store DataTable instance
 
         function refreshTable() {
             const refreshIcon = document.getElementById('table-refresh-icon');
             refreshIcon.classList.add('fa-spin');
+            if (!stockTable) return;
             stockTable.ajax.reload(() => {
                 refreshIcon.classList.remove('fa-spin');
             });
@@ -1485,6 +1474,7 @@
 
         // Function to filter table and scroll
         function filterTable(status) {
+            if (!stockTable) return;
             stockTable.column(7).search(status).draw();
             const tableElement = document.querySelector('#stock-table');
             if (tableElement) {
@@ -1621,18 +1611,7 @@
                         previous: 'Previous'
                     }
                 },
-                dom: '<"row"<"col-sm-6"l><"col-sm-6"fB>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
-                buttons: [
-                    {
-                        extend: 'excelHtml5',
-                        text: '<i class="fa fa-file-excel-o"></i> Export to Excel',
-                        title: 'Supply Hose Stock Report',
-                        filename: 'SupplyHose_StockReport_' + new Date().toISOString().slice(0, 10).replace(/-/g, ''),
-                        exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7] // Export all visible columns
-                        }
-                    }
-                ],
+                dom: '<"row"<"col-sm-6"l><"col-sm-6"f>>rt<"row"<"col-sm-6"i><"col-sm-6"p>>',
                 initComplete: function () {
                     console.log('Stock DataTable initialized successfully');
                 }

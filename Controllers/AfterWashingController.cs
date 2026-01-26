@@ -794,47 +794,64 @@ namespace dashboardWIPHouse.Controllers
             }
         }
 
-        // Submit After Washing Input (IN/SISA)
-        [HttpPost]
-        public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInputModel model)
+        // Submit After Washing Input (IN/SISA/OUT)
+[HttpPost]
+public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInputModel model)
+{
+    try
+    {
+        if (model == null)
         {
-            try
-            {
-                if (model == null)
-                {
-                    return Json(new { success = false, message = "Invalid data" });
-                }
-
-                // Validate required fields
-                if (string.IsNullOrEmpty(model.ItemCode) || string.IsNullOrEmpty(model.FullQR))
-                {
-                    return Json(new { success = false, message = "Item Code and Full QR are required" });
-                }
-
-                // Both IN and SISA go to storage_log_aw
-                var storageLogAW = new StorageLogAW
-                {
-                    ItemCode = model.ItemCode,
-                    FullQr = model.FullQR,
-                    StoredAt = DateTime.Now,
-                    BoxCount = model.BoxCount ?? 0,
-                    Tanggal = DateTime.Now.ToString("dd/MM/yyyy"),
-                    ProductionDate = model.ProductionDate,
-                    QtyPcs = model.QtyPcs
-                };
-
-                _context.StorageLogAW.Add(storageLogAW);
-                await _context.SaveChangesAsync();
-
-                var transactionLabel = model.TransactionType == "SISA" ? "SISA" : "IN";
-                return Json(new { success = true, message = $"Data successfully saved ({transactionLabel})" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error submitting After Washing input");
-                return Json(new { success = false, message = $"Error: {ex.Message}" });
-            }
+            return Json(new { success = false, message = "Invalid data" });
         }
+
+        // Validate required fields
+        if (string.IsNullOrEmpty(model.ItemCode) || string.IsNullOrEmpty(model.FullQR))
+        {
+            return Json(new { success = false, message = "Item Code and Full QR are required" });
+        }
+
+        if (model.TransactionType == "OUT")
+        {
+            // Save to supply_log_aw
+            var supplyLogAW = new SupplyLogAW
+            {
+                ItemCode = model.ItemCode,
+                FullQr = model.FullQR,
+                SuppliedAt = DateTime.Now,
+                BoxCount = model.BoxCount ?? 0,
+                Tanggal = DateTime.Now.ToString("dd/MM/yyyy"),
+                QtyPcs = model.QtyPcs
+            };
+            _context.SupplyLogAW.Add(supplyLogAW);
+        }
+        else
+        {
+            // Both IN and SISA go to storage_log_aw
+            var storageLogAW = new StorageLogAW
+            {
+                ItemCode = model.ItemCode,
+                FullQr = model.FullQR,
+                StoredAt = DateTime.Now,
+                BoxCount = model.BoxCount ?? 0,
+                Tanggal = DateTime.Now.ToString("dd/MM/yyyy"),
+                ProductionDate = model.ProductionDate,
+                QtyPcs = model.QtyPcs
+            };
+            _context.StorageLogAW.Add(storageLogAW);
+        }
+
+        await _context.SaveChangesAsync();
+
+        string transactionLabel = model.TransactionType;
+        return Json(new { success = true, message = $"Data successfully saved ({transactionLabel})" });
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error submitting After Washing input");
+        return Json(new { success = false, message = $"Error: {ex.Message}" });
+    }
+}
         [Authorize]
         public IActionResult History()
         {
