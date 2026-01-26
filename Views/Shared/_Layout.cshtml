@@ -304,22 +304,41 @@
                             {
                                 @if (User.IsInRole("Admin"))
                                 {
-                                    <!-- MOLDED Database Navigation -->
+                                    <!-- MOLDED Dashboard Section -->
                                     <li class="sidebar-header">
                                         <span class="sidebar-nav-mini-hide">MOLDED Dashboard</span>
                                     </li>
                                     <li>
                                         <a href="@Url.Action("Index", "Molded")"
-                                            class="@(currentController == "Molded" && ViewContext.RouteData.Values["action"]?.ToString() != "Items" ? "active" : "")">
+                                            class="@(currentController == "Molded" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
                                             <i class="gi gi-cogwheel sidebar-nav-icon"></i>
-                                            <span class="sidebar-nav-mini-hide">MOLDED Dashboard</span>
+                                            <span class="sidebar-nav-mini-hide">MOLDED Primary</span>
                                         </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("IndexSecondary", "Molded")"
+                                            class="@(currentController == "Molded" && ViewContext.RouteData.Values["action"]?.ToString() == "IndexSecondary" ? "active" : "")">
+                                            <i class="gi gi-settings sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">MOLDED Secondary</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Update Data Section -->
+                                    <li class="sidebar-header">
+                                        <span class="sidebar-nav-mini-hide">Update Data</span>
                                     </li>
                                     <li>
                                         <a href="@Url.Action("Items", "Molded")"
                                             class="@(currentController == "Molded" && ViewContext.RouteData.Values["action"]?.ToString() == "Items" ? "active" : "")">
                                             <i class="gi gi-table sidebar-nav-icon"></i>
-                                            <span class="sidebar-nav-mini-hide">Molded Items</span>
+                                            <span class="sidebar-nav-mini-hide">MOLDED Primary Items</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("ItemsSecondary", "Molded")"
+                                            class="@(currentController == "Molded" && ViewContext.RouteData.Values["action"]?.ToString() == "ItemsSecondary" ? "active" : "")">
+                                            <i class="gi gi-table sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">MOLDED Secondary</span>
                                         </a>
                                     </li>
                                 }

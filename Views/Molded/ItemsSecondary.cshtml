@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "Update Data Items Molded";
+    ViewData["Title"] = "Update Data Items Molded Secondary";
 }
 
 @section Scripts {
@@ -262,7 +262,7 @@
         // Load dashboard summary
         function loadDashboardSummary() {
             $.ajax({
-                url: '@Url.Action("GetMoldedItemsDashboardSummary", "Molded")',
+                url: '@Url.Action("GetMoldedSecondaryItemsDashboardSummary", "Molded")',
                 type: 'GET',
                 success: function(data) {
                     $('#totalItems').text(data.totalItems);
@@ -279,7 +279,7 @@
         // Initialize DataTable with export buttons
         table = $('#itemsTable').DataTable({
             "ajax": {
-                "url": "@Url.Action("GetMoldedItems", "Molded")",
+                "url": "@Url.Action("GetMoldedSecondaryItems", "Molded")",
                 "type": "GET",
                 "dataSrc": "data"
             },
@@ -579,7 +579,7 @@
             $row.find('.editing').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
             
             $.ajax({
-                url: '@Url.Action("UpdateMoldedItem", "Molded")',
+                url: '@Url.Action("UpdateMoldedSecondaryItem", "Molded")',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(apiData),
@@ -680,7 +680,7 @@
                         width: 400px;
                         box-shadow: 0 4px 20px rgba(0,0,0,0.3);
                     ">
-                        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">Add New Molded Item</h3>
+                        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333;">Add New Molded Secondary Item</h3>
                         
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Item Code *:</label>
@@ -792,7 +792,7 @@
                 showMessage('Creating item...', 'info');
                 
                 $.ajax({
-                    url: '@Url.Action("CreateMoldedItem", "Molded")',
+                    url: '@Url.Action("CreateMoldedSecondaryItem", "Molded")',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(itemData),
@@ -845,7 +845,7 @@
                 const requestData = { ItemCode: itemCode };
                 
                 $.ajax({
-                    url: '@Url.Action("DeleteMoldedItem", "Molded")',
+                    url: '@Url.Action("DeleteMoldedSecondaryItem", "Molded")',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(requestData),
@@ -878,13 +878,13 @@
     <div class="row">
         <div class="col-sm-8">
             <div class="page-header">
-                <h1><i class="gi gi-table sm-6"></i> Update Data Molded Items <small>Click on any cell (except Item Code) to edit inline</small></h1>
+                <h1><i class="gi gi-table sm-6"></i> Update Data Molded Secondary Items <small>Click on any cell (except Item Code) to edit inline</small></h1>
             </div>
         </div>
         <div class="col-sm-4 text-right" style="margin-top: 30px;">
             <ol class="breadcrumb">
-                <li><a href="@Url.Action("Index", "Molded")"><i class="fa fa-dashboard"></i> MOLDED Dashboard</a></li>
-                <li class="active">Molded Items</li>
+                <li><a href="@Url.Action("IndexSecondary", "Molded")"><i class="fa fa-dashboard"></i> MOLDED Secondary Dashboard</a></li>
+                <li class="active">Molded Secondary Items</li>
             </ol>
         </div>
     </div>
@@ -940,10 +940,10 @@
         <!-- Items Table Block -->
         <div class="block">
             <div class="block-title">
-                <h2>Molded Items Management</h2>
+                <h2>Molded Secondary Items Management</h2>
                 <div class="block-options pull-right">
-                    <a href="@Url.Action("Index", "Molded")" class="btn btn-sm btn-default">
-                        <i class="fa fa-dashboard"></i> Back to Dashboard
+                    <a href="@Url.Action("IndexSecondary", "Molded")" class="btn btn-sm btn-default">
+                        <i class="fa fa-dashboard"></i> Back to Secondary Dashboard
                     </a>
                     <button type="button" class="btn btn-sm btn-success" id="btnAddNew">
                         <i class="fa fa-plus"></i> Add New Item

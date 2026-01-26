@@ -86,8 +86,16 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW9sZGVkXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/dashboardWIPHouse/Views/Molded/IndexSecondary.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW9sZGVkXEluZGV4U2Vjb25kYXJ5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/dashboardWIPHouse/Views/Molded/Items.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW9sZGVkXEl0ZW1zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/dashboardWIPHouse/Views/Molded/ItemsSecondary.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTW9sZGVkXEl0ZW1zU2Vjb25kYXJ5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [E:/dashboardWIPHouse/Views/Molded/MoldedHistory.cshtml]

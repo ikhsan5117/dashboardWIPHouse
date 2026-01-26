@@ -20,6 +20,10 @@ namespace dashboardWIPHouse.Data
         public DbSet<SupplyLogMolded> SupplyLogMolded { get; set; }
         public DbSet<RakMolded> Raks { get; set; }
 
+        // MOLDED Secondary Database entities
+        public DbSet<ItemMoldedSecondary> ItemsMoldedSecondary { get; set; }
+        public DbSet<StockSummaryMoldedSecondary> StockSummaryMoldedSecondary { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -292,6 +296,74 @@ namespace dashboardWIPHouse.Data
                       .HasForeignKey(e => e.ItemCode)
                       .HasPrincipalKey(i => i.ItemCode)
                       .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // ========================================
+            // MOLDED SECONDARY CONFIGURATION
+            // ========================================
+
+            // Configure MOLDED Secondary Items table
+            modelBuilder.Entity<ItemMoldedSecondary>(entity =>
+            {
+                entity.HasKey(e => e.ItemCode);
+                entity.ToTable("items_secondary");
+
+                entity.Property(e => e.ItemCode)
+                    .HasColumnName("item_code")
+                    .IsRequired();
+
+                entity.Property(e => e.QtyPerBox)
+                    .HasColumnName("qty_per_box")
+                    .HasColumnType("decimal(10,2)")
+                    .IsRequired(false);
+
+                entity.Property(e => e.StandardMin)
+                    .HasColumnName("standard_min")
+                    .HasColumnType("int")
+                    .IsRequired(false);
+
+                entity.Property(e => e.StandardMax)
+                    .HasColumnName("standard_max")
+                    .HasColumnType("int")
+                    .IsRequired(false);
+
+                entity.Property(e => e.StandardExp)
+                    .HasColumnName("standard_exp")
+                    .HasColumnType("int")
+                    .IsRequired(false);
+            });
+
+            // Configure MOLDED Secondary StockSummary view
+            modelBuilder.Entity<StockSummaryMoldedSecondary>(entity =>
+            {
+                // Use composite key since log_id may not exist
+                entity.HasKey(e => new { e.ItemCode, e.FullQr });
+                entity.ToView("vw_stock_summary_secondary");
+
+                entity.Property(e => e.ItemCode)
+                    .HasColumnName("item_code")
+                    .IsRequired();
+
+                entity.Property(e => e.FullQr)
+                    .HasColumnName("full_qr")
+                    .IsRequired();
+
+                entity.Property(e => e.CurrentBoxStock)
+                    .HasColumnName("current_box_stock")
+                    .HasColumnType("int")
+                    .IsRequired(false);
+
+                entity.Property(e => e.LastUpdated)
+                    .HasColumnName("last_updated")
+                    .HasColumnType("varchar(50)")
+                    .IsRequired(false);
+
+                // Configure relationship with ItemsMoldedSecondary table
+                entity.HasOne(s => s.Item)
+                    .WithMany()
+                    .HasForeignKey(s => s.ItemCode)
+                    .HasPrincipalKey(i => i.ItemCode)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
 

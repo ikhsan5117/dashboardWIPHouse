@@ -8,6 +8,7 @@ namespace dashboardWIPHouse.Data
         public DbSet<StorageLog> StorageLog { get; set; }
         public DbSet<StorageLogAW> StorageLogAW { get; set; }
         public DbSet<SupplyLog> SupplyLog { get; set; }
+        public DbSet<SupplyLogAW> SupplyLogAW { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)

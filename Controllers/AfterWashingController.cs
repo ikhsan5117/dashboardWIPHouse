@@ -872,8 +872,28 @@ namespace dashboardWIPHouse.Controllers
                 }
                 else if (type == "out")
                 {
-                    // If After Washing doesn't have its own Supply Log yet, return empty list
-                    return Json(new { success = true, data = new List<object>() });
+                    var query = _context.SupplyLogAW.AsQueryable();
+
+                    if (date.HasValue)
+                    {
+                        var targetDate = date.Value.Date;
+                        query = query.Where(x => x.SuppliedAt.HasValue && x.SuppliedAt.Value.Date == targetDate);
+                    }
+
+                    var data = await query
+                        .OrderByDescending(x => x.SuppliedAt)
+                        .Take(100)
+                        .Select(x => new {
+                            date = x.SuppliedAt.HasValue ? x.SuppliedAt.Value.ToString("dd-MM-yyyy HH:mm") : "-",
+                            item = x.ItemCode,
+                            qty = x.BoxCount ?? 0, // Using Box Count for Qty
+                            qtyPcs = x.QtyPcs ?? 0,
+                            status = "OUT",
+                            id = x.LogId
+                        })
+                        .ToListAsync();
+
+                    return Json(new { success = true, data });
                 }
                 else if (type == "stock")
                 {

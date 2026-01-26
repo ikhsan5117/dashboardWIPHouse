@@ -149,6 +149,363 @@ namespace dashboardWIPHouse.Controllers
             }
         }
 
+        // GET: MOLDED Secondary Dashboard
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> IndexSecondary()
+        {
+            try
+            {
+                _logger.LogInformation("=== MOLDED Secondary Dashboard Load Started ===");
+
+                // Test database connection
+                var canConnect = await _context.Database.CanConnectAsync();
+                _logger.LogInformation($"MOLDED Database connection result: {canConnect}");
+
+                if (!canConnect)
+                {
+                    throw new Exception("Cannot connect to MOLDED database");
+                }
+
+                // Load MOLDED Secondary data
+                _logger.LogInformation("Loading MOLDED Secondary Items data...");
+                var allItemsSecondary = await _context.ItemsMoldedSecondary.ToListAsync();
+                _logger.LogInformation($"Loaded {allItemsSecondary.Count} items from MOLDED items_secondary table");
+
+                _logger.LogInformation("Loading MOLDED Secondary Stock Summary data...");
+                var allStockSummariesSecondary = await _context.StockSummaryMoldedSecondary.ToListAsync();
+                _logger.LogInformation($"Loaded {allStockSummariesSecondary.Count} records from MOLDED vw_stock_summary_secondary");
+
+                // Group stock summaries by item_code
+                var stockSummaryGroupedSecondary = allStockSummariesSecondary
+                    .Where(s => !string.IsNullOrEmpty(s.ItemCode))
+                    .GroupBy(s => s.ItemCode)
+                    .ToDictionary(g => g.Key, g => new
+                    {
+                        TotalCurrentBoxStock = g.Sum(s => s.CurrentBoxStock ?? 0),
+                        LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                        RecordCount = g.Count(),
+                        Records = g.ToList(),
+                        UniqueFullQRCount = g.Select(r => r.FullQr).Distinct().Count()
+                    });
+
+                _logger.LogInformation($"Aggregated secondary stock data for {stockSummaryGroupedSecondary.Count} unique item codes");
+
+                // Combine Items dengan Stock Summary data
+                var itemsWithStockDataSecondary = allItemsSecondary.Select(item => new
+                {
+                    Item = item,
+                    StockData = stockSummaryGroupedSecondary.ContainsKey(item.ItemCode) 
+                               ? stockSummaryGroupedSecondary[item.ItemCode] 
+                               : null,
+                    TotalCurrentBoxStock = stockSummaryGroupedSecondary.ContainsKey(item.ItemCode) 
+                                          ? stockSummaryGroupedSecondary[item.ItemCode].TotalCurrentBoxStock 
+                                          : 0,
+                    LastUpdated = stockSummaryGroupedSecondary.ContainsKey(item.ItemCode) 
+                                 ? stockSummaryGroupedSecondary[item.ItemCode].LastUpdated 
+                                 : DateTime.MinValue,
+                    HasStockData = stockSummaryGroupedSecondary.ContainsKey(item.ItemCode)
+                }).ToList();
+
+                _logger.LogInformation($"Combined data for {itemsWithStockDataSecondary.Count} MOLDED Secondary items");
+
+                var filteredItemsSecondary = itemsWithStockDataSecondary.ToList();
+
+                // Calculate dashboard summary
+                var dashboardSummarySecondary = new DashboardSummaryMoldedSecondary
+                {
+                    TotalItems = filteredItemsSecondary.Count,
+                    ExpiredCount = filteredItemsSecondary.Count(x => x.TotalCurrentBoxStock > 0 && IsExpiredSecondary(x.LastUpdated, x.Item.StandardExp)),
+                    NearExpiredCount = filteredItemsSecondary.Count(x => x.TotalCurrentBoxStock > 0 && IsNearExpiredSecondary(x.LastUpdated, x.Item.StandardExp)),
+                    ShortageCount = filteredItemsSecondary.Count(x => IsShortageSecondary(x.TotalCurrentBoxStock, x.Item.StandardMin)),
+                    BelowMinCount = filteredItemsSecondary.Count(x => IsBelowMinSecondary(x.TotalCurrentBoxStock, x.Item.StandardMin)),
+                    AboveMaxCount = filteredItemsSecondary.Count(x => IsAboveMaxSecondary(x.TotalCurrentBoxStock, x.Item.StandardMax))
+                };
+
+                _logger.LogInformation($"MOLDED Secondary Dashboard Summary:");
+                _logger.LogInformation($"- Total Items: {dashboardSummarySecondary.TotalItems}");
+                _logger.LogInformation($"- Expired: {dashboardSummarySecondary.ExpiredCount}");
+                _logger.LogInformation($"- Near Expired: {dashboardSummarySecondary.NearExpiredCount}");
+                _logger.LogInformation($"- Shortage: {dashboardSummarySecondary.ShortageCount}");
+                _logger.LogInformation($"- Below Min: {dashboardSummarySecondary.BelowMinCount}");
+                _logger.LogInformation($"- Above Max: {dashboardSummarySecondary.AboveMaxCount}");
+
+                ViewData["Title"] = "MOLDED Secondary Dashboard";
+                _logger.LogInformation("=== MOLDED Secondary Dashboard Load Completed Successfully ===");
+                return View(dashboardSummarySecondary);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"=== MOLDED Secondary Dashboard Load Failed ===");
+                _logger.LogError($"Error: {ex.Message}");
+                _logger.LogError($"Stack Trace: {ex.StackTrace}");
+
+                var emptySummary = new DashboardSummaryMoldedSecondary();
+                ViewData["Title"] = "MOLDED Secondary Dashboard";
+                ViewData["Error"] = $"Unable to load MOLDED Secondary dashboard data: {ex.Message}";
+                return View(emptySummary);
+            }
+        }
+
+
+        // GET: MOLDED Secondary Items Management
+        [Authorize(Roles = "Admin")]
+        public IActionResult ItemsSecondary()
+        {
+            // Check if user is logged in and has MOLDED database claim
+            if (!User.Identity.IsAuthenticated || User.FindFirst("Database")?.Value != "MOLDED")
+            {
+                _logger.LogWarning("MOLDED Secondary Items - Authentication failed, redirecting to login");
+                return RedirectToAction("Login", "Account");
+            }
+
+            return View();
+        }
+
+        // GET: Molded/GetMoldedSecondaryItems - API for DataTables
+        [HttpGet]
+        public async Task<IActionResult> GetMoldedSecondaryItems()
+        {
+            try
+            {
+                _logger.LogInformation("Loading Molded Secondary items data for DataTable...");
+
+                // Load from ItemsMoldedSecondary table as primary source
+                var allItems = await _context.ItemsMoldedSecondary.ToListAsync();
+                var allStockSummaries = await _context.StockSummaryMoldedSecondary.ToListAsync();
+
+                _logger.LogInformation($"Loaded {allItems.Count} items from Molded items_secondary table");
+                _logger.LogInformation($"Loaded {allStockSummaries.Count} records from Molded vw_stock_summary_secondary");
+
+                // Group stock summaries
+                var stockSummaryGrouped = allStockSummaries
+                    .Where(s => !string.IsNullOrEmpty(s.ItemCode))
+                    .GroupBy(s => s.ItemCode)
+                    .ToDictionary(g => g.Key, g => new
+                    {
+                        TotalCurrentBoxStock = g.Sum(s => s.CurrentBoxStock ?? 0),
+                        LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                        RecordCount = g.Count()
+                    });
+
+                _logger.LogInformation($"Aggregated stock data for {stockSummaryGrouped.Count} unique item codes");
+
+                // Transform for DataTable display
+                var items = allItems.Select(item => 
+                {
+                    var hasStockData = stockSummaryGrouped.ContainsKey(item.ItemCode);
+                    var stockData = hasStockData ? stockSummaryGrouped[item.ItemCode] : null;
+                    var currentBoxStock = stockData?.TotalCurrentBoxStock ?? 0;
+                    var lastUpdated = stockData?.LastUpdated ?? DateTime.MinValue;
+
+                    return new
+                    {
+                        ItemCode = item.ItemCode,
+                        QtyPerBox = (double)(item.QtyPerBox ?? 0),
+                        StandardExp = item.StandardExp ?? 0,
+                        StandardMin = item.StandardMin ?? 0,
+                        StandardMax = item.StandardMax ?? 0,
+                        
+                        // Status calculations using Items data with stock comparison
+                        IsExpired = IsExpiredSecondary(lastUpdated, item.StandardExp),
+                        IsNearExpired = IsNearExpiredSecondary(lastUpdated, item.StandardExp),
+                        IsBelowMin = IsBelowMinSecondary(currentBoxStock, item.StandardMin),
+                        IsAboveMax = IsAboveMaxSecondary(currentBoxStock, item.StandardMax),
+                        
+                        // Additional info for display
+                        CurrentStock = currentBoxStock,
+                        DaysUntilExpiry = CalculateDaysUntilExpiry(lastUpdated, item.StandardExp),
+                        HasStockData = hasStockData,
+                        StockRecordCount = stockData?.RecordCount ?? 0
+                    };
+                }).OrderBy(x => x.ItemCode).ToList();
+
+                _logger.LogInformation($"Returning {items.Count} Molded Secondary items to DataTable");
+                _logger.LogInformation($"Items with stock data: {items.Count(x => x.HasStockData)}");
+
+                return Json(new { data = items });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading Molded Secondary items data");
+                return Json(new { error = ex.Message });
+            }
+        }
+
+        // POST: Molded/UpdateMoldedSecondaryItem - API for updating item
+        [HttpPost]
+        public async Task<IActionResult> UpdateMoldedSecondaryItem([FromBody] UpdateMoldedItemRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Updating Molded Secondary item: {request.ItemCode}");
+
+                if (string.IsNullOrEmpty(request.ItemCode))
+                {
+                    return Json(new { success = false, message = "Item code is required" });
+                }
+
+                var existingItem = await _context.ItemsMoldedSecondary.FindAsync(request.ItemCode);
+                if (existingItem == null)
+                {
+                    return Json(new { success = false, message = "Item not found" });
+                }
+
+                // Update properties
+                existingItem.QtyPerBox = (decimal?)request.QtyPerBox;
+                existingItem.StandardExp = request.StandardExp;
+                existingItem.StandardMin = request.StandardMin;
+                existingItem.StandardMax = request.StandardMax;
+
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"Molded Secondary item {request.ItemCode} updated successfully");
+
+                return Json(new { success = true, message = "Data updated successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error updating Molded Secondary item: {request.ItemCode}");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        // POST: Molded/CreateMoldedSecondaryItem - API for creating item
+        [HttpPost]
+        public async Task<IActionResult> CreateMoldedSecondaryItem([FromBody] CreateMoldedItemRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Creating new Molded Secondary item: {request.ItemCode}");
+
+                if (string.IsNullOrEmpty(request.ItemCode))
+                {
+                    return Json(new { success = false, message = "Item code is required" });
+                }
+
+                var existingItem = await _context.ItemsMoldedSecondary.FindAsync(request.ItemCode);
+                if (existingItem != null)
+                {
+                    return Json(new { success = false, message = "Item code already exists" });
+                }
+
+                var item = new ItemMoldedSecondary
+                {
+                    ItemCode = request.ItemCode,
+                    QtyPerBox = (decimal?)request.QtyPerBox,
+                    StandardExp = request.StandardExp,
+                    StandardMin = request.StandardMin,
+                    StandardMax = request.StandardMax
+                };
+
+                _context.ItemsMoldedSecondary.Add(item);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"Molded Secondary item {request.ItemCode} created successfully");
+
+                return Json(new { success = true, message = "Data created successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error creating Molded Secondary item: {request.ItemCode}");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        // POST: Molded/DeleteMoldedSecondaryItem - API for deleting item
+        [HttpPost]
+        public async Task<IActionResult> DeleteMoldedSecondaryItem([FromBody] DeleteMoldedItemRequest request)
+        {
+            try
+            {
+                _logger.LogInformation($"Deleting Molded Secondary item: {request.ItemCode}");
+
+                if (string.IsNullOrEmpty(request.ItemCode))
+                {
+                    return Json(new { success = false, message = "Item code is required" });
+                }
+
+                var item = await _context.ItemsMoldedSecondary.FindAsync(request.ItemCode);
+                if (item == null)
+                {
+                    return Json(new { success = false, message = "Item not found" });
+                }
+
+                _context.ItemsMoldedSecondary.Remove(item);
+                await _context.SaveChangesAsync();
+                _logger.LogInformation($"Molded Secondary item {request.ItemCode} deleted successfully");
+
+                return Json(new { success = true, message = "Data deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error deleting Molded Secondary item: {request.ItemCode}");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        // GET: Molded/GetMoldedSecondaryItemsDashboardSummary - API for dashboard summary on Items page
+        [HttpGet]
+        public async Task<IActionResult> GetMoldedSecondaryItemsDashboardSummary()
+        {
+            try
+            {
+                _logger.LogInformation("Loading Molded Secondary Items dashboard summary...");
+
+                var allItems = await _context.ItemsMoldedSecondary.ToListAsync();
+                var allStockSummaries = await _context.StockSummaryMoldedSecondary.ToListAsync();
+
+                // Group stock summaries
+                var stockSummaryGrouped = allStockSummaries
+                    .Where(s => !string.IsNullOrEmpty(s.ItemCode))
+                    .GroupBy(s => s.ItemCode)
+                    .ToDictionary(g => g.Key, g => new
+                    {
+                        TotalCurrentBoxStock = g.Sum(s => s.CurrentBoxStock ?? 0),
+                        LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue
+                    });
+
+                // Combine Items with Stock Summary data
+                var itemsWithStockData = allItems.Select(item => new
+                {
+                    Item = item,
+                    TotalCurrentBoxStock = stockSummaryGrouped.ContainsKey(item.ItemCode) 
+                                          ? stockSummaryGrouped[item.ItemCode].TotalCurrentBoxStock 
+                                          : 0,
+                    LastUpdated = stockSummaryGrouped.ContainsKey(item.ItemCode) 
+                                 ? stockSummaryGrouped[item.ItemCode].LastUpdated 
+                                 : DateTime.MinValue,
+                    HasStockData = stockSummaryGrouped.ContainsKey(item.ItemCode)
+                }).ToList();
+
+                var filteredItems = itemsWithStockData;
+
+                var summary = new DashboardSummaryMoldedSecondary
+                {
+                    TotalItems = filteredItems.Count,
+                    ExpiredCount = filteredItems.Count(x => IsExpiredSecondary(x.LastUpdated, x.Item.StandardExp)),
+                    NearExpiredCount = filteredItems.Count(x => IsNearExpiredSecondary(x.LastUpdated, x.Item.StandardExp)),
+                    BelowMinCount = filteredItems.Count(x => IsBelowMinSecondary(x.TotalCurrentBoxStock, x.Item.StandardMin)),
+                    AboveMaxCount = filteredItems.Count(x => IsAboveMaxSecondary(x.TotalCurrentBoxStock, x.Item.StandardMax))
+                };
+
+                _logger.LogInformation($"Molded Secondary Items dashboard summary: Total={summary.TotalItems}, " +
+                    $"Expired={summary.ExpiredCount}, NearExpired={summary.NearExpiredCount}, " +
+                    $"BelowMin={summary.BelowMinCount}, AboveMax={summary.AboveMaxCount}");
+
+                return Json(summary);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading Molded Secondary Items dashboard summary");
+                return Json(new { error = ex.Message });
+            }
+        }
+
+
         [HttpGet]
         public async Task<JsonResult> GetDashboardData()
         {
@@ -1048,6 +1405,36 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
             // Jika standard exp > 3 hari, maka nearly expired = 3 hari
             return standardExp <= 3 ? 1 : 3;
         }
+
+        // ==========================================
+        // MOLDED SECONDARY HELPER METHODS
+        // ==========================================
+
+        private bool IsExpiredSecondary(DateTime lastUpdated, int? standardExp)
+        {
+            return IsExpired(lastUpdated, standardExp); // Same logic
+        }
+
+        private bool IsNearExpiredSecondary(DateTime lastUpdated, int? standardExp)
+        {
+            return IsNearExpired(lastUpdated, standardExp); // Same logic
+        }
+
+        private bool IsShortageSecondary(int currentStock, int? standardMin)
+        {
+            return IsShortage(currentStock, standardMin); // Same logic
+        }
+
+        private bool IsBelowMinSecondary(int totalStock, int? standardMin)
+        {
+            return IsBelowMin(totalStock, standardMin); // Same logic
+        }
+
+        private bool IsAboveMaxSecondary(int totalStock, int? standardMax)
+        {
+            return IsAboveMax(totalStock, standardMax); // Same logic
+        }
+
 
 
         // ==========================================
