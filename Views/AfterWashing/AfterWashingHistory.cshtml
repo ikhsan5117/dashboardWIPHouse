@@ -413,6 +413,26 @@
             cursor: not-allowed;
             background: #f5f5f5;
         }
+
+        .delete-btn {
+            background-color: #ffebee;
+            color: #c62828;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background-color: #ffcdd2;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
@@ -704,6 +724,37 @@
 
         function refreshData() { loadData(); }
         $(document).ready(function() { loadData(); });
+
+        function deleteHistory(id, type) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteHistory", "AfterWashing")',
+                        type: 'POST',
+                        data: { id: id, type: type },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire('Deleted!', 'Record has been deleted.', 'success');
+                                loadData();
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Failed to delete record', 'error');
+                        }
+                    });
+                }
+            });
+        }
     </script>
 </body>
 </html>

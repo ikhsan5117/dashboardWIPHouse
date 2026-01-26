@@ -1659,33 +1659,46 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
         {
             try
             {
-                // Get stock data for FIFO suggestions
-                // Prioritize older stock (First In First Out)
-                var stock = await _context.StockSummaryRVI
-                    .Where(s => s.CurrentBoxStock > 0)
-                    .Select(s => new {
-                        ItemCode = s.ItemCode,
-                        FullQR = s.FullQr,
-                        // Use parsed date if available, otherwise current date fallback
-                        ProductionDate = s.LastUpdated, 
-                        BoxCount = s.CurrentBoxStock
-                    })
+                // Dynamic Calculation Strategy for RVI
+                // 1. Fetch all IN logs
+                var inLogs = await _context.StorageLogRVI
+                    .Select(s => new { s.ItemCode, s.FullQR, s.ProductionDate, s.BoxCount, s.StoredAt })
                     .ToListAsync();
-                
-                // Sort client-side because of string date parsing complexity in SQL
-                // Sort in memory with date parsing
-                var sortedStock = stock
-                    .OrderBy(s => {
-                        if (DateTime.TryParse(s.ProductionDate, out DateTime dt)) return dt;
-                        return DateTime.MinValue;
+
+                // 2. Fetch all OUT logs 
+                var outLogs = await _context.SupplyLogRVI
+                    .Select(s => new { s.ItemCode, s.FullQR, s.BoxCount })
+                    .ToListAsync();
+
+                // 3. Group and Calculate Net Stock
+                var stock = inLogs
+                    .GroupBy(x => new { x.ItemCode, x.FullQR })
+                    .Select(g => {
+                        var totalIn = g.Sum(x => x.BoxCount);
+                        var totalOut = outLogs
+                            .Where(x => x.ItemCode == g.Key.ItemCode && x.FullQR == g.Key.FullQR)
+                            .Sum(x => x.BoxCount);
+
+                        // Find oldest production date or stored date for this group
+                        var bestDate = g.Min(x => x.ProductionDate ?? x.StoredAt);
+
+                        return new {
+                            ItemCode = g.Key.ItemCode,
+                            FullQr = g.Key.FullQR,
+                            ProductionDate = bestDate.ToString("yyyy-MM-dd HH:mm:ss"),
+                            RawDate = bestDate,
+                            BoxCount = totalIn - totalOut
+                        };
                     })
+                    .Where(s => s.BoxCount > 0)
+                    .OrderBy(s => s.RawDate) // FIFO sort
                     .ToList();
 
-
-                return Json(new { success = true, data = sortedStock });
+                return Json(new { success = true, data = stock });
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error getting RVI FIFO stock");
                 return Json(new { success = false, error = ex.Message });
             }
         }
@@ -1942,7 +1955,8 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                             item = x.ItemCode,
                             qty = x.BoxCount,
                             qtyPcs = x.QtyPcs ?? 0,
-                            status = "IN"
+                            status = "IN",
+                            id = x.LogId
                         })
                         .ToListAsync();
                     return Json(new { success = true, data });
@@ -1965,7 +1979,8 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                             item = x.ItemCode,
                             qty = x.BoxCount,
                             qtyPcs = x.QtyPcs ?? 0,
-                            status = "OUT"
+                            status = "OUT",
+                            id = x.LogId
                         })
                         .ToListAsync();
                     return Json(new { success = true, data });
@@ -2026,6 +2041,39 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
+            }
+
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> DeleteHistory(int id, string type)
+        {
+            try
+            {
+                if (type == "in")
+                {
+                    var log = await _context.StorageLogRVI.FindAsync(id);
+                    if (log == null) return Json(new { success = false, message = "Record not found" });
+                    _context.StorageLogRVI.Remove(log);
+                }
+                else if (type == "out")
+                {
+                    var log = await _context.SupplyLogRVI.FindAsync(id);
+                    if (log == null) return Json(new { success = false, message = "Record not found" });
+                    _context.SupplyLogRVI.Remove(log);
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Invalid type" });
+                }
+
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Record deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting history");
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
     }

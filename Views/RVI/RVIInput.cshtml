@@ -898,8 +898,8 @@
                     document.getElementById('productionDate').value = dateVal.toISOString().split('T')[0];
                 }
             }
-            // Suggest OUT quantity (default 1 box or less)
-            document.getElementById('boxCount').value = Math.min(1, boxCount);
+            // Suggest OUT quantity (use full available stock)
+            document.getElementById('boxCount').value = boxCount;
         }
 
         // FIFO search

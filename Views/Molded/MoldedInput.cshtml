@@ -872,7 +872,7 @@
                     document.getElementById('productionDate').value = dateVal.toISOString().split('T')[0];
                 }
             }
-            document.getElementById('boxCount').value = Math.min(1, boxCount);
+            document.getElementById('boxCount').value = boxCount; // Set to actual available stock
         }
 
         // FIFO search

@@ -1867,7 +1867,8 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                             item = x.ItemCode,
                             qty = x.BoxCount ?? 0,
                             qtyPcs = x.QtyPcs ?? 0,
-                            status = "IN"
+                            status = "IN",
+                            id = x.LogId
                         })
                         .ToListAsync();
                     return Json(new { success = true, data });
@@ -1890,7 +1891,8 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                             item = x.ItemCode,
                             qty = x.BoxCount ?? 0,
                             qtyPcs = x.QtyPcs ?? 0,
-                            status = "OUT"
+                            status = "OUT",
+                            id = x.LogId
                         })
                         .ToListAsync();
                     return Json(new { success = true, data });
@@ -1953,6 +1955,38 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
             catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> DeleteHistory(int id, string type)
+        {
+            try
+            {
+                if (type == "in")
+                {
+                    var log = await _context.StorageLog.FindAsync(id);
+                    if (log == null) return Json(new { success = false, message = "Record not found" });
+                    _context.StorageLog.Remove(log);
+                }
+                else if (type == "out")
+                {
+                    var log = await _context.SupplyLog.FindAsync(id);
+                    if (log == null) return Json(new { success = false, message = "Record not found" });
+                    _context.SupplyLog.Remove(log);
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Invalid type" });
+                }
+
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Record deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting history");
+                return Json(new { success = false, message = "Error: " + ex.Message });
             }
         }
     }
