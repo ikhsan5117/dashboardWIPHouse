@@ -371,6 +371,7 @@
                     <option value="HOSE">HOSE (Green Hose & After Washing)</option>
                     <option value="RVI">RVI</option>
                     <option value="MOLDED">MOLDED</option>
+                    <option value="BTR">BTR</option>
                 </select>
             </div>
 
@@ -437,6 +438,10 @@
                     databaseSelect.value = 'MOLDED';
                     updatePlaceholders();
                     console.log('Auto-selected MOLDED area for username:', username);
+                } else if (username.includes('btr')) {
+                    databaseSelect.value = 'BTR';
+                    updatePlaceholders();
+                    console.log('Auto-selected BTR area for username:', username);
                 } else if (username === 'admin' || username === 'user') {
                     databaseSelect.value = 'HOSE';
                     updatePlaceholders();
@@ -461,11 +466,15 @@
                 } else if (databaseSelect.value === 'MOLDED') {
                     usernameInput.placeholder = 'Username (adminMolded321/userMolded321)';
                     passwordInput.placeholder = 'Password (molded321)';
+                } else if (databaseSelect.value === 'BTR') {
+                    usernameInput.placeholder = 'Username (adminBTR)';
+                    passwordInput.placeholder = 'Password (BTR123)';
                 } else {
                     usernameInput.placeholder = 'Username';
                     passwordInput.placeholder = 'Password';
                 }
             }
+
 
             // Form validation and submission
             loginForm.addEventListener('submit', function(e) {

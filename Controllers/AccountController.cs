@@ -16,13 +16,16 @@ namespace DashboardWIPHouse.Controllers
         private readonly ApplicationDbContext _context;
         private readonly RVIContext _rviContext;
         private readonly MoldedContext _moldedContext;
+        private readonly BTRDbContext _btrContext;
 
-        public AccountController(ApplicationDbContext context, RVIContext rviContext, MoldedContext moldedContext)
+        public AccountController(ApplicationDbContext context, RVIContext rviContext, MoldedContext moldedContext, BTRDbContext btrContext)
         {
             _context = context;
             _rviContext = rviContext;
             _moldedContext = moldedContext;
+            _btrContext = btrContext;
         }
+
         
 
         [HttpGet]
@@ -195,9 +198,52 @@ namespace DashboardWIPHouse.Controllers
                         return RedirectToAction("Index", "Molded");
                     }
                 }
+                else if (database == "BTR")
+                {
+                    // Cek ke database BTR
+                    var user = await _btrContext.Users
+                        .FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
+
+                    if (user == null)
+                    {
+                        ViewBag.Error = "Invalid username or password for BTR database";
+                        return View();
+                    }
+
+                    // Tentukan role
+                    string role = user.Username == "adminBTR" ? "Admin" : "User";
+
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.Username),
+                        new Claim(ClaimTypes.Role, role),
+                        new Claim("Database", "BTR")
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(
+                        claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity));
+
+                    // Update Last_Login
+                    user.LastLogin = DateTime.Now;
+                    await _btrContext.SaveChangesAsync();
+
+                    // Set session untuk BTR
+                    HttpContext.Session.SetString("BTRUsername", user.Username);
+                    HttpContext.Session.SetInt32("BTRUserId", user.Id);
+
+                    Console.WriteLine($"✓ BTR Login successful: {user.Username}");
+
+                    // Redirect to BTR Dashboard
+                    return RedirectToAction("Index", "BTR");
+                }
                 else
                 {
                     ViewBag.Error = "Invalid database selection";
+
                     return View();
                 }
             }

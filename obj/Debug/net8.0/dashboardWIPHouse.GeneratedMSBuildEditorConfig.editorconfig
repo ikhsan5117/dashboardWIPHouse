@@ -54,6 +54,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQmVmb3JlQ2hlY2tcSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[E:/dashboardWIPHouse/Views/BTR/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQlRSXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[E:/dashboardWIPHouse/Views/BTR/Items.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQlRSXEl0ZW1zLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [E:/dashboardWIPHouse/Views/Home/GreenHoseHistory.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxHcmVlbkhvc2VIaXN0b3J5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

@@ -1,0 +1,647 @@
+@{
+    ViewData["Title"] = "Update Data Items BTR";
+}
+
+@section Scripts {
+    <!-- DataTables with Buttons extension from CDN -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.bootstrap.min.css">
+    
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap.min.js"></script>
+    
+    <!-- DataTables Buttons extension -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.bootstrap.min.js"></script>
+    
+    <!-- Export libraries -->
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    
+    <!-- Export button implementations -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
+    
+    <style>
+        /* Inline editing styles */
+        .editable-cell {
+            cursor: pointer;
+            position: relative;
+            padding: 8px !important;
+        }
+        
+        .editable-cell:hover {
+            background-color: #f8f9fa !important;
+        }
+        
+        .editable-cell.editing {
+            padding: 2px !important;
+            background-color: #fff3cd !important;
+        }
+        
+        .inline-input {
+            width: 100%;
+            border: 2px solid #007bff;
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .inline-input:focus {
+            outline: none;
+            border-color: #0056b3;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        
+        .edit-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            color: #007bff;
+            font-size: 10px;
+        }
+        
+        .save-cancel-buttons {
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        .save-cancel-buttons button {
+            margin: 0 2px;
+            font-size: 10px;
+            padding: 2px 8px;
+        }
+        
+        .row-editing {
+            background-color: rgba(255, 243, 205, 0.3) !important;
+        }
+        
+        .edit-mode-indicator {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 10px;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+        
+        @@keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .table td {
+            vertical-align: middle !important;
+        }
+        
+        /* DataTables buttons styling */
+        .dt-buttons {
+            margin-bottom: 10px;
+        }
+        
+        .dt-buttons .btn {
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        
+        /* Custom export buttons styling */
+        .export-buttons {
+            margin-bottom: 15px;
+        }
+        
+        .export-buttons .btn {
+            margin-right: 8px;
+            margin-bottom: 5px;
+        }
+
+        .page-header {
+            margin-left: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        /* DataTables Header Styling */
+        .dataTables_wrapper table.dataTable thead th {
+            position: relative;
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            font-weight: 600;
+            color: #495057;
+            padding: 12px 8px;
+            vertical-align: middle;
+        }
+    </style>
+    
+    <script>
+    $(document).ready(function() {
+        let table;
+        let isEdit = false;
+        let currentEditingRow = null;
+        let originalRowData = null;
+
+        // Load dashboard summary
+        function loadDashboardSummary() {
+            $.ajax({
+                url: '@Url.Action("GetBTRItemsDashboardSummary", "BTR")',
+                type: 'GET',
+                success: function(data) {
+                    $('#totalItems').text(data.totalItems);
+                    $('#expiredItems').text(data.expiredCount);
+                    $('#nearExpiredItems').text(data.nearExpiredCount);
+                    $('#belowMinItems').text(data.belowMinCount);
+                    
+                    // Add animation effect
+                    $('.widget-simple h3 strong').each(function() {
+                        $(this).addClass('animation-fadeIn');
+                        setTimeout(() => $(this).removeClass('animation-fadeIn'), 1000);
+                    });
+                },
+                error: function() {
+                    console.error('Failed to load dashboard summary');
+                }
+            });
+        }
+
+        // Initialize DataTable with export buttons
+        table = $('#itemsTable').DataTable({
+            "ajax": {
+                "url": "@Url.Action("GetBTRItems", "BTR")",
+                "type": "GET",
+                "dataSrc": "data"
+            },
+            "columns": [
+                { 
+                    "data": "itemCode", 
+                    "className": "text-center",
+                    "title": "Item Code",
+                    "orderable": true
+                },
+                { 
+                    "data": "mesin", 
+                    "className": "text-center editable-cell",
+                    "title": "Mesin",
+                    "orderable": true,
+                    "render": function(data, type, row) {
+                        return '<span class="cell-content">' + (data || '-') + '</span>';
+                    }
+                },
+                { 
+                    "data": "qtyPerBox",
+                    "className": "text-center editable-cell",
+                    "title": "Qty Per Box",
+                    "orderable": true,
+                    "type": "num",
+                    "render": function(data, type, row) {
+                        if (type === 'display' || type === 'type') {
+                            let value = data || 0;
+                            return '<span class="cell-content">' + value + '</span>';
+                        }
+                        return data || 0;
+                    }
+                },
+                { 
+                    "data": "standardExp", 
+                    "className": "text-center editable-cell",
+                    "title": "Standard Exp (Days)",
+                    "orderable": true,
+                    "type": "num",
+                    "render": function(data, type, row) {
+                        return '<span class="cell-content">' + (data || 0) + '</span>';
+                    }
+                },
+                { 
+                    "data": "standardMin", 
+                    "className": "text-center editable-cell",
+                    "title": "Standard Min",
+                    "orderable": true,
+                    "type": "num",
+                    "render": function(data, type, row) {
+                        return '<span class="cell-content">' + (data || 0) + '</span>';
+                    }
+                },
+                { 
+                    "data": "standardMax", 
+                    "className": "text-center editable-cell",
+                    "title": "Standard Max",
+                    "orderable": true,
+                    "type": "num",
+                    "render": function(data, type, row) {
+                        return '<span class="cell-content">' + (data || 0) + '</span>';
+                    }
+                },
+                {
+                    "data": null,
+                    "className": "text-center",
+                    "title": "Actions",
+                    "orderable": false,
+                    "searchable": false,
+                    "render": function(data, type, row) {
+                        return '<button class="btn btn-xs btn-danger delete-btn" data-item="' + row.itemCode + '"><i class="fa fa-trash"></i> Delete</button>';
+                    }
+                }
+            ],
+            "pageLength": 25,
+            "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+            "responsive": true,
+            "processing": true,
+            "order": [[0, "asc"]],
+            "language": {
+                "processing": "<i class='fa fa-spinner fa-spin'></i> Loading data...",
+                "zeroRecords": "No matching records found"
+            },
+            "dom": '<"row"<"col-sm-12"B>>' +
+                   '<"row"<"col-sm-12"f>>' +
+                   'rt' +
+                   '<"row"<"col-sm-6"i><"col-sm-6"p>>',
+            "buttons": [
+                {
+                    extend: 'excel',
+                    text: '<i class="fa fa-file-excel-o text-success"></i> Excel',
+                    className: 'btn btn-default',
+                    title: 'BTR Items Data',
+                    exportOptions: { columns: [0, 1, 2, 3, 4, 5] }
+                },
+                {
+                    extend: 'csv',
+                    text: '<i class="fa fa-file-text-o text-info"></i> CSV',
+                    className: 'btn btn-default',
+                    title: 'BTR Items Data',
+                    exportOptions: { columns: [0, 1, 2, 3, 4, 5] }
+                },
+                {
+                    extend: 'pdf',
+                    text: '<i class="fa fa-file-pdf-o text-danger"></i> PDF',
+                    className: 'btn btn-default',
+                    title: 'BTR Items Data',
+                    exportOptions: { columns: [0, 1, 2, 3, 4, 5] }
+                },
+                {
+                    extend: 'print',
+                    text: '<i class="fa fa-print"></i> Print',
+                    className: 'btn btn-default',
+                    title: 'BTR Items Data',
+                    exportOptions: { columns: [0, 1, 2, 3, 4, 5] }
+                },
+                {
+                    extend: 'colvis',
+                    text: '<i class="fa fa-columns"></i> Columns',
+                    className: 'btn btn-default'
+                }
+            ],
+            "drawCallback": function() {
+                loadDashboardSummary();
+            }
+        });
+
+        // Inline editing functionality
+        $(document).on('click', '.editable-cell', function() {
+            if (currentEditingRow !== null) return;
+            
+            const $cell = $(this);
+            const $row = $cell.closest('tr');
+            const rowData = table.row($row).data();
+            const columnIndex = table.cell(this).index().column;
+            const columnData = table.settings()[0].aoColumns[columnIndex].data;
+            
+            originalRowData = {...rowData};
+            currentEditingRow = $row;
+            
+            $('body').prepend('<div class="edit-mode-indicator">EDIT MODE - Click outside or use Save/Cancel buttons to finish editing</div>');
+            $row.addClass('row-editing');
+            
+            let currentValue = rowData[columnData];
+            if (currentValue === undefined || currentValue === null) currentValue = '';
+            
+            let inputHtml; 
+            if (columnData === 'mesin') {
+                 inputHtml = `<input type="text" class="inline-input" value="${currentValue}" data-column="${columnData}">`;
+            } else {
+                 inputHtml = `<input type="number" class="inline-input" value="${currentValue}" data-column="${columnData}" step="0.01" min="0">`;
+            }
+            
+            inputHtml += `
+                <div class="save-cancel-buttons">
+                    <button class="btn btn-xs btn-success save-inline-btn">Save</button>
+                    <button class="btn btn-xs btn-secondary cancel-inline-btn">Cancel</button>
+                </div>
+            `;
+            
+            $cell.addClass('editing').html(inputHtml);
+            $cell.find('.inline-input').focus().select();
+        });
+
+        // Save inline edit
+        $(document).on('click', '.save-inline-btn', function(e) { e.stopPropagation(); saveInlineEdit(); });
+        $(document).on('click', '.cancel-inline-btn', function(e) { e.stopPropagation(); cancelInlineEdit(); });
+        
+        // Key handlers
+        $(document).on('keypress', '.inline-input', function(e) { if (e.which === 13) saveInlineEdit(); });
+        $(document).on('keydown', '.inline-input', function(e) { if (e.which === 27) cancelInlineEdit(); });
+
+        function saveInlineEdit() {
+            if (!currentEditingRow) return;
+            
+            const $row = currentEditingRow;
+            const rowData = table.row($row).data();
+            
+            const updatedData = {...rowData};
+            let hasChanges = false;
+            
+            $row.find('.inline-input').each(function() {
+                const column = $(this).data('column');
+                const newValue = $(this).val();
+                const oldValue = originalRowData[column];
+                
+                if (column === 'mesin') {
+                    updatedData[column] = newValue;
+                    if (newValue !== (oldValue || '')) hasChanges = true;
+                } else {
+                    const numValue = parseFloat(newValue) || 0;
+                    updatedData[column] = numValue;
+                    if (numValue !== (oldValue || 0)) hasChanges = true;
+                }
+            });
+            
+            if (!hasChanges) {
+                cancelInlineEdit();
+                return;
+            }
+            
+            // Prepare API data
+            const apiData = {
+                ItemCode: updatedData.itemCode,
+                Mesin: updatedData.mesin,
+                QtyPerBox: parseFloat(updatedData.qtyPerBox) || 0,
+                StandardExp: parseInt(updatedData.standardExp) || 0,
+                StandardMin: parseInt(updatedData.standardMin) || 0,
+                StandardMax: parseInt(updatedData.standardMax) || 0
+            };
+            
+            $row.find('.editing').html('<i class="fa fa-spinner fa-spin"></i> Saving...');
+            
+            $.ajax({
+                url: '@Url.Action("UpdateBTRItem", "BTR")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(apiData),
+                success: function(response) {
+                    if (response.success) {
+                        table.ajax.reload(null, false);
+                        loadDashboardSummary();
+                        resetInlineEdit();
+                        showMessage('Data updated successfully!', 'success');
+                    } else {
+                        showMessage('Error: ' + response.message, 'error');
+                        cancelInlineEdit();
+                    }
+                },
+                error: function() {
+                    showMessage('An error occurred while saving the data.', 'error');
+                    cancelInlineEdit();
+                }
+            });
+        }
+
+        function cancelInlineEdit() {
+            if (!currentEditingRow) return;
+            table.draw(false); // Redraw to reset cell content
+            resetInlineEdit();
+        }
+
+        function resetInlineEdit() {
+            if (currentEditingRow) currentEditingRow.removeClass('row-editing');
+            currentEditingRow = null;
+            originalRowData = null;
+            $('.edit-mode-indicator').remove();
+        }
+
+        // Delete Button
+        $('#itemsTable').on('click', '.delete-btn', function() {
+            const itemCode = $(this).data('item');
+            if (confirm('Are you sure you want to delete item ' + itemCode + '?')) {
+                $.ajax({
+                    url: '@Url.Action("DeleteBTRItem", "BTR")',
+                    type: 'POST',
+                    data: { itemCode: itemCode },
+                    success: function(response) {
+                        if (response.success) {
+                            table.ajax.reload();
+                            loadDashboardSummary();
+                            showMessage('Item deleted successfully!', 'success');
+                        } else {
+                            showMessage('Error: ' + response.message, 'error');
+                        }
+                    }
+                });
+            }
+        });
+
+        function showMessage(message, type) {
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+            // Use SweetAlert if available or fallback
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: type,
+                    title: type === 'success' ? 'Success' : 'Error',
+                    text: message,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            } else {
+                alert(message);
+            }
+        }
+
+        // Add New Item Logic...
+        $('#btnAddNew').click(showAddItemDialog);
+
+        function showAddItemDialog() {
+            $('#customAddDialog').remove();
+            
+            const dialogHtml = `
+                <div id="customAddDialog" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+                    <div style="background: white; padding: 25px; border-radius: 8px; width: 450px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                        <h3 style="margin-top: 0; margin-bottom: 20px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                            <i class="fa fa-plus-circle text-primary"></i> Add New BTR Item
+                        </h3>
+                        
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label style="font-weight: 600;">Item Code *:</label>
+                            <input type="text" id="dialogItemCode" class="form-control" placeholder="Enter Unique Item Code">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label style="font-weight: 600;">Mesin:</label>
+                            <input type="text" id="dialogMesin" class="form-control" placeholder="Enter Machine Name/ID">
+                        </div>
+                        
+                        <div class="row" style="margin-bottom: 15px;">
+                            <div class="col-xs-6">
+                                <label style="font-weight: 600;">Qty Per Box:</label>
+                                <input type="number" id="dialogQtyPerBox" class="form-control" value="0" min="0">
+                            </div>
+                            <div class="col-xs-6">
+                                <label style="font-weight: 600;">Standard Exp (Days):</label>
+                                <input type="number" id="dialogStandardExp" class="form-control" value="0" min="0">
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-bottom: 20px;">
+                            <div class="col-xs-6">
+                                <label style="font-weight: 600;">Standard Min:</label>
+                                <input type="number" id="dialogStandardMin" class="form-control" value="0" min="0">
+                            </div>
+                            <div class="col-xs-6">
+                                <label style="font-weight: 600;">Standard Max:</label>
+                                <input type="number" id="dialogStandardMax" class="form-control" value="0" min="0">
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: right; margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px;">
+                            <button id="dialogCancel" class="btn btn-default" style="margin-right: 10px;">Cancel</button>
+                            <button id="dialogSave" class="btn btn-primary">Save Item</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            $('body').append(dialogHtml);
+            $('#dialogItemCode').focus();
+
+            // Cancel
+            $('#dialogCancel').click(() => $('#customAddDialog').remove());
+
+            // Save
+            $('#dialogSave').click(function() {
+                const itemCode = $('#dialogItemCode').val().trim();
+                const mesin = $('#dialogMesin').val().trim();
+                const qtyPerBox = parseFloat($('#dialogQtyPerBox').val()) || 0;
+                
+                if (!itemCode) {
+                    Swal.fire('Error', 'Item Code is required', 'error');
+                    return;
+                }
+
+                const itemData = {
+                    ItemCode: itemCode.toUpperCase(),
+                    Mesin: mesin,
+                    QtyPerBox: qtyPerBox,
+                    StandardExp: parseInt($('#dialogStandardExp').val()) || 0,
+                    StandardMin: parseInt($('#dialogStandardMin').val()) || 0,
+                    StandardMax: parseInt($('#dialogStandardMax').val()) || 0
+                };
+                
+                $.ajax({
+                    url: '@Url.Action("CreateBTRItem", "BTR")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(itemData),
+                    success: function(response) {
+                        if (response.success) {
+                            $('#customAddDialog').remove();
+                            table.ajax.reload();
+                            loadDashboardSummary();
+                            showMessage('Item created successfully!', 'success');
+                        } else {
+                            Swal.fire('Error', response.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        Swal.fire('Error', 'Failed to create item', 'error');
+                    }
+                });
+            });
+        }
+    });
+    </script>
+}
+
+<!-- Page Content -->
+<div id="page-content">
+    <!-- Header -->
+    <div class="content-header">
+        <div class="header-section">
+            <h1>
+                <i class="fa fa-table"></i> Update Data Items<br>
+                <small>Click on any cell (except Item Code) to edit inline</small>
+            </h1>
+        </div>
+    </div>
+    <!-- END Header -->
+
+    <!-- Stats Widgets -->
+    <div class="row text-center">
+        <div class="col-sm-6 col-lg-3">
+            <div class="widget">
+                <div class="widget-extra themed-background-dark">
+                    <h4 class="widget-content-light"><strong>Total Items</strong></h4>
+                </div>
+                <div class="widget-extra-full"><span class="h2 animation-expandOpen" id="totalItems">0</span></div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="widget">
+                <div class="widget-extra themed-background-danger">
+                    <h4 class="widget-content-light"><strong>Expired</strong></h4>
+                </div>
+                <div class="widget-extra-full"><span class="h2 animation-expandOpen" style="color: #d9534f" id="expiredItems">0</span></div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="widget">
+                <div class="widget-extra themed-background-warning">
+                    <h4 class="widget-content-light"><strong>Near Expired</strong></h4>
+                </div>
+                <div class="widget-extra-full"><span class="h2 animation-expandOpen" style="color: #f0ad4e" id="nearExpiredItems">0</span></div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="widget">
+                <div class="widget-extra themed-background-info">
+                    <h4 class="widget-content-light"><strong>Below Min</strong></h4>
+                </div>
+                <div class="widget-extra-full"><span class="h2 animation-expandOpen" style="color: #5bc0de" id="belowMinItems">0</span></div>
+            </div>
+        </div>
+    </div>
+    <!-- END Stats Widgets -->
+
+    <!-- Datatables Content -->
+    <div class="block full">
+        <div class="block-title">
+            <div class="block-options pull-right">
+                <button id="btnAddNew" class="btn btn-alt btn-sm btn-success" style="margin-right: 5px;">
+                    <i class="fa fa-plus"></i> Add New Item
+                </button>
+                <button onclick="location.reload()" class="btn btn-alt btn-sm btn-info">
+                    <i class="fa fa-refresh"></i> Refresh
+                </button>
+            </div>
+            <h2>Items Management</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table id="itemsTable" class="table table-vcenter table-condensed table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-center">Item Code</th>
+                        <th class="text-center">Mesin</th>
+                        <th class="text-center">Qty Per Box</th>
+                        <th class="text-center">Standard Exp</th>
+                        <th class="text-center">Standard Min</th>
+                        <th class="text-center">Standard Max</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Data loaded via Ajax -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

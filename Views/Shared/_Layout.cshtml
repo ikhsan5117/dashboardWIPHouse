@@ -355,6 +355,47 @@
                                     </a>
                                 </li>
                             }
+                            else if (currentDatabase == "BTR")
+                            {
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <!-- BTR Dashboard Section -->
+                                    <li class="sidebar-header">
+                                        <span class="sidebar-nav-mini-hide">BTR Dashboard</span>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Index", "BTR")"
+                                            class="@(currentController == "BTR" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")">
+                                            <i class="gi gi-cogwheel sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">BTR Dashboard</span>
+                                        </a>
+                                    </li>
+
+                                    <!-- Update Data Section -->
+                                    <li class="sidebar-header">
+                                        <span class="sidebar-nav-mini-hide">Update Data</span>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Items", "BTR")"
+                                            class="@(currentController == "Items" ? "active" : "")">
+                                            <i class="gi gi-table sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">BTR Items</span>
+                                        </a>
+                                    </li>
+                                }
+                                
+                                <!-- Stock Input Menu (For All Users) -->
+                                <li class="sidebar-header">
+                                    <span class="sidebar-nav-mini-hide">Stock Input</span>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Index", "InputMenu")"
+                                        class="@(currentController == "InputMenu" ? "active" : "")">
+                                        <i class="gi gi-circle_plus sidebar-nav-icon"></i>
+                                        <span class="sidebar-nav-mini-hide">Supply App</span>
+                                    </a>
+                                </li>
+                            }
                             else
                             {
                                 <!-- Default Navigation (Not Logged In) -->

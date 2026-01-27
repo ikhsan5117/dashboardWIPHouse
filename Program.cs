@@ -26,6 +26,11 @@ builder.Services.AddDbContext<RVIContext>(options =>
 builder.Services.AddDbContext<MoldedContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MoldedDb")));
 
+// ✅ Tambah BTR DbContext
+builder.Services.AddDbContext<BTRDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BTRDb")));
+
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddLogging();
 
@@ -73,6 +78,12 @@ app.MapControllerRoute(
     name: "beforecheck",
     pattern: "BeforeCheck/{action=Index}/{id?}",
     defaults: new { controller = "BeforeCheck" });
+
+app.MapControllerRoute(
+    name: "btr",
+    pattern: "BTR/{action=Index}/{id?}",
+    defaults: new { controller = "BTR" });
+
 
 app.MapControllerRoute(
     name: "default",
@@ -204,6 +215,45 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         Console.WriteLine($"✗ MOLDED Database connection error: {ex.Message}");
+    }
+
+    // Test BTR database
+    var btrContext = scope.ServiceProvider.GetRequiredService<BTRDbContext>();
+    try
+    {
+        if (btrContext.Database.CanConnect())
+        {
+            Console.WriteLine("✓ BTR Database connection successful");
+
+            // Auto-create admin user if it doesn't exist
+            try 
+            {
+                var adminUser = btrContext.Users.FirstOrDefault(u => u.Username == "adminBTR");
+                if (adminUser == null)
+                {
+                    btrContext.Users.Add(new UserBTR
+                    {
+                        Username = "adminBTR",
+                        Password = "BTR123",
+                        CreatedDate = DateTime.Now
+                    });
+                    btrContext.SaveChanges();
+                    Console.WriteLine("✓ Created default 'adminBTR' user (password: BTR123)");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"! Error Seeding BTR Users: {ex.Message}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("✗ BTR Database connection failed");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"✗ BTR Database connection error: {ex.Message}");
     }
 }
 
