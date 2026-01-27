@@ -236,9 +236,29 @@
     </style>
 </head>
 <body>
+    @{
+        var isAdmin = User.IsInRole("Admin");
+        var database = ViewBag.Database as string ?? "HOSE";
+        var actionUrl = "/Account/Logout";
+        var iconPath = "M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"; // Logout icon
+        var btnTitle = "Logout";
+
+        if (isAdmin)
+        {
+            btnTitle = "Back to Dashboard";
+            iconPath = "M520-600v-240h320v240H520ZM120-120v-320h320v320H120ZM120-520v-320h320v320H120Zm400 400v-320h320v320H520ZM600-680h160v-80H600v80Zm-400 480h160v-160H200v160Zm0-400h160v-160H200v160Zm400 400h160v-160H600v160Z"; // Dashboard icon
+            
+            if (database == "HOSE") actionUrl = Url.Action("Index", "Home");
+            else if (database == "RVI") actionUrl = Url.Action("Index", "RVI");
+            else if (database == "MOLDED") actionUrl = Url.Action("Index", "Molded");
+        }
+    }
+
     <!-- Settings Icon -->
-    <div class="settings-icon" onclick="window.location.href='/Account/Logout'">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
+    <div class="settings-icon" onclick="window.location.href='@actionUrl'" title="@btnTitle">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="white">
+            <path d="@iconPath"/>
+        </svg>
     </div>
 
     <!-- Logo & Title -->
@@ -247,14 +267,11 @@
             <img src="~/img/supply-app-logo.png" alt="Supply App Logo" style="width: 120px; height: auto;">
         </div>
         <h1 class="app-title">SUPPLY APP</h1>
-        <p class="app-subtitle">Stock Management System</p>
+        <p class="app-subtitle">Stock Management System @(isAdmin ? "- Admin" : "")</p>
     </div>
 
     <!-- Menu Cards -->
     <div class="menu-container">
-        @{
-            var database = ViewBag.Database as string ?? "HOSE";
-        }
 
         @if (database == "HOSE")
         {

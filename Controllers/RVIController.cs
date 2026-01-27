@@ -2043,6 +2043,7 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<JsonResult> DeleteHistory(int id, string type)
         {

@@ -1958,6 +1958,7 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<JsonResult> DeleteHistory(int id, string type)
         {

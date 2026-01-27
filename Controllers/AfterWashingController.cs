@@ -971,6 +971,7 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<JsonResult> DeleteHistory(int id, string type)
         {
@@ -981,13 +982,20 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                     var log = await _context.StorageLogAW.FindAsync(id);
                     if (log == null) return Json(new { success = false, message = "Record not found" });
                     _context.StorageLogAW.Remove(log);
-                    await _context.SaveChangesAsync();
-                    return Json(new { success = true, message = "Record deleted successfully" });
+                }
+                else if (type == "out")
+                {
+                    var log = await _context.SupplyLogAW.FindAsync(id);
+                    if (log == null) return Json(new { success = false, message = "Record not found" });
+                    _context.SupplyLogAW.Remove(log);
                 }
                 else
                 {
                     return Json(new { success = false, message = "Type not supported for deletion" });
                 }
+
+                await _context.SaveChangesAsync();
+                return Json(new { success = true, message = "Record deleted successfully" });
             }
             catch (Exception ex)
             {
