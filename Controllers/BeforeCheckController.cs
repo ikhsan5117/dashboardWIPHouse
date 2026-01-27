@@ -40,24 +40,22 @@ namespace dashboardWIPHouse.Controllers
 
                 _logger.LogInformation($"Loaded {allBcItems.Count()} BC items from database");
 
-                // Calculate summary statistics
+                // Calculate summary statistics using standard inventory logic
                 var summary = new BeforeCheckSummaryRVI
                 {
                     TotalRaks = allBcItems.Count(),
                     TotalItems = allBcItems.Select(x => x.ItemCode).Distinct().Count(),
                     TotalQty = allBcItems.Sum(x => x.DisplayQtyPerBox),
-                    FullRaks = allBcItems.Count(x => IsFullRak(x.DisplayQtyPerBox, x.DisplayStandardMax)),
-                    EmptyRaks = allBcItems.Count(x => IsEmptyRak(x.DisplayQtyPerBox)),
-                    PartialRaks = allBcItems.Count(x => IsPartialRak(x.DisplayQtyPerBox, x.DisplayStandardMax))
+                    ShortageCount = allBcItems.Count(x => (x.QtyPerBox ?? 0) <= (x.StandardMin ?? 0)),
+                    NormalCount = allBcItems.Count(x => (x.QtyPerBox ?? 0) > (x.StandardMin ?? 0) && (x.QtyPerBox ?? 0) < (x.StandardMax ?? 0)),
+                    OverStockCount = allBcItems.Count(x => (x.QtyPerBox ?? 0) >= (x.StandardMax ?? 0))
                 };
 
                 _logger.LogInformation($"Before Check Summary calculated:");
                 _logger.LogInformation($"- Total Raks: {summary.TotalRaks}");
-                _logger.LogInformation($"- Total Items: {summary.TotalItems}");
-                _logger.LogInformation($"- Total Qty: {summary.TotalQty}");
-                _logger.LogInformation($"- Full Raks: {summary.FullRaks}");
-                _logger.LogInformation($"- Empty Raks: {summary.EmptyRaks}");
-                _logger.LogInformation($"- Partial Raks: {summary.PartialRaks}");
+                _logger.LogInformation($"- Shortage: {summary.ShortageCount}");
+                _logger.LogInformation($"- Normal: {summary.NormalCount}");
+                _logger.LogInformation($"- Over Stock: {summary.OverStockCount}");
 
                 ViewData["Title"] = "Before Check Dashboard";
                 _logger.LogInformation("=== Before Check Dashboard Load Completed Successfully ===");
@@ -67,7 +65,6 @@ namespace dashboardWIPHouse.Controllers
             {
                 _logger.LogError($"=== Before Check Dashboard Load Failed ===");
                 _logger.LogError($"Error: {ex.Message}");
-                _logger.LogError($"Stack Trace: {ex.StackTrace}");
 
                 var emptySummary = new BeforeCheckSummaryRVI();
                 ViewData["Title"] = "Before Check Dashboard";
@@ -86,21 +83,23 @@ namespace dashboardWIPHouse.Controllers
                 // Load BC items for table
                 var allBcItems = await _context.ItemsBCRVI.ToListAsync();
 
-                _logger.LogInformation($"Loaded {allBcItems.Count()} BC items for table data");
-
-                var tableData = allBcItems.Select((bc, index) => new BeforeCheckTableItemRVI
-                {
-                    No = index + 1,
-                    KodeRak = bc.ItemCode, // Using ItemCode as identifier
-                    KodeItem = bc.ItemCode,
-                    Qty = bc.DisplayQtyPerBox,
-                    TypeBox = "N/A",
-                    MaxCapacRak = bc.DisplayStandardMax,
-                    Status = DetermineRakStatus(bc.DisplayQtyPerBox, bc.DisplayStandardMax),
-                    CapacityPercentage = CalculateCapacityPercentage(bc.DisplayQtyPerBox, bc.DisplayStandardMax)
+                var tableData = allBcItems.Select((bc, index) => {
+                    var qty = bc.QtyPerBox ?? 0;
+                    var min = bc.StandardMin ?? 0;
+                    var max = bc.StandardMax ?? 0;
+                    
+                    return new BeforeCheckTableItemRVI
+                    {
+                        No = index + 1,
+                        KodeRak = bc.ItemCode, 
+                        KodeItem = bc.ItemCode,
+                        Qty = qty,
+                        TypeBox = "N/A",
+                        MaxCapacRak = max,
+                        Status = (qty <= min ? "Shortage" : qty >= max ? "Over Stock" : "Normal"),
+                        CapacityPercentage = (max > 0 ? Math.Round((double)qty / max * 100, 1) : 0)
+                    };
                 }).ToList();
-
-                _logger.LogInformation($"Processed {tableData.Count} items for table display");
 
                 return Json(new { data = tableData });
             }

@@ -313,31 +313,31 @@ namespace dashboardWIPHouse.Models
         public double CapacityPercentage { get; set; }
     }
 
-    // RVI Before Check Dashboard Summary Model (new)
+    // RVI Before Check Dashboard Summary Model (aligned with standard inventory logic)
     public class BeforeCheckSummaryRVI
     {
         public int TotalRaks { get; set; }
         public int TotalItems { get; set; }
-        public int FullRaks { get; set; }
-        public int EmptyRaks { get; set; }
-        public int PartialRaks { get; set; }
+        public int ShortageCount { get; set; } = 0;
+        public int NormalCount { get; set; } = 0;
+        public int OverStockCount { get; set; } = 0;
         public decimal TotalQty { get; set; }
 
         // Computed properties for percentages
         [NotMapped]
-        public double FullRaksPercentage => TotalRaks > 0 ? Math.Round((double)FullRaks / TotalRaks * 100, 1) : 0;
+        public double ShortagePercentage => TotalRaks > 0 ? Math.Round((double)ShortageCount / TotalRaks * 100, 1) : 0;
 
         [NotMapped]
-        public double EmptyRaksPercentage => TotalRaks > 0 ? Math.Round((double)EmptyRaks / TotalRaks * 100, 1) : 0;
+        public double NormalPercentage => TotalRaks > 0 ? Math.Round((double)NormalCount / TotalRaks * 100, 1) : 0;
 
         [NotMapped]
-        public double PartialRaksPercentage => TotalRaks > 0 ? Math.Round((double)PartialRaks / TotalRaks * 100, 1) : 0;
+        public double OverStockPercentage => TotalRaks > 0 ? Math.Round((double)OverStockCount / TotalRaks * 100, 1) : 0;
 
         [NotMapped]
-        public int NormalRaks => TotalRaks - FullRaks - EmptyRaks - PartialRaks;
+        public int CriticalCount => ShortageCount + OverStockCount;
 
         [NotMapped]
-        public double NormalRaksPercentage => TotalRaks > 0 ? Math.Round((double)NormalRaks / TotalRaks * 100, 1) : 0;
+        public double CriticalPercentage => TotalRaks > 0 ? Math.Round((double)CriticalCount / TotalRaks * 100, 1) : 0;
     }
 
     // RVI Before Check Table Item Model (new)

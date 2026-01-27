@@ -1717,20 +1717,48 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
         {
             try
             {
-                var items = await _context.ItemsRVI.ToListAsync();
-                var result = items.Select(i => new
-                {
-                    itemCode = i.ItemCode,
-                    qtyPerBox = (double)(i.QtyPerBox ?? 0),
-                    standardMin = i.StandardMin ?? 0,
-                    standardMax = i.StandardMax ?? 0
-                }).ToList();
+                // Load items and stock summaries
+                var allItems = await _context.ItemsRVI.ToListAsync();
+                var allStockSummaries = await _context.StockSummaryRVI.ToListAsync();
+
+                // Group stock summaries - sum all records with same item_code and check for expiry status
+                var stockSummaryGrouped = allStockSummaries
+                    .Where(s => !string.IsNullOrEmpty(s.ItemCode))
+                    .GroupBy(s => s.ItemCode)
+                    .ToDictionary(g => g.Key, g => new
+                    {
+                        TotalStock = g.Sum(s => s.CurrentBoxStock ?? 0),
+                        HasExpired = g.Any(s => s.StatusExpired == "Expired"),
+                        HasNearExpired = g.Any(s => s.StatusExpired == "Near Expired")
+                    });
+
+                var result = allItems.Select(i => {
+                    var summary = stockSummaryGrouped.ContainsKey(i.ItemCode) ? stockSummaryGrouped[i.ItemCode] : null;
+                    var currentStock = summary?.TotalStock ?? 0;
+                    
+                    return new
+                    {
+                        itemCode = i.ItemCode,
+                        mesin = "N/A", // RVI doesn't have machines
+                        qtyPerBox = (double)(i.QtyPerBox ?? 0),
+                        standardExp = 0, // Placeholder as ItemRVI doesn't have it in DB
+                        standardMin = i.StandardMin ?? 0,
+                        standardMax = i.StandardMax ?? 0,
+                        currentStock = currentStock,
+                        isExpired = summary?.HasExpired ?? false,
+                        isNearExpired = summary?.HasNearExpired ?? false,
+                        isBelowMin = currentStock < (i.StandardMin ?? 0), // Standard "Below Min" check
+                        status = (summary?.HasExpired == true ? "Expired" : 
+                                 summary?.HasNearExpired == true ? "Near Exp" : 
+                                 currentStock < (i.StandardMin ?? 0) ? "Below Min" : "Normal")
+                    };
+                }).OrderBy(x => x.itemCode).ToList();
 
                 return Json(new { data = result });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading RVI items");
+                _logger.LogError(ex, "Error loading RVI items with stock data");
                 return Json(new { data = new List<object>() });
             }
         }
@@ -1828,22 +1856,31 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
         {
             try
             {
-                // EF query should work now that model matches database schema (int)
                 var items = await _context.ItemsBCRVI.ToListAsync();
                 
-                var result = items.Select(i => new
-                {
-                    itemCode = i.ItemCode,
-                    qtyPerBox = i.QtyPerBox ?? 0, // int
-                    standardMin = i.StandardMin ?? 0,
-                    standardMax = i.StandardMax ?? 0
-                }).ToList();
+                var result = items.Select(i => {
+                    var currentStock = i.QtyPerBox ?? 0;
+                    return new
+                    {
+                        itemCode = i.ItemCode,
+                        mesin = "N/A", // BC doesn't have machines
+                        qtyPerBox = currentStock, 
+                        standardExp = 0,
+                        standardMin = i.StandardMin ?? 0,
+                        standardMax = i.StandardMax ?? 0,
+                        currentStock = currentStock,
+                        isExpired = false, // BC is fresh material arriving
+                        isNearExpired = false,
+                        isBelowMin = currentStock < (i.StandardMin ?? 0),
+                        status = (currentStock < (i.StandardMin ?? 0) ? "Below Min" : "Normal")
+                    };
+                }).OrderBy(x => x.itemCode).ToList();
 
                 return Json(new { data = result });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading BC items");
+                _logger.LogError(ex, "Error loading BC items with status data");
                 return Json(new { data = new List<object>(), error = ex.Message });
             }
         }

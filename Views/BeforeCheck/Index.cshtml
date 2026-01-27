@@ -241,22 +241,22 @@
                         <div class="push-10">
                             <i class="gi gi-cargo text-danger" style="font-size: 2em;"></i>
                         </div>
-                        <div class="h3 text-danger push-5">@Model.EmptyRaks</div>
-                        <div class="text-muted">Empty Raks</div>
-                    </div>
-                    <div class="col-xs-6 col-sm-3">
-                        <div class="push-10">
-                            <i class="gi gi-cargo text-warning" style="font-size: 2em;"></i>
-                        </div>
-                        <div class="h3 text-warning push-5">@Model.PartialRaks</div>
-                        <div class="text-muted">Partial Raks</div>
+                        <div class="h3 text-danger push-5">@Model.ShortageCount</div>
+                        <div class="text-muted">Shortage Count</div>
                     </div>
                     <div class="col-xs-6 col-sm-3">
                         <div class="push-10">
                             <i class="gi gi-cargo text-success" style="font-size: 2em;"></i>
                         </div>
-                        <div class="h3 text-success push-5">@Model.FullRaks</div>
-                        <div class="text-muted">Full Raks</div>
+                        <div class="h3 text-success push-5">@Model.NormalCount</div>
+                        <div class="text-muted">Normal Count</div>
+                    </div>
+                    <div class="col-xs-6 col-sm-3">
+                        <div class="push-10">
+                            <i class="gi gi-cargo text-warning" style="font-size: 2em;"></i>
+                        </div>
+                        <div class="h3 text-warning push-5">@Model.OverStockCount</div>
+                        <div class="text-muted">Over Stock Count</div>
                     </div>
                     <div class="col-xs-6 col-sm-3">
                         <div class="push-10">
@@ -275,54 +275,48 @@
 <div class="dashboard-stats-row" id="main-stats">
     <div class="dashboard-stats-container">
         <div class="stats-widget-wrapper">
-            <!-- Empty Raks Widget -->
-            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Empty')">
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Shortage')">
                 <div class="widget-simple widget-simple-custom">
                     <div class="widget-icon themed-background-danger animation-fadeIn">
                         <i class="fa fa-times-circle"></i>
                     </div>
                     <div class="widget-content animation-pullDown">
                         <h3>
-                            <strong id="main-empty">@Model.EmptyRaks</strong>
-                            Raks
+                            <strong id="main-shortage">@Model.ShortageCount</strong>
                         </h3>
-                        <small>Empty Raks</small>
+                        <small>Shortage</small>
                     </div>
                 </div>
             </a>
         </div>
 
         <div class="stats-widget-wrapper">
-            <!-- Partial Raks Widget -->
-            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Partial')">
-                <div class="widget-simple widget-simple-custom">
-                    <div class="widget-icon themed-background-warning animation-fadeIn">
-                        <i class="fa fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="widget-content animation-pullDown">
-                        <h3>
-                            <strong id="main-partial">@Model.PartialRaks</strong>
-                            Raks
-                        </h3>
-                        <small>Partial Raks</small>
-                    </div>
-                </div>
-            </a>
-        </div>
-
-        <div class="stats-widget-wrapper">
-            <!-- Full Raks Widget -->
-            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Full')">
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Normal')">
                 <div class="widget-simple widget-simple-custom">
                     <div class="widget-icon themed-background-success animation-fadeIn">
                         <i class="fa fa-check-circle"></i>
                     </div>
                     <div class="widget-content animation-pullDown">
                         <h3>
-                            <strong id="main-full">@Model.FullRaks</strong>
-                            Raks
+                            <strong id="main-normal">@Model.NormalCount</strong>
                         </h3>
-                        <small>Full Raks</small>
+                        <small>Normal</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="stats-widget-wrapper">
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Over Stock')">
+                <div class="widget-simple widget-simple-custom">
+                    <div class="widget-icon themed-background-warning animation-fadeIn">
+                        <i class="fa fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="widget-content animation-pullDown">
+                        <h3>
+                            <strong id="main-overstock">@Model.OverStockCount</strong>
+                        </h3>
+                        <small>Over Stock</small>
                     </div>
                 </div>
             </a>
@@ -417,17 +411,14 @@
                         render: function (data, type, row) {
                             let badgeClass = '';
                             switch (data) {
-                                case 'Empty':
+                                case 'Shortage':
                                     badgeClass = 'badge badge-danger';
                                     break;
-                                case 'Partial':
+                                case 'Over Stock':
                                     badgeClass = 'badge badge-warning';
                                     break;
-                                case 'Full':
-                                    badgeClass = 'badge badge-success';
-                                    break;
                                 case 'Normal':
-                                    badgeClass = 'badge badge-info';
+                                    badgeClass = 'badge badge-success';
                                     break;
                                 default:
                                     badgeClass = 'badge badge-secondary';
