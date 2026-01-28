@@ -535,7 +535,7 @@ namespace dashboardWIPHouse.Controllers
                     // Aggregate stock to itemCode-level (match AfterWashing response shape)
                     var allItems = await _context.Items
                         .Select(i => new { i.ItemCode, i.QtyPerBox, i.StandardMin })
-                        .ToDictionaryAsync(i => i.ItemCode);
+                        .ToDictionaryAsync(i => i.ItemCode, StringComparer.OrdinalIgnoreCase);
 
                     var stockRows = await _context.StockSummary
                         .Where(s => !string.IsNullOrEmpty(s.ItemCode))
@@ -553,27 +553,29 @@ namespace dashboardWIPHouse.Controllers
                             var statusExpired = latest?.StatusExpired;
                             var lastUpdated = latest?.LastUpdate ?? DateTime.MinValue;
 
-                            allItems.TryGetValue(g.Key, out var item);
+                            allItems.TryGetValue(g.Key.Trim(), out var item);
                             var qtyPerBox = item?.QtyPerBox ?? 0;
                             var qtyPcs = totalBox * qtyPerBox;
-
                             var standardMin = item?.StandardMin ?? 0;
 
                             string displayStatus = "Normal";
+                            
+                            // 1. Check Expiry first
                             if (!string.IsNullOrEmpty(statusExpired))
                             {
-                                if (statusExpired.Equals("Expired", StringComparison.OrdinalIgnoreCase)) displayStatus = "Already Expired";
-                                else if (statusExpired.Equals("Near Exp", StringComparison.OrdinalIgnoreCase) ||
-                                         statusExpired.Equals("Near Expired", StringComparison.OrdinalIgnoreCase)) displayStatus = "Near Expired";
+                                if (statusExpired.Contains("Expired", StringComparison.OrdinalIgnoreCase)) displayStatus = "Already Expired";
+                                else if (statusExpired.Contains("Near", StringComparison.OrdinalIgnoreCase)) displayStatus = "Near Expired";
                             }
-                            else if (standardMin > 0 && totalBox < standardMin)
+
+                            // 2. Check Shortage (only if not already Expired/Near)
+                            if (displayStatus == "Normal" && standardMin > 0 && totalBox < standardMin)
                             {
                                 displayStatus = "Shortage";
                             }
 
                             return new
                             {
-                                itemCode = g.Key,
+                                itemCode = g.Key.Trim(),
                                 description = displayStatus,
                                 qty = totalBox,
                                 qtyPcs = qtyPcs,
