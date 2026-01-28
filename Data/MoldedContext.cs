@@ -70,7 +70,7 @@ namespace dashboardWIPHouse.Data
                     .HasColumnName("item_code")
                     .IsRequired();
 
-                entity.Property(e => e.FullQr)
+                entity.Property(e => e.FullQR)
                     .HasColumnName("full_qr")
                     .IsRequired();
 
@@ -335,14 +335,14 @@ namespace dashboardWIPHouse.Data
             modelBuilder.Entity<StockSummaryMoldedSecondary>(entity =>
             {
                 // Use composite key since log_id may not exist
-                entity.HasKey(e => new { e.ItemCode, e.FullQr });
+                entity.HasKey(e => new { e.ItemCode, e.FullQR });
                 entity.ToView("vw_stock_summary_secondary");
 
                 entity.Property(e => e.ItemCode)
                     .HasColumnName("item_code")
                     .IsRequired();
 
-                entity.Property(e => e.FullQr)
+                entity.Property(e => e.FullQR)
                     .HasColumnName("full_qr")
                     .IsRequired();
 

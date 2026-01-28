@@ -141,7 +141,7 @@ namespace dashboardWIPHouse.Models
         public string ItemCode { get; set; } = string.Empty;
 
         [Column("full_qr")]
-        public string FullQr { get; set; } = string.Empty;
+        public string FullQR { get; set; } = string.Empty;
 
         [Column("current_box_stock")]
         public int? CurrentBoxStock { get; set; }
@@ -265,7 +265,7 @@ namespace dashboardWIPHouse.Models
         // Helper method for expiry calculation
         private double CalculateDaysUntilExpiry()
         {
-            if (!Item?.StandardExp.HasValue == true || LastUpdated == DateTime.MinValue) 
+            if (Item?.StandardExp == null || LastUpdated == DateTime.MinValue) 
                 return 0;
             
             var daysSinceLastUpdate = (DateTime.Now - LastUpdated).TotalDays;
@@ -275,7 +275,7 @@ namespace dashboardWIPHouse.Models
         // Helper method to get near expired threshold based on standard exp
         private int GetNearExpiredThreshold()
         {
-            if (!Item?.StandardExp.HasValue == true) return 3;
+            if (Item?.StandardExp == null) return 3;
             
             // Jika standard exp <= 3 hari, maka nearly expired = 1 hari
             // Jika standard exp > 3 hari, maka nearly expired = 3 hari

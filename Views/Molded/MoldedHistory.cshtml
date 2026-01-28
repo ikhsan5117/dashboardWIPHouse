@@ -344,8 +344,9 @@
 
         .status-normal { background-color: #E8F5E9; color: #2E7D32; }
         .status-shortage { background-color: #FFEBEE; color: #C62828; }
-        .status-overstock { background-color: #E3F2FD; color: #1565C0; }
-        .status-expired { background-color: #FFCDD2; color: #B71C1C; } /* Added for Molded */
+        .status-belowmin { background-color: #E3F2FD; color: #1565C0; }
+        .status-overstock { background-color: #E1F5FE; color: #0288D1; }
+        .status-expired { background-color: #FFCDD2; color: #B71C1C; }
 
         .stock-date {
             font-size: 11px;
@@ -594,6 +595,7 @@
                         let statusClass = 'status-normal';
                         const desc = (item.description || '').toLowerCase();
                         if (desc.includes('shortage')) statusClass = 'status-shortage';
+                        else if (desc.includes('below min')) statusClass = 'status-belowmin';
                         else if (desc.includes('over')) statusClass = 'status-overstock';
                         else if (desc.includes('expired')) statusClass = 'status-expired';
 

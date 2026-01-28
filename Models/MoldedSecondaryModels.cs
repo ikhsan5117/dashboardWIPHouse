@@ -37,7 +37,7 @@ namespace dashboardWIPHouse.Models
         public string ItemCode { get; set; } = string.Empty;
 
         [Column("full_qr")]
-        public string FullQr { get; set; } = string.Empty;
+        public string FullQR { get; set; } = string.Empty;
 
         [Column("current_box_stock")]
         public int? CurrentBoxStock { get; set; }

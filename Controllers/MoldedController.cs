@@ -75,7 +75,7 @@ namespace dashboardWIPHouse.Controllers
                                      .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
                         RecordCount = g.Count(),
                         Records = g.ToList(), // Keep all records for debugging
-                        UniqueFullQRCount = g.Select(r => r.FullQr).Distinct().Count()
+                        UniqueFullQRCount = g.Select(r => r.FullQR).Distinct().Count()
                     });
 
                 _logger.LogInformation($"Aggregated stock data for {stockSummaryGrouped.Count} unique item codes");
@@ -187,7 +187,7 @@ namespace dashboardWIPHouse.Controllers
                                      .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
                         RecordCount = g.Count(),
                         Records = g.ToList(),
-                        UniqueFullQRCount = g.Select(r => r.FullQr).Distinct().Count()
+                        UniqueFullQRCount = g.Select(r => r.FullQR).Distinct().Count()
                     });
 
                 _logger.LogInformation($"Aggregated secondary stock data for {stockSummaryGroupedSecondary.Count} unique item codes");
@@ -515,29 +515,30 @@ namespace dashboardWIPHouse.Controllers
                 var allItems = await _context.ItemsMolded.ToListAsync();
                 var allStockSummaries = await _context.StockSummaryMolded.ToListAsync();
 
-                // Group stock summaries - sum all records with same item_code
-                var stockSummaryGrouped = allStockSummaries
+                // Create case-insensitive dictionary for stock summary
+                var stockSummaryDict = allStockSummaries
                     .Where(s => !string.IsNullOrEmpty(s.ItemCode))
-                    .GroupBy(s => s.ItemCode)
+                    .GroupBy(s => s.ItemCode.Trim(), StringComparer.OrdinalIgnoreCase)
                     .ToDictionary(g => g.Key, g => new
                     {
-                        TotalCurrentBoxStock = g.Sum(s => s.CurrentBoxStock ?? 0), // Sum ALL records
+                        TotalCurrentBoxStock = g.Sum(s => s.CurrentBoxStock ?? 0),
                         LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
                                      .OrderByDescending(s => s.ParsedLastUpdated)
                                      .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue
-                    });
+                    }, StringComparer.OrdinalIgnoreCase);
 
-                // Combine data
-                var itemsWithStockData = allItems.Select(item => new
-                {
-                    Item = item,
-                    TotalCurrentBoxStock = stockSummaryGrouped.ContainsKey(item.ItemCode) 
-                                          ? stockSummaryGrouped[item.ItemCode].TotalCurrentBoxStock 
-                                          : 0,
-                    LastUpdated = stockSummaryGrouped.ContainsKey(item.ItemCode) 
-                                 ? stockSummaryGrouped[item.ItemCode].LastUpdated 
-                                 : DateTime.MinValue,
-                    HasStockData = stockSummaryGrouped.ContainsKey(item.ItemCode)
+                // Combine data with master list
+                var itemsWithStockData = allItems.Select(item => {
+                    var code = (item.ItemCode ?? "").Trim();
+                    bool hasStock = stockSummaryDict.TryGetValue(code, out var stock);
+                    
+                    return new
+                    {
+                        Item = item,
+                        TotalCurrentBoxStock = hasStock ? stock!.TotalCurrentBoxStock : 0,
+                        LastUpdated = hasStock ? stock!.LastUpdated : DateTime.MinValue,
+                        HasStockData = hasStock
+                    };
                 }).ToList();
 
                 var filteredItems = itemsWithStockData;
@@ -622,7 +623,7 @@ namespace dashboardWIPHouse.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading MOLDED table data");
-                return Json(new { error = "Unable to load table data", details = ex.Message });
+                return Json(new { success = false, data = new List<object>(), error = "Unable to load table data", details = ex.Message });
             }
         }
 
@@ -1297,62 +1298,41 @@ namespace dashboardWIPHouse.Controllers
         }
 
         // IMPROVED: Helper method untuk menentukan status item dengan logika yang benar (same as HomeController)
-// Now uses status_expired from database when available
-private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, ItemMolded item, string? statusExpired = null)
-{
-    // If database provides status_expired, use it for expiry-related status
-    if (!string.IsNullOrEmpty(statusExpired))
-    {
-        // Map database status to our status strings
-        // Database values: "tidak ada stok", "expired", "hampir expired", "normal", etc.
-        
-        // Check for expired status
-        if (statusExpired.Equals("expired", StringComparison.OrdinalIgnoreCase))
+        // Now uses status_expired from database when available
+        private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, ItemMolded item, string? statusExpired = null)
         {
-            return "Already Expired";
+            // If database provides status_expired, use it for expiry-related status
+            if (!string.IsNullOrEmpty(statusExpired))
+            {
+                if (statusExpired.Contains("expired", StringComparison.OrdinalIgnoreCase))
+                    return "Already Expired";
+                
+                if (statusExpired.Contains("hampir", StringComparison.OrdinalIgnoreCase) || 
+                    statusExpired.Contains("near", StringComparison.OrdinalIgnoreCase))
+                    return "Near Expired";
+            }
+
+            // Fallback to manual calculation or stock-level status
+            // Priority 1: Check for expired if stock > 0
+            if (currentBoxStock > 0 && IsExpired(lastUpdated, item.StandardExp))
+                return "Already Expired";
+
+            // Priority 2: Check for near expired if stock > 0
+            if (currentBoxStock > 0 && IsNearExpired(lastUpdated, item.StandardExp))
+                return "Near Expired";
+
+            // Priority 3: Check stock levels
+            if (IsShortage(currentBoxStock, item.StandardMin))
+                return "Shortage";
+
+            if (IsBelowMin(currentBoxStock, item.StandardMin))
+                return "Below Min";
+
+            if (IsAboveMax(currentBoxStock, item.StandardMax))
+                return "Over Stock";
+
+            return "Normal";
         }
-        
-        // Check for near expired status
-        if (statusExpired.Contains("hampir", StringComparison.OrdinalIgnoreCase))
-        {
-            return "Near Expired";
-        }
-        
-        // Check for ok status
-        // Check for ok status
-        if (statusExpired.Equals("ok", StringComparison.OrdinalIgnoreCase) ||
-            statusExpired.Equals("normal", StringComparison.OrdinalIgnoreCase))
-        {
-            // Don't return "Normal" yet, check stock levels first
-        }
-        
-        // "tidak ada stok" means no stock, handled by shortage logic below
-    }
-
-    // Fallback to manual calculation if database status not available or for stock-level status
-    // IMPORTANT: status strings here must match the ones used by dashboard cards / DataTable filter
-    // - "Shortage"  : 0 stock
-    // - "Below Min" : 0 < stock < StandardMin
-    if (IsShortage(currentBoxStock, item.StandardMin))
-        return "Shortage";
-
-    // Prioritas 1: Check for expired (hanya jika stok > 0)
-    if (currentBoxStock > 0 && IsExpired(lastUpdated, item.StandardExp))
-        return "Already Expired";
-
-    // Prioritas 2: Check for near expired (hanya jika stok > 0)
-    if (currentBoxStock > 0 && IsNearExpired(lastUpdated, item.StandardExp))
-        return "Near Expired";
-
-    // Prioritas 3: Check stock levels
-    if (IsBelowMin(currentBoxStock, item.StandardMin))
-        return "Below Min";
-
-    if (IsAboveMax(currentBoxStock, item.StandardMax))
-        return "Over Stock";
-
-    return "Normal";
-}
         // IMPROVED: Helper methods dengan logika yang lebih jelas (same as HomeController)
         private double CalculateDaysUntilExpiry(DateTime lastUpdated, int? standardExp)
         {
@@ -1379,17 +1359,18 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
             return daysUntilExpiry >= 0 && daysUntilExpiry <= nearExpiredThreshold;
         }
 
-        // Shortage = 0 stock (separate from Below Min)
+        // Shortage = 0 stock
         private bool IsShortage(int currentStock, int? standardMin)
         {
-            _ = standardMin; // kept for signature compatibility
+            // We only count as Shortage if standardMin is set (meaning we expect stock)
+            if (!standardMin.HasValue || standardMin.Value == 0) return false;
             return currentStock <= 0;
         }
 
-        // Below Min = 0 < stock < StandardMin
+        // Below Min = 0 < stock < standard min
         private bool IsBelowMin(int totalStock, int? standardMin)
         {
-            if (!standardMin.HasValue) return false;
+            if (!standardMin.HasValue || standardMin.Value == 0) return false;
             return totalStock > 0 && totalStock < standardMin.Value;
         }
 
@@ -1532,7 +1513,8 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
         {
             try
             {
-                var query = _context.Raks.AsQueryable();
+                // First try getting from StorageLogMolded as it contains actual scanned QRs
+                var query = _context.StorageLogMolded.AsQueryable();
 
                 if (!string.IsNullOrEmpty(search))
                 {
@@ -1542,8 +1524,25 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                 var fullQRCodes = await query
                     .Select(r => new { id = r.FullQR, text = r.FullQR })
                     .Distinct()
+                    .OrderBy(r => r.text)
                     .Take(50)
                     .ToListAsync();
+
+                // If no results from logs, try the Raks table (legacy or master rak list)
+                if (fullQRCodes.Count == 0 && _context.Raks != null)
+                {
+                    var rakQuery = _context.Raks.AsQueryable();
+                    if (!string.IsNullOrEmpty(search))
+                    {
+                        rakQuery = rakQuery.Where(r => r.FullQR.Contains(search));
+                    }
+                    fullQRCodes = await rakQuery
+                        .Select(r => new { id = r.FullQR, text = r.FullQR })
+                        .Distinct()
+                        .OrderBy(r => r.text)
+                        .Take(50)
+                        .ToListAsync();
+                }
 
                 return Json(new { results = fullQRCodes });
             }
@@ -1614,24 +1613,29 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
         {
             try
             {
-                // Dynamic Calculation Strategy
-                // 1. Fetch all IN logs
+                // Dynamic Calculation Strategy 
+                // 1. Fetch all logs
                 var inLogs = await _context.StorageLogMolded
                     .Select(s => new { s.ItemCode, s.FullQR, s.ProductionDate, s.BoxCount, s.StoredAt })
                     .ToListAsync();
 
-                // 2. Fetch all OUT logs 
                 var outLogs = await _context.SupplyLogMolded
                     .Select(s => new { s.ItemCode, s.FullQR, s.BoxCount })
                     .ToListAsync();
 
-                // 3. Group and Calculate Net Stock
+                // 2. Group and Calculate Net Stock with case-insensitive matching
                 var stock = inLogs
-                    .GroupBy(x => new { x.ItemCode, x.FullQR })
+                    .GroupBy(x => new { 
+                        ItemCode = (x.ItemCode ?? "").Trim().ToUpperInvariant(), 
+                        FullQR = (x.FullQR ?? "").Trim().ToUpperInvariant() 
+                    })
                     .Select(g => {
                         var totalIn = g.Sum(x => x.BoxCount);
+                        
+                        // Sum OUTs that match this ItemCode and FullQR (case-insensitive)
                         var totalOut = outLogs
-                            .Where(x => x.ItemCode == g.Key.ItemCode && x.FullQR == g.Key.FullQR)
+                            .Where(x => string.Equals((x.ItemCode ?? "").Trim(), g.Key.ItemCode, StringComparison.OrdinalIgnoreCase) 
+                                     && string.Equals((x.FullQR ?? "").Trim(), g.Key.FullQR, StringComparison.OrdinalIgnoreCase))
                             .Sum(x => x.BoxCount);
 
                         // Find oldest production date or stored date for this group
@@ -1639,8 +1643,8 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                         
                         return new {
                             ItemCode = g.Key.ItemCode,
-                            FullQr = g.Key.FullQR, // Changed to FullQr to match JS expectation (camelCase: fullQr)
-                            ProductionDate = bestDate.ToString("yyyy-MM-dd HH:mm:ss"), // Standard format
+                            FullQR = g.Key.FullQR,
+                            ProductionDate = bestDate.ToString("yyyy-MM-dd HH:mm:ss"),
                             RawDate = bestDate,
                             BoxCount = totalIn - totalOut
                         };
@@ -1720,36 +1724,61 @@ private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, It
                 else if (type == "stock")
                 {
                     var allStock = await _context.StockSummaryMolded.ToListAsync();
-                    var items = await _context.ItemsMolded.ToDictionaryAsync(x => x.ItemCode, x => x);
+                    var allItemsList = await _context.ItemsMolded.ToListAsync();
 
-                    var grouped = allStock
-                        .GroupBy(x => x.ItemCode)
-                        .Select(g => {
-                            var item = items.ContainsKey(g.Key) ? items[g.Key] : new ItemMolded { QtyPerBox = 0 };
-                            var totalQty = g.Sum(x => x.CurrentBoxStock ?? 0);
-                            
-                            // Calculate total PCS
-                            var totalPcs = (long)Math.Round((decimal)totalQty * (item.QtyPerBox ?? 0));
+                    // Create case-insensitive dictionary for master items
+                    var itemsDict = allItemsList
+                        .Where(x => !string.IsNullOrEmpty(x.ItemCode))
+                        .ToDictionary(x => x.ItemCode.Trim(), x => x, StringComparer.OrdinalIgnoreCase);
 
-                             // Find latest update
-                            var validDates = g.Where(x => x.ParsedLastUpdated.HasValue).Select(x => x.ParsedLastUpdated.Value).ToList();
-                            var latestUpdate = validDates.Any() ? validDates.Max() : DateTime.MinValue;
+                    // Group stock by item code (case-insensitive)
+                    var stockGrouped = allStock
+                        .Where(x => !string.IsNullOrEmpty(x.ItemCode))
+                        .GroupBy(x => x.ItemCode.Trim(), StringComparer.OrdinalIgnoreCase)
+                        .ToDictionary(g => g.Key, g => g.ToList(), StringComparer.OrdinalIgnoreCase);
 
-                            // Determine status using existing helper (pass null for statusExpired as we aggregate multiple rows)
-                            // Or use the status from the latest record? Let's rely on calculation for aggregation
-                            var displayStatus = DetermineItemStatus(totalQty, latestUpdate, item, null);
-
-                            return new {
-                                itemCode = g.Key,
-                                description = displayStatus,
-                                qty = totalQty,
-                                qtyPcs = totalPcs,
-                                lastUpdated = latestUpdate != DateTime.MinValue ? latestUpdate.ToString("dd-MM-yyyy HH:mm") : "-"
-                            };
-                        })
-                        .OrderBy(x => x.itemCode)
+                    // We want to show all items from Master list, plus any that might have stock but no master entry
+                    var allCodes = allItemsList.Select(x => x.ItemCode.Trim())
+                        .Union(stockGrouped.Keys, StringComparer.OrdinalIgnoreCase)
+                        .OrderBy(x => x)
                         .ToList();
-                    return Json(new { success = true, data = grouped });
+
+                    var resultData = allCodes.Select(code => {
+                        var item = itemsDict.TryGetValue(code, out var masterItem) ? masterItem : new ItemMolded { ItemCode = code, QtyPerBox = 0 };
+                        var records = stockGrouped.TryGetValue(code, out var stockList) ? stockList : new List<StockSummaryMolded>();
+                        
+                        var totalQty = records.Sum(x => x.CurrentBoxStock ?? 0);
+                        var totalPcs = (long)Math.Round((decimal)totalQty * (item.QtyPerBox ?? 0));
+                        
+                        var validDates = records
+                            .Where(x => x.ParsedLastUpdated.HasValue)
+                            .Select(x => x.ParsedLastUpdated.Value)
+                            .ToList();
+                        
+                        var latestUpdate = validDates.Any() ? validDates.Max() : DateTime.MinValue;
+                        
+                        // Use database status_expired from latest record if available
+                        string? statusFromDb = null;
+                        if (records.Any())
+                        {
+                            statusFromDb = records
+                                .Where(x => x.ParsedLastUpdated.HasValue)
+                                .OrderByDescending(x => x.ParsedLastUpdated)
+                                .FirstOrDefault()?.StatusExpired;
+                        }
+
+                        var displayStatus = DetermineItemStatus(totalQty, latestUpdate, item, statusFromDb);
+
+                        return new {
+                            itemCode = code,
+                            description = displayStatus,
+                            qty = totalQty,
+                            qtyPcs = totalPcs,
+                            lastUpdated = latestUpdate != DateTime.MinValue ? latestUpdate.ToString("dd-MM-yyyy HH:mm") : "-"
+                        };
+                    }).ToList();
+
+                    return Json(new { success = true, data = resultData });
                 }
                 return Json(new { success = false, message = "Invalid type" });
             }

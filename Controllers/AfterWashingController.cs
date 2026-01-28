@@ -639,57 +639,47 @@ namespace dashboardWIPHouse.Controllers
         // Helper methods - Now uses status_expired from database when available
         private string DetermineItemStatus(int currentBoxStock, DateTime lastUpdated, ItemAW item, string? statusExpired = null)
         {
-            // If database provides status_expired, use it for expiry-related status
+            string displayStatus = "Normal";
+
+            // Prioritas 1: Cek dari Database Status Expired
             if (!string.IsNullOrEmpty(statusExpired))
             {
-                // Map database status to our status strings
-                // Database values: "tidak ada stok", "expired", "hampir expired", "normal", etc.
-                
-                // Check for expired status
-                if (statusExpired.Equals("expired", StringComparison.OrdinalIgnoreCase))
+                if (statusExpired.Contains("expired", StringComparison.OrdinalIgnoreCase))
                 {
-                    return "Already Expired";
+                    displayStatus = "Already Expired";
                 }
-                
-                // Check for near expired status
-                if (statusExpired.Contains("hampir", StringComparison.OrdinalIgnoreCase))
+                else if (statusExpired.Contains("hampir", StringComparison.OrdinalIgnoreCase) || 
+                         statusExpired.Contains("near", StringComparison.OrdinalIgnoreCase))
                 {
-                    return "Near Expired";
+                    displayStatus = "Near Expired";
                 }
-
-                // Check for ok status
-                if (statusExpired.Equals("ok", StringComparison.OrdinalIgnoreCase) ||
-                    statusExpired.Equals("normal", StringComparison.OrdinalIgnoreCase))
-                {
-                    return "Normal";
-                }
-                
-                // "tidak ada stok" means no stock, handled by shortage logic below
             }
 
-            // Fallback to manual calculation if database status not available or for stock-level status
-            // Jika stok box dan pcs adalah 0, anggap sebagai Out of Stock atau Normal
-            if (currentBoxStock == 0 && (item.QtyPerBox.HasValue && currentBoxStock * item.QtyPerBox.Value == 0))
+            // Prioritas 2: Manual Check (jika status masih Normal dan stok > 0)
+            if (displayStatus == "Normal" && currentBoxStock > 0)
             {
-                return "Out of Stock"; // Atau "Normal" sesuai kebutuhan
+                if (IsExpired(lastUpdated, item.StandardExp))
+                    displayStatus = "Already Expired";
+                else if (IsNearExpired(lastUpdated, item.StandardExp))
+                    displayStatus = "Near Expired";
             }
 
-            // Prioritas 1: Check for expired (hanya jika stok > 0)
-            if (currentBoxStock > 0 && IsExpired(lastUpdated, item.StandardExp))
-                return "Already Expired";
+            // Jika stok benar-benar 0
+            if (currentBoxStock <= 0)
+            {
+                return "Out of Stock";
+            }
 
-            // Prioritas 2: Check for near expired (hanya jika stok > 0)
-            if (currentBoxStock > 0 && IsNearExpired(lastUpdated, item.StandardExp))
-                return "Near Expired";
+            // Prioritas 3: Stock Levels (Hanya jika belum Berstatus Expired)
+            if (displayStatus == "Normal")
+            {
+                if (IsShortage(currentBoxStock, item.StandardMin))
+                    displayStatus = "Shortage";
+                else if (IsAboveMax(currentBoxStock, item.StandardMax))
+                    displayStatus = "Over Stock";
+            }
 
-            // Prioritas 3: Check stock levels
-            if (IsShortage(currentBoxStock, item.StandardMin))
-                return "Shortage";
-
-            if (IsAboveMax(currentBoxStock, item.StandardMax))
-                return "Over Stock";
-
-            return "Normal";
+            return displayStatus;
         }
 
         private double CalculateDaysUntilExpiry(DateTime lastUpdated, int? standardExp)
@@ -718,18 +708,18 @@ namespace dashboardWIPHouse.Controllers
 
         private bool IsShortage(int currentStock, int? standardMin)
         {
-            if (!standardMin.HasValue) return false;
-            return currentStock >= 0 && currentStock <= standardMin.Value;
+            if (!standardMin.HasValue || standardMin.Value <= 0) return false;
+            return currentStock < standardMin.Value;
         }
 
         private bool IsBelowMin(int totalStock, int? standardMin)
         {
-            return false; // Not used, replaced by IsShortage
+            return IsShortage(totalStock, standardMin);
         }
 
         private bool IsAboveMax(int totalStock, int? standardMax)
         {
-            return standardMax.HasValue && totalStock > standardMax.Value;
+            return standardMax.HasValue && standardMax.Value > 0 && totalStock > standardMax.Value;
         }
 
         // After Washing Input Page
@@ -915,10 +905,11 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                 else if (type == "stock")
                 {
                     var allStock = await _context.StockSummaryAW.ToListAsync();
-                    var allItems = await _context.ItemAW.ToDictionaryAsync(i => i.ItemCode);
+                    var allItems = await _context.ItemAW.ToDictionaryAsync(i => i.ItemCode.Trim(), StringComparer.OrdinalIgnoreCase);
                     
                     var grouped = allStock
-                        .GroupBy(x => x.ItemCode)
+                        .Where(x => !string.IsNullOrEmpty(x.ItemCode))
+                        .GroupBy(x => x.ItemCode.Trim())
                         .Select(g => {
                             // Logic untuk ambil status terbaru
                             var latestRecord = g.Where(s => s.ParsedLastUpdated.HasValue)
@@ -930,7 +921,7 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                             var lastUpdated = latestRecord?.ParsedLastUpdated ?? DateTime.MinValue;
                             
                             // Get Item info
-                            var item = allItems.ContainsKey(g.Key) ? allItems[g.Key] : null;
+                            allItems.TryGetValue(g.Key, out var item);
 
                             // Calculate Pcs
                             var totalPcs = item?.QtyPerBox.HasValue == true ? 

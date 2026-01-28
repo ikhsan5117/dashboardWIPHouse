@@ -800,7 +800,13 @@
             if (currentScanField === 'fullQR') {
                  const parts = decodedText.split(/[- ]/);
                  if (parts.length > 0 && !$('#itemCode').val()) {
-                     $('#itemCode').val(parts[0]);
+                     // Pattern recognition: if it starts with GH-, the item code is the second part
+                     if (decodedText.startsWith('GH-') && parts.length > 1) {
+                         $('#itemCode').val(parts[1]);
+                     } else {
+                         // Fallback: use first part
+                         $('#itemCode').val(parts[0]);
+                     }
                  }
             }
         }
