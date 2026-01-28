@@ -1166,6 +1166,11 @@
                             <i class="fa fa-folder-open"></i>
                             Browse Files
                         </button>
+                        <button type="button" class="upload-btn" id="download-template-btn"
+                            style="font-size: 1rem; padding: 14px 28px; background-color: #6c757d; margin-left:10px;">
+                            <i class="fa fa-download"></i>
+                            Download Template
+                        </button>
                     </div>
                 </div>
 
@@ -1451,6 +1456,16 @@
             const fileInfo = document.getElementById('file-info');
             const uploadProgress = document.getElementById('upload-progress');
             const uploadResult = document.getElementById('upload-result');
+
+            const downloadTemplateBtn = document.getElementById('download-template-btn');
+
+            // Download template button click
+            if (downloadTemplateBtn) {
+                downloadTemplateBtn.addEventListener('click', () => {
+                    window.location.href = '@Url.Action("DownloadTemplate", "AfterWashing")';
+                    console.log('After Washing template download initiated');
+                });
+            }
 
             // Browse button click
             browseBtn.addEventListener('click', () => {

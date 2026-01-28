@@ -829,7 +829,7 @@
                         const term = searchTerm.toLowerCase();
                         items = items.filter(i => 
                             i.itemCode.toLowerCase().includes(term) || 
-                            (i.fullQr && i.fullQr.toLowerCase().includes(term))
+                            (i.fullQR && i.fullQR.toLowerCase().includes(term))
                         );
                     }
                     
@@ -837,9 +837,9 @@
                         let html = '';
                         items.forEach(item => {
                             html += `
-                                <div class="fifo-item" onclick="selectFIFOItem('${item.itemCode}', '${item.fullQr || ''}', '${item.productionDate || ''}', ${item.boxCount})">
+                                <div class="fifo-item" onclick="selectFIFOItem('${item.itemCode}', '${item.fullQR || ''}', '${item.productionDate || ''}', ${item.boxCount})">
                                     <strong>${item.itemCode}</strong><br>
-                                    <small>QR: ${item.fullQr || '-'} | Stock: ${item.boxCount} boxes</small>
+                                    <small>QR: ${item.fullQR || '-'} | Stock: ${item.boxCount} boxes</small>
                                 </div>
                             `;
                         });

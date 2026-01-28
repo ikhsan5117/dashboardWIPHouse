@@ -133,6 +133,55 @@ namespace dashboardWIPHouse.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult DownloadTemplate()
+        {
+            try
+            {
+                _logger.LogInformation("Generating After Washing Excel template");
+
+                OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                using var package = new OfficeOpenXml.ExcelPackage();
+                var worksheet = package.Workbook.Worksheets.Add("Template");
+
+                // Headers
+                worksheet.Cells[1, 1].Value = "Timestamp";
+                worksheet.Cells[1, 2].Value = "Kode Rak";
+                worksheet.Cells[1, 3].Value = "Full QR";
+                worksheet.Cells[1, 4].Value = "Kode Item";
+                worksheet.Cells[1, 5].Value = "Jml Box";
+
+                // Add sample data
+                worksheet.Cells[2, 1].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                worksheet.Cells[2, 2].Value = "RAK-AW-01";
+                worksheet.Cells[2, 3].Value = "AW-ITEM001-B12-1";
+                worksheet.Cells[2, 4].Value = "ITEM001";
+                worksheet.Cells[2, 5].Value = 10;
+
+                // Style the header
+                using (var range = worksheet.Cells[1, 1, 1, 5])
+                {
+                    range.Style.Font.Bold = true;
+                    range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightBlue);
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                var fileName = $"AfterWashing_Template_{DateTime.Now:yyyyMMdd}.xlsx";
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileBytes = package.GetAsByteArray();
+
+                return File(fileBytes, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating After Washing Excel template");
+                return BadRequest($"Error generating template: {ex.Message}");
+            }
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<JsonResult> UploadExcel(IFormFile file)

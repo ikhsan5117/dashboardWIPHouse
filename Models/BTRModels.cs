@@ -228,4 +228,46 @@ namespace dashboardWIPHouse.Models
         public int BelowMinItems { get; set; }
         public int NormalItems { get; set; }
     }
+
+    // BTR Excel Upload Models
+    public class ExcelRowDataBTR
+    {
+        public int RowNumber { get; set; }
+        public string ItemCode { get; set; } = string.Empty;
+        public string Mesin { get; set; } = string.Empty;
+        public int? QtyPerBox { get; set; }
+        public int? StandardMin { get; set; }
+        public int? StandardMax { get; set; }
+        public int? StandardExp { get; set; }
+        
+        // For Storage/Supply
+        public string FullQR { get; set; } = string.Empty;
+        public int? BoxCount { get; set; }
+        public int? QtyPcs { get; set; }
+        public DateTime? Timestamp { get; set; }
+        public string KodeRak { get; set; } = string.Empty;
+        public DateTime? ProductionDate { get; set; }
+        public string ToProcess { get; set; } = string.Empty;
+
+        public List<string> ValidationErrors { get; set; } = new List<string>();
+        public bool IsValid => !ValidationErrors.Any();
+    }
+
+    public class ExcelUploadResultBTR
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; } = string.Empty;
+        public int ProcessedRows { get; set; }
+        public int SuccessfulRows { get; set; }
+        public int ErrorRows { get; set; }
+        public List<string> Errors { get; set; } = new List<string>();
+        public List<ExcelRowErrorBTR> DetailedErrors { get; set; } = new List<ExcelRowErrorBTR>();
+    }
+
+    public class ExcelRowErrorBTR
+    {
+        public int RowNumber { get; set; }
+        public string Error { get; set; } = string.Empty;
+        public string RowData { get; set; } = string.Empty;
+    }
 }

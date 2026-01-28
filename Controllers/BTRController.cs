@@ -4,6 +4,8 @@ using dashboardWIPHouse.Data;
 using dashboardWIPHouse.Models;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Globalization;
+using OfficeOpenXml;
 
 namespace dashboardWIPHouse.Controllers
 {
@@ -154,25 +156,420 @@ namespace dashboardWIPHouse.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UploadExcel(IFormFile file, string uploadType)
+        [HttpGet]
+        public IActionResult DownloadTemplate(string uploadType = "items")
         {
-            if (file == null || file.Length == 0)
-                return Json(new { success = false, message = "No file uploaded" });
-
             try
             {
-                // TODO: Implement actual Excel processing logic based on uploadType
-                // For now just return success to confirm endpoint handles request
-                await Task.Delay(1000); // Simulate processing
+                _logger.LogInformation($"Generating BTR Excel template for upload type: {uploadType}");
 
-                return Json(new { success = true, message = "File uploaded successfully (Simulation)" });
+                OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                using var package = new OfficeOpenXml.ExcelPackage();
+                var worksheet = package.Workbook.Worksheets.Add("Template");
+
+                if (uploadType == "storage")
+                {
+                    // Storage Log Template
+                    worksheet.Cells[1, 1].Value = "Timestamp";
+                    worksheet.Cells[1, 2].Value = "Kode Rak";
+                    worksheet.Cells[1, 3].Value = "Full QR";
+                    worksheet.Cells[1, 4].Value = "Kode Item";
+                    worksheet.Cells[1, 5].Value = "Jml Box";
+                    worksheet.Cells[1, 6].Value = "Production Date";
+                    worksheet.Cells[1, 7].Value = "Qty Pcs";
+
+                    // Add sample data
+                    worksheet.Cells[2, 1].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    worksheet.Cells[2, 2].Value = "RAK-BTR-01";
+                    worksheet.Cells[2, 3].Value = "BTR-ITEM001-C12-1";
+                    worksheet.Cells[2, 4].Value = "ITEM001";
+                    worksheet.Cells[2, 5].Value = 10;
+                    worksheet.Cells[2, 6].Value = DateTime.Now.AddDays(-15).ToString("yyyy-MM-dd");
+                    worksheet.Cells[2, 7].Value = 100;
+
+                    // Style the header
+                    using (var range = worksheet.Cells[1, 1, 1, 7])
+                    {
+                        range.Style.Font.Bold = true;
+                        range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
+                    }
+                }
+                else if (uploadType == "supply")
+                {
+                    // Supply Log Template
+                    worksheet.Cells[1, 1].Value = "item_code";
+                    worksheet.Cells[1, 2].Value = "full_qr";
+                    worksheet.Cells[1, 3].Value = "box_count";
+                    worksheet.Cells[1, 4].Value = "qty_pcs";
+                    worksheet.Cells[1, 5].Value = "supplied_at";
+                    worksheet.Cells[1, 6].Value = "to_process";
+
+                    // Add sample data
+                    worksheet.Cells[2, 1].Value = "ITEM001";
+                    worksheet.Cells[2, 2].Value = "BTR-ITEM001-C12-1";
+                    worksheet.Cells[2, 3].Value = 5;
+                    worksheet.Cells[2, 4].Value = 50;
+                    worksheet.Cells[2, 5].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    worksheet.Cells[2, 6].Value = "Trimming";
+
+                    // Style the header
+                    using (var range = worksheet.Cells[1, 1, 1, 6])
+                    {
+                        range.Style.Font.Bold = true;
+                        range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightBlue);
+                    }
+                }
+                else // "items" (default)
+                {
+                    // Items Template
+                    worksheet.Cells[1, 1].Value = "ItemCode";
+                    worksheet.Cells[1, 2].Value = "QtyPerBox";
+                    worksheet.Cells[1, 3].Value = "StandardMin";
+                    worksheet.Cells[1, 4].Value = "StandardMax";
+                    worksheet.Cells[1, 5].Value = "StandardExp";
+
+                    // Add sample data
+                    worksheet.Cells[2, 1].Value = "ITEM001";
+                    worksheet.Cells[2, 2].Value = 20;
+                    worksheet.Cells[2, 3].Value = 100;
+                    worksheet.Cells[2, 4].Value = 500;
+                    worksheet.Cells[2, 5].Value = 60;
+
+                    // Style the header
+                    using (var range = worksheet.Cells[1, 1, 1, 5])
+                    {
+                        range.Style.Font.Bold = true;
+                        range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                    }
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                var fileName = $"BTR_{uploadType}_Template_{DateTime.Now:yyyyMMdd}.xlsx";
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileBytes = package.GetAsByteArray();
+
+                return File(fileBytes, contentType, fileName);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "UploadExcel error");
-                return Json(new { success = false, message = "Error: " + ex.Message });
+                _logger.LogError(ex, "Error generating BTR Excel template");
+                return BadRequest($"Error generating template: {ex.Message}");
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadExcel(IFormFile file, string uploadType)
+        {
+            var result = new ExcelUploadResultBTR();
+
+            try
+            {
+                // Validate file
+                if (file == null || file.Length == 0)
+                {
+                    result.Message = "Please select a file to upload";
+                    return Json(result);
+                }
+
+                if (!Path.GetExtension(file.FileName).ToLower().EndsWith(".xlsx") && 
+                    !Path.GetExtension(file.FileName).ToLower().EndsWith(".xls"))
+                {
+                    result.Message = "Please upload only Excel files (.xlsx or .xls)";
+                    return Json(result);
+                }
+
+                if (file.Length > 10 * 1024 * 1024) // 10MB limit
+                {
+                    result.Message = "File size must be less than 10MB";
+                    return Json(result);
+                }
+
+                _logger.LogInformation($"Processing BTR Excel file: {file.FileName}, Type: {uploadType}, Size: {file.Length} bytes");
+
+                var excelData = await ProcessExcelFileBTR(file, uploadType);
+                
+                if (!excelData.Any())
+                {
+                    result.Message = "No valid data found in Excel file";
+                    return Json(result);
+                }
+
+                // Validate all rows
+                var validRows = new List<ExcelRowDataBTR>();
+                foreach (var row in excelData)
+                {
+                    if (row.IsValid)
+                    {
+                        validRows.Add(row);
+                    }
+                    else
+                    {
+                        result.DetailedErrors.Add(new ExcelRowErrorBTR
+                        {
+                            RowNumber = row.RowNumber,
+                            Error = string.Join(", ", row.ValidationErrors),
+                            RowData = uploadType == "items" ? $"ItemCode: {row.ItemCode}" : $"FullQR: {row.FullQR}, Item: {row.ItemCode}"
+                        });
+                    }
+                }
+
+                result.ProcessedRows = excelData.Count;
+                result.ErrorRows = result.DetailedErrors.Count;
+
+                if (!validRows.Any())
+                {
+                    result.Message = "No valid rows found to import";
+                    result.Errors = result.DetailedErrors.Select(e => $"Row {e.RowNumber}: {e.Error}").ToList();
+                    return Json(result);
+                }
+
+                // Insert valid data to database based on type
+                int insertedCount = 0;
+                if (uploadType == "items")
+                {
+                    insertedCount = await InsertBTRItemsData(validRows);
+                }
+                else if (uploadType == "storage")
+                {
+                    insertedCount = await InsertBTRStorageData(validRows);
+                }
+                else if (uploadType == "supply")
+                {
+                    insertedCount = await InsertBTRSupplyData(validRows);
+                }
+
+                result.Success = true;
+                result.SuccessfulRows = insertedCount;
+                result.Message = $"Successfully imported {insertedCount} records from {result.ProcessedRows} total rows";
+
+                if (result.ErrorRows > 0)
+                {
+                    result.Message += $" ({result.ErrorRows} rows had errors and were skipped)";
+                    result.Errors = result.DetailedErrors.Take(10).Select(e => $"Row {e.RowNumber}: {e.Error}").ToList();
+                }
+
+                _logger.LogInformation($"BTR Excel upload completed: {insertedCount} successful, {result.ErrorRows} errors");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error processing BTR Excel upload");
+                result.Message = $"Error processing file: {ex.Message}";
+                result.Errors.Add(ex.Message);
+            }
+
+            return Json(result);
+        }
+
+        private async Task<List<ExcelRowDataBTR>> ProcessExcelFileBTR(IFormFile file, string uploadType)
+        {
+            var rows = new List<ExcelRowDataBTR>();
+            
+            try
+            {
+                using var stream = new MemoryStream();
+                await file.CopyToAsync(stream);
+                stream.Position = 0;
+
+                OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                using var package = new OfficeOpenXml.ExcelPackage(stream);
+                var worksheet = package.Workbook.Worksheets[0];
+                
+                var rowCount = worksheet.Dimension?.Rows ?? 0;
+
+                if (rowCount <= 1) return rows;
+
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    var rowData = new ExcelRowDataBTR { RowNumber = row };
+
+                    try
+                    {
+                        if (uploadType == "items")
+                        {
+                            // A=ItemCode, B=QtyPerBox, C=StandardMin, D=StandardMax, E=StandardExp
+                            var itemCode = worksheet.Cells[row, 1].Value?.ToString()?.Trim();
+                            var qtyPerBox = worksheet.Cells[row, 2].Value?.ToString()?.Trim();
+                            var stdMin = worksheet.Cells[row, 3].Value?.ToString()?.Trim();
+                            var stdMax = worksheet.Cells[row, 4].Value?.ToString()?.Trim();
+                            var stdExp = worksheet.Cells[row, 5].Value?.ToString()?.Trim();
+
+                            if (string.IsNullOrEmpty(itemCode)) continue;
+
+                            rowData.ItemCode = itemCode;
+                            if (int.TryParse(qtyPerBox, out int qpb)) rowData.QtyPerBox = qpb;
+                            if (int.TryParse(stdMin, out int min)) rowData.StandardMin = min;
+                            if (int.TryParse(stdMax, out int max)) rowData.StandardMax = max;
+                            if (int.TryParse(stdExp, out int exp)) rowData.StandardExp = exp;
+                            
+                            if (!rowData.QtyPerBox.HasValue) rowData.ValidationErrors.Add("Invalid QtyPerBox");
+                        }
+                        else if (uploadType == "storage")
+                        {
+                            // Timestamp, Kode Rak, Full QR, Kode Item, Jml Box, Production Date, Qty Pcs
+                            var timestampStr = worksheet.Cells[row, 1].Value?.ToString()?.Trim();
+                            var kodeRak = worksheet.Cells[row, 2].Value?.ToString()?.Trim();
+                            var fullQR = worksheet.Cells[row, 3].Value?.ToString()?.Trim();
+                            var itemCode = worksheet.Cells[row, 4].Value?.ToString()?.Trim();
+                            var jmlBox = worksheet.Cells[row, 5].Value?.ToString()?.Trim();
+                            var prodDateStr = worksheet.Cells[row, 6].Value?.ToString()?.Trim();
+                            var qtyPcs = worksheet.Cells[row, 7].Value?.ToString()?.Trim();
+
+                            if (string.IsNullOrEmpty(fullQR) || string.IsNullOrEmpty(itemCode)) continue;
+
+                            rowData.FullQR = fullQR;
+                            rowData.ItemCode = itemCode;
+                            rowData.KodeRak = kodeRak;
+                            
+                            if (DateTime.TryParse(timestampStr, out DateTime ts)) rowData.Timestamp = ts;
+                            else rowData.Timestamp = DateTime.Now;
+
+                            if (int.TryParse(jmlBox, out int jb)) rowData.BoxCount = jb;
+                            if (int.TryParse(qtyPcs, out int qp)) rowData.QtyPcs = qp;
+                            if (DateTime.TryParse(prodDateStr, out DateTime pd)) rowData.ProductionDate = pd;
+                        }
+                        else if (uploadType == "supply")
+                        {
+                            // item_code, full_qr, box_count, qty_pcs, supplied_at, to_process
+                            var itemCode = worksheet.Cells[row, 1].Value?.ToString()?.Trim();
+                            var fullQR = worksheet.Cells[row, 2].Value?.ToString()?.Trim();
+                            var boxCount = worksheet.Cells[row, 3].Value?.ToString()?.Trim();
+                            var qtyPcs = worksheet.Cells[row, 4].Value?.ToString()?.Trim();
+                            var suppliedAtStr = worksheet.Cells[row, 5].Value?.ToString()?.Trim();
+                            var toProcess = worksheet.Cells[row, 6].Value?.ToString()?.Trim();
+
+                            if (string.IsNullOrEmpty(fullQR) || string.IsNullOrEmpty(itemCode)) continue;
+
+                            rowData.ItemCode = itemCode;
+                            rowData.FullQR = fullQR;
+                            rowData.ToProcess = toProcess;
+
+                            if (int.TryParse(boxCount, out int bc)) rowData.BoxCount = bc;
+                            if (int.TryParse(qtyPcs, out int qp)) rowData.QtyPcs = qp;
+                            if (DateTime.TryParse(suppliedAtStr, out DateTime sa)) rowData.Timestamp = sa;
+                            else rowData.Timestamp = DateTime.Now;
+                        }
+
+                        rows.Add(rowData);
+                    }
+                    catch (Exception ex)
+                    {
+                        rowData.ValidationErrors.Add($"Row Error: {ex.Message}");
+                        rows.Add(rowData);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error Processing BTR Excel");
+                throw;
+            }
+
+            return rows;
+        }
+
+        private async Task<int> InsertBTRItemsData(List<ExcelRowDataBTR> validRows)
+        {
+            int count = 0;
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                foreach (var row in validRows)
+                {
+                    var existing = await _context.Items.FindAsync(row.ItemCode);
+                    if (existing != null)
+                    {
+                        existing.QtyPerBox = row.QtyPerBox ?? existing.QtyPerBox;
+                        existing.StandardMin = row.StandardMin ?? existing.StandardMin;
+                        existing.StandardMax = row.StandardMax ?? existing.StandardMax;
+                        existing.StandardExp = row.StandardExp ?? existing.StandardExp;
+                        existing.UpdatedAt = DateTime.Now;
+                        _context.Items.Update(existing);
+                    }
+                    else
+                    {
+                        _context.Items.Add(new ItemBTR
+                        {
+                            ItemCode = row.ItemCode,
+                            QtyPerBox = row.QtyPerBox ?? 0,
+                            StandardMin = row.StandardMin ?? 0,
+                            StandardMax = row.StandardMax ?? 0,
+                            StandardExp = row.StandardExp ?? 0,
+                            CreatedAt = DateTime.Now,
+                            UpdatedAt = DateTime.Now
+                        });
+                    }
+                    count++;
+                }
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch { await transaction.RollbackAsync(); throw; }
+            return count;
+        }
+
+        private async Task<int> InsertBTRStorageData(List<ExcelRowDataBTR> validRows)
+        {
+            int count = 0;
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                foreach (var row in validRows)
+                {
+                    _context.StorageLogs.Add(new StorageLogBTR
+                    {
+                        ItemCode = row.ItemCode,
+                        FullQR = row.FullQR,
+                        BoxCount = row.BoxCount ?? 0,
+                        QtyPcs = row.QtyPcs ?? 0,
+                        ProductionDate = row.ProductionDate,
+                        StoredAt = row.Timestamp ?? DateTime.Now,
+                        Tanggal = DateTime.Today
+                    });
+                    count++;
+                }
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch { await transaction.RollbackAsync(); throw; }
+            return count;
+        }
+
+        private async Task<int> InsertBTRSupplyData(List<ExcelRowDataBTR> validRows)
+        {
+            int count = 0;
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                foreach (var row in validRows)
+                {
+                    // Find matching storage_log for FIFO if possible
+                    var storageLog = await _context.StorageLogs
+                        .Where(s => s.FullQR == row.FullQR)
+                        .OrderByDescending(s => s.StoredAt)
+                        .FirstOrDefaultAsync();
+
+                    _context.SupplyLogs.Add(new SupplyLogBTR
+                    {
+                        ItemCode = row.ItemCode,
+                        FullQR = row.FullQR,
+                        BoxCount = row.BoxCount ?? 0,
+                        QtyPcs = row.QtyPcs ?? 0,
+                        ToProcess = row.ToProcess,
+                        SuppliedAt = row.Timestamp ?? DateTime.Now,
+                        Tanggal = DateTime.Today,
+                        StorageLogId = storageLog?.LogId
+                    });
+                    count++;
+                }
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch { await transaction.RollbackAsync(); throw; }
+            return count;
         }
 
         // =============================================

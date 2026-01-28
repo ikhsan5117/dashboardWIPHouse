@@ -613,6 +613,7 @@ namespace dashboardWIPHouse.Controllers
                         StockRecordCount = stockData?.RecordCount ?? 0
                     };
                 })
+                .Where(x => x.CurrentBoxStock > 0)
                 .OrderBy(x => x.ItemCode)
                 .ToList();
 
@@ -1513,36 +1514,37 @@ namespace dashboardWIPHouse.Controllers
         {
             try
             {
-                // First try getting from StorageLogMolded as it contains actual scanned QRs
-                var query = _context.StorageLogMolded.AsQueryable();
-
-                if (!string.IsNullOrEmpty(search))
-                {
-                    query = query.Where(r => r.FullQR.Contains(search));
-                }
-
-                var fullQRCodes = await query
+                // 1. Get from StorageLogMolded (actual usage)
+                var logList = await _context.StorageLogMolded
+                    .Where(r => string.IsNullOrEmpty(search) || r.FullQR.Contains(search))
                     .Select(r => new { id = r.FullQR, text = r.FullQR })
                     .Distinct()
                     .OrderBy(r => r.text)
-                    .Take(50)
+                    .Take(30)
                     .ToListAsync();
 
-                // If no results from logs, try the Raks table (legacy or master rak list)
-                if (fullQRCodes.Count == 0 && _context.Raks != null)
+                // 2. Get from Raks table (master list)
+                var rakList = new List<object>();
+                if (_context.Raks != null)
                 {
-                    var rakQuery = _context.Raks.AsQueryable();
-                    if (!string.IsNullOrEmpty(search))
-                    {
-                        rakQuery = rakQuery.Where(r => r.FullQR.Contains(search));
-                    }
-                    fullQRCodes = await rakQuery
+                    var rakQuery = await _context.Raks
+                        .Where(r => string.IsNullOrEmpty(search) || (r.FullQR != null && r.FullQR.Contains(search)))
                         .Select(r => new { id = r.FullQR, text = r.FullQR })
                         .Distinct()
                         .OrderBy(r => r.text)
-                        .Take(50)
+                        .Take(30)
                         .ToListAsync();
+                    rakList = rakQuery.Cast<object>().ToList();
                 }
+
+                // Combine and Deduplicate
+                var fullQRCodes = logList.Cast<object>()
+                    .Concat(rakList)
+                    .GroupBy(x => ((dynamic)x).id)
+                    .Select(g => g.First())
+                    .OrderBy(x => ((dynamic)x).text)
+                    .Take(50)
+                    .ToList();
 
                 return Json(new { results = fullQRCodes });
             }
@@ -1605,6 +1607,112 @@ namespace dashboardWIPHouse.Controllers
                     errorMessage += " Details: " + ex.InnerException.Message;
                 }
                 return Json(new { success = false, message = "Error saving data: " + errorMessage });
+            }
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult DownloadTemplate(string uploadType = "items")
+        {
+            try
+            {
+                _logger.LogInformation($"Generating MOLDED Excel template for upload type: {uploadType}");
+
+                OfficeOpenXml.ExcelPackage.LicenseContext = OfficeOpenXml.LicenseContext.NonCommercial;
+                using var package = new OfficeOpenXml.ExcelPackage();
+                var worksheet = package.Workbook.Worksheets.Add("Template");
+
+                if (uploadType == "storage")
+                {
+                    // Storage Log Template
+                    worksheet.Cells[1, 1].Value = "Timestamp";
+                    worksheet.Cells[1, 2].Value = "Kode Rak";
+                    worksheet.Cells[1, 3].Value = "Full QR";
+                    worksheet.Cells[1, 4].Value = "Kode Item";
+                    worksheet.Cells[1, 5].Value = "Jml Box";
+                    worksheet.Cells[1, 6].Value = "Production Date";
+                    worksheet.Cells[1, 7].Value = "Qty Pcs";
+
+                    // Add sample data
+                    worksheet.Cells[2, 1].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    worksheet.Cells[2, 2].Value = "RAK001";
+                    worksheet.Cells[2, 3].Value = "GH-ITEM001-A12-1";
+                    worksheet.Cells[2, 4].Value = "ITEM001";
+                    worksheet.Cells[2, 5].Value = 10;
+                    worksheet.Cells[2, 6].Value = DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd");
+                    worksheet.Cells[2, 7].Value = 100;
+
+                    // Style the header
+                    using (var range = worksheet.Cells[1, 1, 1, 7])
+                    {
+                        range.Style.Font.Bold = true;
+                        range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
+                    }
+                }
+                else if (uploadType == "supply")
+                {
+                    // Supply Log Template
+                    worksheet.Cells[1, 1].Value = "item_code";
+                    worksheet.Cells[1, 2].Value = "full_qr";
+                    worksheet.Cells[1, 3].Value = "box_count";
+                    worksheet.Cells[1, 4].Value = "qty_pcs";
+                    worksheet.Cells[1, 5].Value = "supplied_at";
+                    worksheet.Cells[1, 6].Value = "to_process";
+
+                    // Add sample data
+                    worksheet.Cells[2, 1].Value = "ITEM001";
+                    worksheet.Cells[2, 2].Value = "GH-ITEM001-A12-1";
+                    worksheet.Cells[2, 3].Value = 5;
+                    worksheet.Cells[2, 4].Value = 50;
+                    worksheet.Cells[2, 5].Value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                    worksheet.Cells[2, 6].Value = "Production";
+
+                    // Style the header
+                    using (var range = worksheet.Cells[1, 1, 1, 6])
+                    {
+                        range.Style.Font.Bold = true;
+                        range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightBlue);
+                    }
+                }
+                else // "items" (default)
+                {
+                    // Items Template
+                    worksheet.Cells[1, 1].Value = "ItemCode";
+                    worksheet.Cells[1, 2].Value = "QtyPerBox";
+                    worksheet.Cells[1, 3].Value = "StandardMin";
+                    worksheet.Cells[1, 4].Value = "StandardMax";
+                    worksheet.Cells[1, 5].Value = "StandardExp";
+
+                    // Add sample data
+                    worksheet.Cells[2, 1].Value = "ITEM001";
+                    worksheet.Cells[2, 2].Value = 25;
+                    worksheet.Cells[2, 3].Value = 10;
+                    worksheet.Cells[2, 4].Value = 50;
+                    worksheet.Cells[2, 5].Value = 30;
+
+                    // Style the header
+                    using (var range = worksheet.Cells[1, 1, 1, 5])
+                    {
+                        range.Style.Font.Bold = true;
+                        range.Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                        range.Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGray);
+                    }
+                }
+
+                worksheet.Cells.AutoFitColumns();
+
+                var fileName = $"Molded_{uploadType}_Template_{DateTime.Now:yyyyMMdd}.xlsx";
+                var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                var fileBytes = package.GetAsByteArray();
+
+                return File(fileBytes, contentType, fileName);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating MOLDED Excel template");
+                return BadRequest($"Error generating template: {ex.Message}");
             }
         }
 
@@ -1776,7 +1884,7 @@ namespace dashboardWIPHouse.Controllers
                             qtyPcs = totalPcs,
                             lastUpdated = latestUpdate != DateTime.MinValue ? latestUpdate.ToString("dd-MM-yyyy HH:mm") : "-"
                         };
-                    }).ToList();
+                    }).Where(x => x.qty > 0).ToList();
 
                     return Json(new { success = true, data = resultData });
                 }
