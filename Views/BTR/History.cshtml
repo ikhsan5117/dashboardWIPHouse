@@ -1,0 +1,713 @@
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>History & Stock - BTR</title>
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/plugins.css">
+    <link rel="stylesheet" href="~/css/main.css">
+    <link rel="stylesheet" href="~/css/themes.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* BTR theme (green) */
+            --theme-primary: #00897b;
+            --theme-dark: #00695c;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #f0f2f5; 
+            margin: 0; 
+            padding: 0;
+            color: #333;
+        }
+
+        .history-header {
+            background: var(--theme-primary);
+            color: white;
+            padding: 15px 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .tabs-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            padding-bottom: 5px;
+            flex: 1;
+        }
+
+        .tab-item i {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .tab-item.active {
+            color: white;
+        }
+
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: white;
+            border-radius: 2px 2px 0 0;
+        }
+
+        .sub-header {
+            margin-top: 135px;
+            background: #E0F2F1; /* green-ish subheader */
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .action-icon {
+            color: #444;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .calendar-wrapper {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .calendar-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .search-container {
+            padding: 10px 20px;
+            background: white;
+            display: none;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px 10px 45px;
+            border: 1px solid #eee;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            background: #fdfdfd;
+        }
+
+        .content-area {
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+
+        .loader-container {
+            margin-top: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .loader {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--theme-primary);
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .cards-container { display: none; }
+
+        .history-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.2s;
+        }
+
+        .history-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 24px;
+        }
+
+        .card-icon.in { background: #E0F2F1; color: var(--theme-primary); }
+        .card-icon.out { background: #FFEBEE; color: #F44336; }
+
+        .card-content { flex: 1; }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 6px;
+        }
+
+        .card-details {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .card-detail-row { display: flex; gap: 4px; }
+        .card-label { font-weight: 500; color: #888; }
+
+        .no-data-card {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .no-data-card i { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+
+        .stock-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+        }
+
+        .stock-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+        }
+
+        .stock-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .stock-item-code { font-size: 16px; font-weight: 700; color: #222; }
+        .stock-qty { font-size: 18px; font-weight: 700; color: var(--theme-primary); }
+        .stock-pcs { font-size: 13px; color: #666; margin-left: 5px; font-weight: 500; }
+
+        .stock-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            border-top: 1px solid #f0f0f0;
+            padding-top: 8px;
+        }
+
+        .stock-status {
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-normal { background: #E8F5E9; color: #2E7D32; }
+        .status-expired { background: #FFEBEE; color: #C62828; }
+        .status-near { background: #FFF8E1; color: #F9A825; }
+        .status-shortage { background: #E0F2F1; color: #00695c; }
+        .status-over { background: #ECEFF1; color: #455A64; }
+        .status-default { background: #f5f5f5; color: #666; }
+
+        .stock-date {
+            font-size: 11px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .pagination-area {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 20px;
+            flex-wrap: wrap;
+            display: none;
+        }
+
+        .page-btn {
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            color: #444;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+        }
+
+        .page-btn:hover:not(:disabled) {
+            border-color: var(--theme-primary);
+            color: var(--theme-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .page-btn.active {
+            background: var(--theme-primary);
+            color: white;
+            border-color: var(--theme-primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background: #f5f5f5;
+        }
+
+        .delete-btn {
+            background-color: #ffebee;
+            color: #c62828;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 10px;
+        }
+
+        .delete-btn:hover {
+            background-color: #ffcdd2;
+            transform: scale(1.1);
+        }
+        </style>
+</head>
+<body>
+    <header class="history-header">
+        <div class="header-top">
+            <button class="back-btn" onclick="window.history.back()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="28px" viewBox="0 -960 960 960" width="28px" fill="currentColor"><path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/></svg>
+            </button>
+            <div class="header-title">History & Stock</div>
+        </div>
+        
+        <div class="tabs-nav">
+            <div class="tab-item active" onclick="switchTab('in', this)">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-320 280-520l56-56 104 104v-328h80v328l104-104 56 56-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>
+                <span>IN</span>
+            </div>
+            <div class="tab-item" onclick="switchTab('out', this)">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-440v-204l-64 64-56-56 160-160 160 160-56 56-64-64v204h-80ZM160-200v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-120H240q-33 0-56.5-23.5T160-200Z"/></svg>
+                <span>OUT</span>
+            </div>
+            <div class="tab-item" onclick="switchTab('stock', this)">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M240-200q-33 0-56.5-23.5T160-280v-440q0-33 23.5-56.5T240-800h480q33 0 56.5 23.5T800-720v440q0 33-23.5 56.5T720-200H240Zm40-80h400v-400H280v400Zm0 0v-400 400Z"/></svg>
+                <span>STOCK</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="sub-header" id="sub-header">
+        <span id="sub-title">All dates</span>
+        <div class="action-icons">
+            <div class="calendar-wrapper" id="calendar-icon-container">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" class="action-icon"><path d="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>
+                <input type="date" class="calendar-input" id="dateFilter" onchange="handleDateFilter(this.value)">
+            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor" class="action-icon" onclick="refreshData()"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T712-690v-110h80v280H512v-80h150q-34-45-84-72.5T480-800q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>
+        </div>
+    </div>
+
+    <div class="search-container" id="search-container">
+        <div class="search-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#aaa" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%);"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-240q75 0 127.5-52.5T560-420q0-75-52.5-127.5T380-600q-75 0-127.5 52.5T200-420q0 75 52.5 127.5T380-240Z"/></svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search Item Code..." onkeyup="handleSearch()">
+        </div>
+    </div>
+
+    <div class="content-area">
+        <div id="loader" class="loader-container">
+            <div class="loader"></div>
+            <div style="margin-top: 10px; font-size: 12px; color: #888;">Fetching data...</div>
+        </div>
+
+        <div id="cards-container" class="cards-container"></div>
+
+        <div id="pagination-container" class="pagination-area"></div>
+    </div>
+
+    <script src="~/js/vendor/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const isAdmin = @User.IsInRole("Admin").ToString().ToLower();
+        let currentTab = 'in';
+        let selectedDate = '';
+        let masterData = [];
+        let filteredData = [];
+        let currentPage = 1;
+        const pageSize = 25;
+
+        function switchTab(tab, element) {
+            currentTab = tab;
+            selectedDate = '';
+            $('#dateFilter').val('');
+            $('#searchInput').val('');
+            
+            $('.tab-item').removeClass('active');
+            $(element).addClass('active');
+
+            if (tab === 'stock') {
+                $('#sub-title').text('Current Stock Summary');
+                $('#calendar-icon-container').hide();
+                $('#search-container').fadeIn();
+                $('.sub-header').css('background', '#FFF9C4');
+            } else {
+                $('#sub-title').text('All dates');
+                $('#calendar-icon-container').show();
+                $('#search-container').hide();
+                $('.sub-header').css('background', '#E0F2F1');
+            }
+
+            loadData();
+        }
+
+        function handleDateFilter(val) {
+            if (val) {
+                selectedDate = val;
+                let d = new Date(val);
+                let formatted = d.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+                $('#sub-title').text(formatted);
+            } else {
+                selectedDate = '';
+                $('#sub-title').text('All dates');
+            }
+            loadData();
+        }
+
+        function loadData() {
+            $('#cards-container').hide();
+            $('#pagination-container').hide();
+            $('#loader').show();
+
+            $.ajax({
+                url: '@Url.Action("GetHistoryData", "BTR")',
+                type: 'GET',
+                data: { type: currentTab, date: selectedDate },
+                success: function(response) {
+                    $('#loader').hide();
+                    if (response.success) {
+                        masterData = response.data;
+                        filteredData = [...masterData];
+                        currentPage = 1;
+                        renderUI();
+                    } else {
+                        Swal.fire('Error', response.message, 'error');
+                    }
+                },
+                error: function() {
+                    $('#loader').hide();
+                    Swal.fire('Error', 'Connection failed', 'error');
+                }
+            });
+        }
+
+        function handleSearch() {
+            let filter = $('#searchInput').val().toUpperCase();
+            if (filter) {
+                filteredData = masterData.filter(item => 
+                    (item.itemCode || item.item || "").toUpperCase().indexOf(filter) > -1
+                );
+            } else {
+                filteredData = [...masterData];
+            }
+            currentPage = 1;
+            renderUI();
+        }
+
+        function renderUI() {
+            renderCards();
+            renderPagination();
+            $('#cards-container').fadeIn();
+        }
+
+        function renderCards() {
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredData.slice(start, end);
+            let html = '';
+
+            if (currentTab === 'stock') {
+                if (filteredData.length === 0) {
+                    html = `<div class="no-data-card">
+                        <i class="gi gi-package"></i>
+                        <div>Belum ada data stock</div>
+                    </div>`;
+                } else {
+                    pageData.forEach(item => {
+                        let statusClass = 'status-default';
+                        const desc = (item.description || '').toLowerCase();
+                        
+                        if (desc.includes('normal') || desc.includes('ok')) statusClass = 'status-normal';
+                        else if (desc.includes('expired') || desc.includes('kadaluarsa')) statusClass = 'status-expired';
+                        else if (desc.includes('near') || desc.includes('hampir')) statusClass = 'status-near';
+                        else if (desc.includes('shortage') || desc.includes('stok habis') || desc.includes('tidak ada')) statusClass = 'status-shortage';
+                        else if (desc.includes('over')) statusClass = 'status-over';
+
+                        html += `
+                            <div class="stock-card">
+                                <div class="stock-card-header">
+                                    <div class="stock-item-code">${item.itemCode}</div>
+                                    <div>
+                                        <span class="stock-qty">${item.qty} Box</span>
+                                        <span class="stock-pcs">(${item.qtyPcs || 0} Pcs)</span>
+                                    </div>
+                                </div>
+                                <div class="stock-details">
+                                    <div class="stock-status ${statusClass}">${item.description || '-'}</div>
+                                    <div class="stock-date">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="currentColor" style="margin-right:4px;"><path d="m612-292 56-56-148-148V320h-80v200l172 172ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/></svg> Updated: ${item.lastUpdated || '-'}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            } else {
+                if (filteredData.length === 0) {
+                    html = `<div class="no-data-card">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="currentColor" style="opacity:0.3; margin-bottom:10px;"><path d="M480-120q-138 0-240.5-91.5T122-440h82q14 104 92.5 172T480-200q117 0 198.5-81.5T760-480q0-117-81.5-198.5T480-760q-69 0-129 32t-101 88h110v80H120v-240h80v94q51-64 124.5-99T480-840q75 0 140.5 28.5t114 77q48.5 48.5 77 114T840-480q0 75-28.5 140.5t-77 114q-48.5 48.5-114 77T480-120Z"/></svg>
+                        <div>Tidak ada history untuk periode ini</div>
+                    </div>`;
+                } else {
+                    pageData.forEach(item => {
+                        const iconClass = currentTab === 'in' ? 'in' : 'out';
+                        const iconSvg = currentTab === 'in' ? 
+                            '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M480-320 280-520l56-56 104 104v-328h80v328l104-104 56 56-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>' : 
+                            '<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M440-440v-204l-64 64-56-56 160-160 160 160-56 56-64-64v204h-80ZM160-200v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-120H240q-33 0-56.5-23.5T160-200Z"/></svg>';
+                        
+                        const dateTime = (item.date || '').split(' ');
+                        const datePart = dateTime[0] || '';
+                        const timePart = dateTime[1] || '';
+                        
+                        html += `
+                            <div class="history-card">
+                                <div class="card-icon ${iconClass}">
+                                    ${iconSvg}
+                                </div>
+                                <div class="card-content">
+                                    <div class="card-title">${item.item}</div>
+                                    <div class="card-details">
+                                        <div class="card-detail-row">
+                                            <span class="card-label">Box:</span>
+                                            <span>${item.qty}</span>
+                                            <span class="card-label" style="margin-left: 12px;">Pcs:</span>
+                                            <span>${item.qtyPcs}</span>
+                                        </div>
+                                        <div class="card-detail-row">
+                                            <span class="card-label">Date:</span>
+                                            <span>${datePart}</span>
+                                        </div>
+                                        ${timePart ? `<div class="card-detail-row">
+                                            <span class="card-label">Time:</span>
+                                            <span>${timePart}</span>
+                                        </div>` : ''}
+                                    </div>
+                                 </div>
+                                 ${isAdmin ? `
+                                 <button class="delete-btn" onclick="deleteHistory(${item.id}, '${currentTab}')" title="Delete record">
+                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg>
+                                 </button>
+                                 ` : ''}
+                            </div>
+                        `;
+                    });
+                }
+            }
+
+            $('#cards-container').html(html);
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredData.length / pageSize);
+            const container = $('#pagination-container');
+            
+            if (totalPages <= 1) {
+                container.hide();
+                return;
+            }
+
+            let html = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
+                            <i class="gi gi-chevron-left"></i>
+                        </button>`;
+
+            const range = [];
+            const delta = 1;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - delta && i <= currentPage + delta)) {
+                    range.push(i);
+                }
+            }
+
+            let prev = 0;
+            for (const i of range) {
+                if (prev) {
+                    if (i - prev === 2) {
+                        html += `<button class="page-btn" onclick="changePage(${prev + 1})">${prev + 1}</button>`;
+                    } else if (i - prev !== 1) {
+                        html += `<span style="padding: 0 5px; color: #888;">...</span>`;
+                    }
+                }
+                html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+                prev = i;
+            }
+            html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
+                        <i class="gi gi-chevron-right"></i>
+                    </button>`;
+            
+            container.html(html).css('display', 'flex').hide().fadeIn();
+        }
+
+        function changePage(p) {
+            currentPage = p;
+            renderUI();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function refreshData() { loadData(); }
+        $(document).ready(function() { loadData(); });
+
+        function deleteHistory(id, type) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '@Url.Action("DeleteHistory", "BTR")',
+                        type: 'POST',
+                        data: { id: id, type: type },
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire('Deleted!', 'Record has been deleted.', 'success');
+                                loadData();
+                            } else {
+                                Swal.fire('Error', response.message, 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Error', 'Failed to delete record', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

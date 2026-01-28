@@ -240,6 +240,20 @@ using (var scope = app.Services.CreateScope())
                     btrContext.SaveChanges();
                     Console.WriteLine("✓ Created default 'adminBTR' user (password: BTR123)");
                 }
+
+                // Seed userBTR
+                var userBTR = btrContext.Users.FirstOrDefault(u => u.Username == "userBTR");
+                if (userBTR == null)
+                {
+                    btrContext.Users.Add(new UserBTR
+                    {
+                        Username = "userBTR",
+                        Password = "BTR123",
+                        CreatedDate = DateTime.Now
+                    });
+                    btrContext.SaveChanges();
+                    Console.WriteLine("✓ Created 'userBTR' user (password: BTR123)");
+                }
             }
             catch (Exception ex)
             {

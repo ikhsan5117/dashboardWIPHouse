@@ -235,10 +235,17 @@ namespace DashboardWIPHouse.Controllers
                     HttpContext.Session.SetString("BTRUsername", user.Username);
                     HttpContext.Session.SetInt32("BTRUserId", user.Id);
 
-                    Console.WriteLine($"✓ BTR Login successful: {user.Username}");
+                    Console.WriteLine($"✓ BTR Login successful: {user.Username} as {role}");
 
-                    // Redirect to BTR Dashboard
-                    return RedirectToAction("Index", "BTR");
+                    // Redirect based on role
+                    if (role == "User")
+                    {
+                        return RedirectToAction("Index", "InputMenu");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "BTR");
+                    }
                 }
                 else
                 {

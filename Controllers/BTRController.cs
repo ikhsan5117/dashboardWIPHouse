@@ -471,50 +471,122 @@ namespace dashboardWIPHouse.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetHistoryData(string type = "storage")
+        public async Task<IActionResult> GetHistoryData(string type, DateTime? date = null)
         {
             try
             {
-                if (type == "storage")
+                // Normalize expected values to match AfterWashing: in/out/stock
+                type = (type ?? string.Empty).Trim().ToLowerInvariant();
+
+                if (type == "in")
                 {
-                    var data = await _context.StorageLogs
-                        .OrderByDescending(s => s.StoredAt)
-                        .Select(s => new
+                    var query = _context.StorageLogs.AsQueryable();
+
+                    if (date.HasValue)
+                    {
+                        var targetDate = date.Value.Date;
+                        query = query.Where(x => x.StoredAt.Date == targetDate);
+                    }
+
+                    var data = await query
+                        .OrderByDescending(x => x.StoredAt)
+                        .Take(100)
+                        .Select(x => new
                         {
-                            s.LogId,
-                            s.ItemCode,
-                            s.FullQR,
-                            productionDate = s.ProductionDate.HasValue ? s.ProductionDate.Value.ToString("yyyy-MM-dd") : "",
-                            s.BoxCount,
-                            s.QtyPcs,
-                            storedAt = s.StoredAt.ToString("yyyy-MM-dd HH:mm:ss"),
-                            tanggal = s.Tanggal.ToString("yyyy-MM-dd")
+                            date = x.StoredAt.ToString("dd-MM-yyyy HH:mm"),
+                            item = x.ItemCode,
+                            qty = x.BoxCount,
+                            qtyPcs = x.QtyPcs,
+                            status = "IN",
+                            id = x.LogId
                         })
                         .ToListAsync();
 
                     return Json(new { success = true, data });
                 }
-                else
+                else if (type == "out")
                 {
-                    var data = await _context.SupplyLogs
-                        .OrderByDescending(s => s.SuppliedAt)
-                        .Select(s => new
+                    var query = _context.SupplyLogs.AsQueryable();
+
+                    if (date.HasValue)
+                    {
+                        var targetDate = date.Value.Date;
+                        query = query.Where(x => x.SuppliedAt.Date == targetDate);
+                    }
+
+                    var data = await query
+                        .OrderByDescending(x => x.SuppliedAt)
+                        .Take(100)
+                        .Select(x => new
                         {
-                            s.LogId,
-                            s.ItemCode,
-                            s.FullQR,
-                            productionDate = s.ProductionDate.HasValue ? s.ProductionDate.Value.ToString("yyyy-MM-dd") : "",
-                            s.BoxCount,
-                            s.QtyPcs,
-                            suppliedAt = s.SuppliedAt.ToString("yyyy-MM-dd HH:mm:ss"),
-                            s.ToProcess,
-                            tanggal = s.Tanggal.ToString("yyyy-MM-dd"),
-                            s.StorageLogId
+                            date = x.SuppliedAt.ToString("dd-MM-yyyy HH:mm"),
+                            item = x.ItemCode,
+                            qty = x.BoxCount,
+                            qtyPcs = x.QtyPcs,
+                            status = "OUT",
+                            id = x.LogId
                         })
                         .ToListAsync();
 
                     return Json(new { success = true, data });
                 }
+                else if (type == "stock")
+                {
+                    // Aggregate stock to itemCode-level (match AfterWashing response shape)
+                    var allItems = await _context.Items
+                        .Select(i => new { i.ItemCode, i.QtyPerBox, i.StandardMin })
+                        .ToDictionaryAsync(i => i.ItemCode);
+
+                    var stockRows = await _context.StockSummary
+                        .Where(s => !string.IsNullOrEmpty(s.ItemCode))
+                        .ToListAsync();
+
+                    var grouped = stockRows
+                        .GroupBy(s => s.ItemCode)
+                        .Select(g =>
+                        {
+                            var totalBox = g.Sum(x => x.CurrentBoxStock);
+                            var latest = g
+                                .OrderByDescending(x => x.LastUpdate)
+                                .FirstOrDefault();
+
+                            var statusExpired = latest?.StatusExpired;
+                            var lastUpdated = latest?.LastUpdate ?? DateTime.MinValue;
+
+                            allItems.TryGetValue(g.Key, out var item);
+                            var qtyPerBox = item?.QtyPerBox ?? 0;
+                            var qtyPcs = totalBox * qtyPerBox;
+
+                            var standardMin = item?.StandardMin ?? 0;
+
+                            string displayStatus = "Normal";
+                            if (!string.IsNullOrEmpty(statusExpired))
+                            {
+                                if (statusExpired.Equals("Expired", StringComparison.OrdinalIgnoreCase)) displayStatus = "Already Expired";
+                                else if (statusExpired.Equals("Near Exp", StringComparison.OrdinalIgnoreCase) ||
+                                         statusExpired.Equals("Near Expired", StringComparison.OrdinalIgnoreCase)) displayStatus = "Near Expired";
+                            }
+                            else if (standardMin > 0 && totalBox < standardMin)
+                            {
+                                displayStatus = "Shortage";
+                            }
+
+                            return new
+                            {
+                                itemCode = g.Key,
+                                description = displayStatus,
+                                qty = totalBox,
+                                qtyPcs = qtyPcs,
+                                lastUpdated = lastUpdated != DateTime.MinValue ? lastUpdated.ToString("dd-MM-yyyy HH:mm") : "-"
+                            };
+                        })
+                        .OrderBy(x => x.itemCode)
+                        .ToList();
+
+                    return Json(new { success = true, data = grouped });
+                }
+
+                return Json(new { success = false, message = "Invalid type" });
             }
             catch (Exception ex)
             {
@@ -523,26 +595,73 @@ namespace dashboardWIPHouse.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> DeleteHistory(int logId, string type)
+        [HttpGet]
+        public async Task<IActionResult> GetStockSummary()
         {
             try
             {
-                if (type == "storage")
+                var stockData = await _context.StockSummary
+                    .OrderBy(s => s.ItemCode)
+                    .Select(s => new
+                    {
+                        s.ItemCode,
+                        s.FullQR,
+                        s.CurrentBoxStock,
+                        s.StatusExpired,
+                        s.ExpiredDate,
+                        s.LastUpdate,
+                        currentPcsStock = _context.Items
+                            .Where(i => i.ItemCode == s.ItemCode)
+                            .Select(i => i.QtyPerBox * s.CurrentBoxStock)
+                            .FirstOrDefault(),
+                        standardMin = _context.Items
+                            .Where(i => i.ItemCode == s.ItemCode)
+                            .Select(i => i.StandardMin)
+                            .FirstOrDefault()
+                    })
+                    .ToListAsync();
+
+                return Json(new { success = true, data = stockData });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetStockSummary error");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteHistory(int id, string type)
+        {
+            try
+            {
+                // UI sudah hide tombol untuk non-admin, tapi tetap harus dijaga di server.
+                if (!User.IsInRole("Admin"))
                 {
-                    var log = await _context.StorageLogs.FindAsync(logId);
+                    return Json(new { success = false, message = "Unauthorized" });
+                }
+
+                type = (type ?? string.Empty).Trim().ToLowerInvariant();
+
+                if (type == "in")
+                {
+                    var log = await _context.StorageLogs.FindAsync(id);
                     if (log != null)
                     {
                         _context.StorageLogs.Remove(log);
                     }
                 }
-                else
+                else if (type == "out")
                 {
-                    var log = await _context.SupplyLogs.FindAsync(logId);
+                    var log = await _context.SupplyLogs.FindAsync(id);
                     if (log != null)
                     {
                         _context.SupplyLogs.Remove(log);
                     }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Type not supported for deletion" });
                 }
 
                 await _context.SaveChangesAsync();
