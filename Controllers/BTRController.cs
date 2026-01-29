@@ -48,20 +48,66 @@ namespace dashboardWIPHouse.Controllers
             var items = await _context.Items.ToListAsync();
             var stockSummary = await _context.StockSummary.ToListAsync();
 
+            // Group stock by item_code and sum
+            var stockByItem = stockSummary
+                .GroupBy(s => s.ItemCode)
+                .ToDictionary(
+                    g => g.Key,
+                    g => new
+                    {
+                        TotalStock = g.Sum(s => s.CurrentBoxStock),
+                        HasExpired = g.Any(s => s.StatusExpired == "Expired"),
+                        HasNearExpired = g.Any(s => s.StatusExpired == "Near Exp")
+                    }
+                );
+
+            // Initialize counters
+            int expiredCount = 0;
+            int nearExpiredCount = 0;
+            int shortageCount = 0;
+            int overStockCount = 0;
+            int normalCount = 0;
+
+            // Iterate through items and determine single status per item (prioritized)
+            foreach (var item in items)
+            {
+                var hasStock = stockByItem.ContainsKey(item.ItemCode);
+                var totalStock = hasStock ? stockByItem[item.ItemCode].TotalStock : 0;
+                var hasExpired = hasStock && stockByItem[item.ItemCode].HasExpired;
+                var hasNearExpired = hasStock && stockByItem[item.ItemCode].HasNearExpired;
+
+                // Priority: Expired > Near Expired > Shortage > Over Stock > Normal
+                if (hasExpired)
+                {
+                    expiredCount++;
+                }
+                else if (hasNearExpired)
+                {
+                    nearExpiredCount++;
+                }
+                else if (totalStock <= item.StandardMin)
+                {
+                    shortageCount++;
+                }
+                else if (totalStock > item.StandardMax)
+                {
+                    overStockCount++;
+                }
+                else
+                {
+                    normalCount++;
+                }
+            }
+
             return new DashboardSummaryBTR
             {
                 TotalItems = items.Count,
                 TotalStock = stockSummary.Sum(s => s.CurrentBoxStock),
-                ExpiredItems = stockSummary.Count(s => s.StatusExpired == "Expired"),
-                NearExpiredItems = stockSummary.Count(s => s.StatusExpired == "Near Exp"),
-                BelowMinItems = items.Count(i =>
-                {
-                    var currentStock = stockSummary
-                        .Where(s => s.ItemCode == i.ItemCode)
-                        .Sum(s => s.CurrentBoxStock);
-                    return currentStock < i.StandardMin;
-                }),
-                NormalItems = items.Count - stockSummary.Count(s => s.StatusExpired == "Expired" || s.StatusExpired == "Near Exp")
+                ExpiredItems = expiredCount,
+                NearExpiredItems = nearExpiredCount,
+                ShortageCount = shortageCount,
+                OverStockCount = overStockCount,
+                NormalItems = normalCount
             };
         }
 
@@ -94,9 +140,9 @@ namespace dashboardWIPHouse.Controllers
                     totalItems = summary.TotalItems,
                     expiredCount = summary.ExpiredItems,
                     nearExpiredCount = summary.NearExpiredItems,
-                    shortageCount = summary.BelowMinItems,
-                    belowMinCount = summary.BelowMinItems,
-                    aboveMaxCount = summary.NormalItems,
+                    shortageCount = summary.ShortageCount,
+                    overStockCount = summary.OverStockCount,
+                    normalCount = summary.NormalItems,
                     totalStock = summary.TotalStock
                 });
             }

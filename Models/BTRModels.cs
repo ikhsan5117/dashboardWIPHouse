@@ -225,7 +225,8 @@ namespace dashboardWIPHouse.Models
         public int TotalStock { get; set; }
         public int ExpiredItems { get; set; }
         public int NearExpiredItems { get; set; }
-        public int BelowMinItems { get; set; }
+        public int ShortageCount { get; set; }
+        public int OverStockCount { get; set; }
         public int NormalItems { get; set; }
     }
 

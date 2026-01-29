@@ -1,7 +1,7 @@
 ﻿@model dashboardWIPHouse.Models.DashboardSummaryBTR
 
 @{
-    ViewData["Title"] = "Dashboard - BTR Management";
+    ViewData["Title"] = "Dashboard - After Press Management";
 }
 
 <style>
@@ -946,7 +946,7 @@
             <div class="row">
                 <!-- Main Title -->
                 <div class="col-md-4 col-lg-6 hidden-xs hidden-sm">
-                    <h1>Monitoring Stock <strong>BTR</strong><span class="btr-badge">WIP</span><br><small>Before Trimming Dashboard</small></h1>
+                    <h1>Monitoring Stock <strong>AFTER PRESS</strong><span class="btr-badge">WIP</span><br><small>After Press Dashboard</small></h1>
                 </div>
                 <!-- END Main Title -->
 
@@ -967,7 +967,7 @@
                         </div>
                         <div class="col-xs-custom">
                             <h2 class="animation-hatch">
-                                <strong id="header-shortage">@Model.BelowMinItems</strong>
+                                <strong id="header-shortage">@Model.ShortageCount</strong>
                                 <small><i class="fa fa-battery-quarter"></i> Shortage</small>
                             </h2>
                         </div>
@@ -1040,7 +1040,7 @@
                     </div>
                     <div class="widget-content animation-pullDown">
                         <h3>
-                            <strong id="main-shortage">@Model.BelowMinItems</strong>
+                            <strong id="main-shortage">@Model.ShortageCount</strong>
                             Items
                         </h3>
                         <small>Shortage</small>
@@ -1050,36 +1050,36 @@
         </div>
 
         <div class="stats-widget-wrapper">
-            <!-- Below Min Widget -->
-            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Below Min')">
+            <!-- Over Stock Widget -->
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Over Stock')">
                 <div class="widget-simple widget-simple-custom">
-                    <div class="widget-icon themed-background-info animation-fadeIn">
-                        <i class="fa fa-arrow-down"></i>
+                    <div class="widget-icon themed-background-warning animation-fadeIn">
+                        <i class="fa fa-arrow-up"></i>
                     </div>
                     <div class="widget-content animation-pullDown">
                         <h3>
-                            <strong id="main-below-min">@Model.BelowMinItems</strong>
+                            <strong id="main-overstock">@Model.OverStockCount</strong>
                             Items
                         </h3>
-                        <small>Below Min</small>
+                        <small>Over Stock</small>
                     </div>
                 </div>
             </a>
         </div>
 
         <div class="stats-widget-wrapper">
-            <!-- Above Max Widget -->
-            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Over Stock')">
+            <!-- Normal Stock Widget -->
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Normal')">
                 <div class="widget-simple widget-simple-custom">
                     <div class="widget-icon themed-background-success animation-fadeIn">
-                        <i class="fa fa-arrow-up"></i>
+                        <i class="fa fa-check-circle"></i>
                     </div>
                     <div class="widget-content animation-pullDown">
                         <h3>
-                            <strong id="main-above-max">@Model.NormalItems</strong>
+                            <strong id="main-normal">@Model.NormalItems</strong>
                             Items
                         </h3>
-                        <small>Over Stock</small>
+                        <small>Normal Stock</small>
                     </div>
                 </div>
             </a>
@@ -1094,13 +1094,13 @@
         <div class="widget-header-custom">
             <div class="row">
                 <div class="col-sm-8">
-                    <h4><i class="fa fa-bar-chart"></i> BTR Inventory Summary</h4>
+                    <h4><i class="fa fa-bar-chart"></i> After Press Inventory Summary</h4>
                 </div>
                 <div class="col-sm-4 text-right">
                     @if (User.IsInRole("Admin"))
                     {
                         <a href="@Url.Action("Items", "BTR")" class="btn btn-info btn-sm" style="margin-right: 10px;">
-                            <i class="fa fa-table"></i> BTR Items
+                            <i class="fa fa-table"></i> After Press Items
                         </a>
                     }
                     <button type="button" class="btn btn-primary btn-sm" onclick="refreshDashboard()">
@@ -1124,16 +1124,16 @@
                     <span>Near Expired</span>
                 </div>
                 <div class="summary-stat">
-                    <strong id="shortage-items">@Model.BelowMinItems</strong>
+                    <strong id="shortage-items">@Model.ShortageCount</strong>
                     <span>Shortage</span>
                 </div>
                 <div class="summary-stat">
-                    <strong id="below-min-items">@Model.BelowMinItems</strong>
-                    <span>Below Min</span>
+                    <strong id="overstock-items">@Model.OverStockCount</strong>
+                    <span>Over Stock</span>
                 </div>
                 <div class="summary-stat">
-                    <strong id="above-max-items">@Model.NormalItems</strong>
-                    <span>Above Max</span>
+                    <strong id="normal-items">@Model.NormalItems</strong>
+                    <span>Normal Stock</span>
                 </div>
                 <div class="summary-stat">
                     <strong id="last-update">@DateTime.Now.ToString("HH:mm")</strong>
