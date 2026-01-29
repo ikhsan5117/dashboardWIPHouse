@@ -1,0 +1,621 @@
+@{
+    ViewData["Title"] = "RVI Neural Analytics";
+}
+
+<!-- Premium Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+    /* ===== FUTURISTIC NEURAL DESIGN SYSTEM ===== */
+    :root {
+        --deep-bg: #0a0c10;
+        --card-bg: rgba(22, 28, 36, 0.8);
+        --accent-cyan: #00f2ff;
+        --accent-purple: #7000ff;
+        --accent-pink: #ff007a;
+        --accent-green: #00ff9d;
+        --text-main: #e2e8f0;
+        --text-dim: #94a3b8;
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --neon-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    }
+
+    #page-content {
+        background: var(--deep-bg) !important;
+        background-image: 
+            radial-gradient(circle at 20% 20%, rgba(112, 0, 255, 0.05) 0%, transparent 40%),
+            radial-gradient(circle at 80% 80%, rgba(0, 242, 255, 0.05) 0%, transparent 40%) !important;
+        font-family: 'Outfit', sans-serif !important;
+        color: var(--text-main);
+        min-height: 100vh;
+    }
+
+    .neural-container {
+        padding: 40px;
+        max-width: 1700px;
+        margin: 0 auto;
+        animation: cyberEnter 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    @@keyframes cyberEnter {
+        from { opacity: 0; transform: scale(0.98) translateY(20px); filter: blur(10px); }
+        to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+    }
+
+    /* ===== GLOWING HEADER ===== */
+    .neural-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 50px;
+        position: relative;
+    }
+
+    .header-glitch h1 {
+        font-weight: 800;
+        font-size: 3rem;
+        letter-spacing: -2px;
+        margin: 0;
+        background: linear-gradient(to right, #fff, var(--accent-cyan));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+    }
+
+    .header-glitch p {
+        font-family: 'JetBrains Mono', monospace;
+        color: var(--accent-cyan);
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 4px;
+        margin-top: 10px;
+        opacity: 0.8;
+    }
+
+    .sync-btn {
+        background: rgba(0, 242, 255, 0.1);
+        border: 1px solid var(--accent-cyan);
+        color: var(--accent-cyan);
+        padding: 12px 30px;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .sync-btn:hover {
+        background: var(--accent-cyan);
+        color: var(--deep-bg);
+        box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+    }
+
+    /* ===== NEON STAT CARDS ===== */
+    .grid-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+
+    .cyber-card-stat {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        padding: 30px;
+        border-radius: 4px;
+        position: relative;
+        backdrop-filter: blur(20px);
+        transition: all 0.3s;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .cyber-card-stat::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 2px;
+        background: var(--accent-color, var(--accent-cyan));
+        box-shadow: 0 0 15px var(--accent-color, var(--accent-cyan));
+        z-index: 10;
+    }
+
+    .cyber-card-stat:hover {
+        transform: translateY(-8px);
+        border-color: var(--accent-color, var(--accent-cyan));
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .stat-content {
+        flex: 1;
+        z-index: 2;
+    }
+
+    .stat-icon-right {
+        width: 70px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        color: var(--accent-color, var(--accent-cyan));
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        opacity: 0.4;
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform: rotate(15deg);
+        z-index: 1;
+        box-shadow: inset 0 0 15px rgba(255,255,255,0.02);
+    }
+
+    .cyber-card-stat:hover .stat-icon-right {
+        opacity: 1;
+        transform: rotate(0deg) scale(1.1);
+        background: rgba(var(--icon-rgb, 0, 242, 255), 0.15);
+        border-color: var(--accent-color, var(--accent-cyan));
+        box-shadow: 0 0 25px rgba(var(--icon-rgb, 0, 242, 255), 0.3);
+        filter: drop-shadow(0 0 5px var(--accent-color, var(--accent-cyan)));
+    }
+
+    .stat-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    .stat-value {
+        font-size: 2.8rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+
+    .stat-meta {
+        margin-top: 15px;
+        font-size: 0.85rem;
+        color: var(--accent-color, var(--accent-cyan));
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    /* ===== MAIN ANALYTICS BLOCK ===== */
+    .cyber-block {
+        background: var(--card-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 4px;
+        margin-bottom: 40px;
+        backdrop-filter: blur(20px);
+    }
+
+    .block-header {
+        padding: 25px 30px;
+        border-bottom: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .block-header h2 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .block-header h2 i { color: var(--accent-cyan); }
+
+    .chart-zone {
+        padding: 40px;
+        height: 600px;
+    }
+
+    /* ===== SMART TABLE ===== */
+    .cyber-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .cyber-table th {
+        text-align: left;
+        padding: 20px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .cyber-table td {
+        padding: 20px;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+        font-size: 0.95rem;
+    }
+
+    .cyber-table tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Visual Stock Line */
+    .stock-tube {
+        height: 6px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 10px;
+        position: relative;
+        overflow: visible;
+    }
+
+    .stock-fill {
+        height: 100%;
+        background: linear-gradient(to right, var(--accent-purple), var(--accent-cyan));
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
+        border-radius: 10px;
+        transition: width 1s ease-out;
+    }
+
+    .limit-node {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid var(--deep-bg);
+        z-index: 5;
+    }
+
+    .node-min { background: var(--accent-pink); box-shadow: 0 0 10px var(--accent-pink); }
+    .node-max { background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
+
+    .cyber-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.7rem;
+        padding: 4px 12px;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ===== LOADERS ===== */
+    .cyber-loader {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: var(--deep-bg);
+        z-index: 9999;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .dna-spinner {
+        width: 80px;
+        height: 80px;
+        border: 2px solid var(--accent-cyan);
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+        box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    }
+
+    @@keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* Custom Tooltip */
+    #cyber-tooltip {
+        background: rgba(10, 12, 16, 0.95);
+        border: 1px solid var(--accent-cyan);
+        padding: 15px;
+        border-radius: 4px;
+        font-family: 'JetBrains Mono', monospace;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+</style>
+
+<div class="neural-container">
+    <!-- Cyber Header -->
+    <div class="neural-header">
+        <div class="header-glitch">
+            <p>// STOCK_DIAGNOSTICS_v4.0</p>
+            <h1>NEURAL ANALYTICS</h1>
+        </div>
+        <button class="sync-btn" onclick="refreshNeuralData()">
+            [ RE-SYNC SYSTEM ]
+        </button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid-stats">
+        <div class="cyber-card-stat" style="--accent-color: var(--accent-cyan); --icon-rgb: 0, 242, 255">
+            <div class="stat-content">
+                <span class="stat-label">System Skus</span>
+                <div class="stat-value" id="stat-total">0</div>
+                <div class="stat-meta">ONLINE PROXIES</div>
+            </div>
+            <div class="stat-icon-right">
+                <i class="fa fa-cubes"></i>
+            </div>
+        </div>
+        <div class="cyber-card-stat" style="--accent-color: var(--accent-pink); --icon-rgb: 255, 0, 122">
+            <div class="stat-content">
+                <span class="stat-label">Critical Gaps</span>
+                <div class="stat-value" id="stat-shortage" style="color: var(--accent-pink)">0</div>
+                <div class="stat-meta">IMMEDIATE ACTION REQ.</div>
+            </div>
+            <div class="stat-icon-right">
+                <i class="fa fa-bolt"></i>
+            </div>
+        </div>
+        <div class="cyber-card-stat" style="--accent-color: var(--accent-green); --icon-rgb: 0, 255, 157">
+            <div class="stat-content">
+                <span class="stat-label">Operational Area</span>
+                <div class="stat-value" id="stat-normal" style="color: var(--accent-green)">0</div>
+                <div class="stat-meta">OPTIMIZED FLOW</div>
+            </div>
+            <div class="stat-icon-right">
+                <i class="fa fa-shield"></i>
+            </div>
+        </div>
+        <div class="cyber-card-stat" style="--accent-color: var(--warning); --icon-rgb: 255, 170, 0">
+            <div class="stat-content">
+                <span class="stat-label">Overflow State</span>
+                <div class="stat-value" id="stat-overstock" style="color: var(--warning)">0</div>
+                <div class="stat-meta">CAPACITY ALERT</div>
+            </div>
+            <div class="stat-icon-right">
+                <i class="fa fa-exclamation-triangle"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Visualizer -->
+    <div class="cyber-block">
+        <div class="block-header">
+            <h2><i class="fa fa-microchip"></i> INVENTORY NODES VISUALIZER</h2>
+            <div style="display: flex; gap: 30px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">
+                <span style="color: var(--accent-cyan)">■ LIVE_STOCK</span>
+                <span style="color: var(--accent-pink)">● MIN_THRESHOLD</span>
+                <span style="color: var(--accent-green)">● MAX_BUFFER</span>
+            </div>
+        </div>
+        <div class="chart-zone">
+            <canvas id="neuralChart"></canvas>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-5">
+            <div class="cyber-block">
+                <div class="block-header">
+                    <h2><i class="fa fa-circle-notch"></i> HEALTH INDEX</h2>
+                </div>
+                <div style="padding: 40px; height: 400px;">
+                    <canvas id="healthOrbit"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="cyber-block">
+                <div class="block-header">
+                    <h2><i class="fa fa-terminal"></i> ITEM_DATA_MATRIX</h2>
+                </div>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="cyber-table" id="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Identity</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th style="width: 40%;">Neural Alignment</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-body">
+                            <!-- Matrix Injected -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="cyber-loader" id="cyber-loader">
+    <div class="dna-spinner"></div>
+    <div style="margin-top: 30px; font-family: 'JetBrains Mono', monospace; color: var(--accent-cyan); letter-spacing: 5px;">INITIALIZING_NEURAL_LINK...</div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        let neuralChart = null;
+        let healthOrbit = null;
+
+        $(function() {
+            refreshNeuralData();
+        });
+
+        function refreshNeuralData() {
+            $('#cyber-loader').css('display', 'flex').hide().fadeIn(400);
+            
+            $.ajax({
+                url: '@Url.Action("GetGraphData", "RVI")',
+                type: 'GET',
+                success: function(res) {
+                    $('#cyber-loader').fadeOut(600);
+                    if (res.success) {
+                        initNeuralChart(res);
+                        initHealthOrbit(res);
+                        renderMatrix(res);
+                        animateNumbers(res);
+                    }
+                },
+                error: function() { $('#cyber-loader').fadeOut(600); }
+            });
+        }
+
+        function initNeuralChart(data) {
+            const ctx = document.getElementById('neuralChart').getContext('2d');
+            
+            const cyanGrad = ctx.createLinearGradient(0, 0, 0, 400);
+            cyanGrad.addColorStop(0, 'rgba(0, 242, 255, 0.5)');
+            cyanGrad.addColorStop(1, 'rgba(0, 242, 255, 0)');
+
+            if (neuralChart) neuralChart.destroy();
+
+            neuralChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'STOCK',
+                            data: data.stocks,
+                            borderColor: '#00f2ff',
+                            backgroundColor: cyanGrad,
+                            borderWidth: 4,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#00f2ff',
+                            pointHoverRadius: 8,
+                            pointRadius: 2,
+                            order: 1
+                        },
+                        {
+                            label: 'MIN',
+                            data: data.mins,
+                            borderColor: '#ff007a',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            borderDash: [10, 5],
+                            order: 2
+                        },
+                        {
+                            label: 'MAX',
+                            data: data.maxs,
+                            borderColor: '#00ff9d',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            order: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(10, 12, 16, 0.95)',
+                            borderColor: '#00f2ff',
+                            borderWidth: 1,
+                            padding: 20,
+                            titleFont: { family: 'JetBrains Mono', size: 14 },
+                            bodyFont: { family: 'JetBrains Mono', size: 12 },
+                            cornerRadius: 0
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#64748b', font: { family: 'JetBrains Mono' } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#64748b', font: { family: 'JetBrains Mono' } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initHealthOrbit(data) {
+            if (healthOrbit) healthOrbit.destroy();
+            healthOrbit = new Chart('healthOrbit', {
+                type: 'doughnut',
+                data: {
+                    labels: data.statusLabels,
+                    datasets: [{
+                        data: data.statusData,
+                        backgroundColor: ['#ff007a', '#00ff9d', '#ffaa00'],
+                        borderWidth: 0,
+                        hoverOffset: 30
+                    }]
+                },
+                options: {
+                    cutout: '85%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#94a3b8',
+                                font: { family: 'JetBrains Mono', size: 11 },
+                                padding: 20
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function animateNumbers(data) {
+            $({ val: 0 }).animate({ val: data.labels.length }, {
+                duration: 1500, step: function(n) { $('#stat-total').text(Math.round(n)); }
+            });
+            $('#stat-shortage').text(data.statusData[0]);
+            $('#stat-normal').text(data.statusData[1]);
+            $('#stat-overstock').text(data.statusData[2]);
+        }
+
+        function renderMatrix(data) {
+            let html = '';
+            for (let i = 0; i < data.labels.length; i++) {
+                const s = data.stocks[i], min = data.mins[i], max = data.maxs[i];
+                let st = "IDLE", color = "var(--accent-green)";
+                
+                if (s <= min) { st = "CRITICAL"; color = "var(--accent-pink)"; }
+                else if (s >= max) { st = "OVERFLOW"; color = "var(--warning)"; }
+
+                const limit = Math.max(s, max, 1);
+                const perc = (s / limit) * 100, minP = (min / limit) * 100, maxP = (max / limit) * 100;
+
+                html += `
+                    <tr>
+                        <td><span style="font-family: 'JetBrains Mono'; color: var(--accent-cyan)">${data.labels[i]}</span></td>
+                        <td><span style="font-weight: 700;">${s}</span></td>
+                        <td><span class="cyber-badge" style="color: ${color}">${st}</span></td>
+                        <td>
+                            <div class="stock-tube">
+                                <div class="stock-fill" style="width: ${perc}%; background: linear-gradient(to right, var(--accent-purple), ${color})"></div>
+                                <div class="limit-node node-min" style="left: ${minP}%"></div>
+                                <div class="limit-node node-max" style="left: ${maxP}%"></div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            $('#matrix-body').html(html);
+        }
+    </script>
+}

@@ -148,6 +148,57 @@
                     return View(emptySummary);
                 }
             }
+            [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Graph()
+        {
+            if (!User.Identity.IsAuthenticated || User.FindFirst("Database")?.Value != "RVI")
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            ViewData["Title"] = "Graph Analysis - RVI";
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetGraphData()
+        {
+            try
+            {
+                var allItems = await _context.ItemsRVI.ToListAsync();
+                var allStockSummaries = await _context.StockSummaryRVI.ToListAsync();
+
+                var stockSummaryGrouped = allStockSummaries
+                    .Where(s => !string.IsNullOrEmpty(s.ItemCode))
+                    .GroupBy(s => s.ItemCode)
+                    .ToDictionary(g => g.Key, g => g.Sum(s => s.CurrentBoxStock ?? 0));
+
+                var validItems = allItems.OrderBy(i => i.ItemCode).ToList();
+                var labels = validItems.Select(i => i.ItemCode).ToList();
+                var stocks = validItems.Select(i => stockSummaryGrouped.ContainsKey(i.ItemCode) ? stockSummaryGrouped[i.ItemCode] : 0).ToList();
+                var mins = validItems.Select(i => i.StandardMin ?? 0).ToList();
+                var maxs = validItems.Select(i => i.StandardMax ?? 0).ToList();
+
+                // Group by Status for Pie Chart
+                var shortageCount = validItems.Count(x => IsShortage(stockSummaryGrouped.ContainsKey(x.ItemCode) ? stockSummaryGrouped[x.ItemCode] : 0, x.StandardMin));
+                var normalCount = validItems.Count(x => IsNormal(stockSummaryGrouped.ContainsKey(x.ItemCode) ? stockSummaryGrouped[x.ItemCode] : 0, x.StandardMin, x.StandardMax));
+                var overstockCount = validItems.Count(x => IsOverStock(stockSummaryGrouped.ContainsKey(x.ItemCode) ? stockSummaryGrouped[x.ItemCode] : 0, x.StandardMax));
+
+                return Json(new { 
+                    success = true,
+                    labels, 
+                    stocks, 
+                    mins, 
+                    maxs,
+                    statusData = new[] { shortageCount, normalCount, overstockCount },
+                    statusLabels = new[] { "Shortage", "Normal", "Over Stock" }
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting graph data");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
             [HttpGet]
             public async Task<JsonResult> GetDashboardData()
