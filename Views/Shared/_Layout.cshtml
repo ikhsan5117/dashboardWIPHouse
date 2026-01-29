@@ -62,6 +62,151 @@
             margin: 0 !important;
             padding: 0 !important;
         }
+
+        /* ===== GLOBAL ULTRA PREMIUM DATATABLE STYLES ===== */
+        .dataTables_wrapper .dataTables_info {
+            padding-top: 25px !important;
+            font-size: 1.15rem !important;
+            color: #4a5568 !important;
+            font-weight: 600 !important;
+            margin-bottom: 20px !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate {
+            padding-top: 20px !important;
+            padding-bottom: 30px !important;
+            float: right !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+        }
+
+        /* Reset all default pagination button styles */
+        .dataTables_wrapper .dataTables_paginate .paginate_button,
+        .dataTables_wrapper .dataTables_paginate .pagination li,
+        .dataTables_wrapper .dataTables_paginate .pagination li a {
+            padding: 0 !important;
+            margin: 0 !important;
+            border: none !important;
+            background: none !important;
+            box-shadow: none !important;
+            text-decoration: none !important;
+        }
+
+        /* The actual premium button style */
+        .dataTables_wrapper .dataTables_paginate .paginate_button,
+        .dataTables_wrapper .dataTables_paginate .pagination li a {
+            display: inline-block !important;
+            min-width: 45px !important;
+            height: 45px !important;
+            line-height: 45px !important;
+            text-align: center !important;
+            padding: 0 15px !important;
+            margin-left: 8px !important;
+            border-radius: 12px !important;
+            background: #ffffff !important;
+            color: #4a5568 !important;
+            font-weight: 700 !important;
+            font-size: 1.1rem !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            cursor: pointer !important;
+            vertical-align: middle !important;
+        }
+
+        /* Hover state */
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover:not(.disabled),
+        .dataTables_wrapper .dataTables_paginate .pagination li a:hover,
+        .dataTables_wrapper .dataTables_paginate .pagination li:not(.active):not(.disabled) a:hover {
+            background: #f7fafc !important;
+            border-color: #667eea !important;
+            color: #667eea !important;
+            transform: translateY(-4px) !important;
+            box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        /* Active/Current state */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.active a,
+        .dataTables_wrapper .dataTables_paginate .pagination li.active a {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.5) !important;
+            transform: translateY(-3px) !important;
+        }
+
+        /* Disabled state */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+        .dataTables_wrapper .dataTables_paginate .pagination li.disabled a {
+            opacity: 0.4 !important;
+            cursor: not-allowed !important;
+            background: #f1f5f9 !important;
+            color: #94a3b8 !important;
+            border: 1px solid #e2e8f0 !important;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Previous and Next specific styling */
+        .dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.next,
+        .dataTables_wrapper .dataTables_paginate .pagination li.previous a,
+        .dataTables_wrapper .dataTables_paginate .pagination li.next a {
+            min-width: 100px !important;
+            background: #edf2ff !important;
+            color: #4c51bf !important;
+            border-color: #c3dafe !important;
+            text-transform: uppercase !important;
+            font-size: 0.95rem !important;
+            letter-spacing: 1px !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.previous:hover:not(.disabled),
+        .dataTables_wrapper .dataTables_paginate .paginate_button.next:hover:not(.disabled),
+        .dataTables_wrapper .dataTables_paginate .pagination li.previous:not(.disabled) a:hover,
+        .dataTables_wrapper .dataTables_paginate .pagination li.next:not(.disabled) a:hover {
+            background: #667eea !important;
+            color: white !important;
+        }
+
+        /* Override Bootstrap's default active circle or markers */
+        .pagination > .active > a, 
+        .pagination > .active > span, 
+        .pagination > .active > a:hover, 
+        .pagination > .active > span:hover, 
+        .pagination > .active > a:focus, 
+        .pagination > .active > span:focus {
+            background: transparent !important; /* Let our gradient show through */
+            border: none !important;
+        }
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 25px !important;
+            font-weight: 600 !important;
+            color: #4a5568 !important;
+            font-size: 1.1rem !important;
+        }
+
+        .dataTables_wrapper .dataTables_length select,
+        .dataTables_wrapper .dataTables_filter input {
+            border: 2px solid #e2e8f0 !important;
+            border-radius: 10px !important;
+            padding: 12px 18px !important;
+            font-size: 1.1rem !important;
+            transition: all 0.3s ease !important;
+            font-weight: 500 !important;
+            background: #fff !important;
+        }
+
+        .dataTables_wrapper .dataTables_length select:focus,
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: #667eea !important;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15) !important;
+            outline: none !important;
+        }
     </style>
 
 </head>
