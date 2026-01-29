@@ -114,25 +114,41 @@ namespace dashboardWIPHouse.Controllers
                 // 5. Filter items berdasarkan kriteria tertentu (optional)
                 var filteredItems = itemsWithStockData.ToList();
 
-                // 6. Calculate dashboard summary dengan status baru
+                // 6. Calculate dashboard summary with mutually exclusive status (same as table logic)
                 var dashboardSummary = new DashboardSummary
                 {
-                    TotalItems = filteredItems.Count,
-                    ExpiredCount = filteredItems.Count(x => x.TotalCurrentBoxStock > 0 && IsExpired(x.LastUpdated, x.Item.StandardExp)),
-                    NearExpiredCount = filteredItems.Count(x => x.TotalCurrentBoxStock > 0 && IsNearExpired(x.LastUpdated, x.Item.StandardExp)),
-                    ShortageCount = filteredItems.Count(x => IsShortage(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    BelowMinCount = filteredItems.Count(x => IsBelowMin(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    AboveMaxCount = filteredItems.Count(x => IsAboveMax(x.TotalCurrentBoxStock, x.Item.StandardMax))
+                    TotalItems = filteredItems.Count
                 };
 
+                foreach (var item in filteredItems)
+                {
+                    // Use the same helper method as the table for consistent status
+                    string status = DetermineItemStatus(item.TotalCurrentBoxStock, item.LastUpdated, item.Item, item.StockData?.StatusExpired);
+
+                    switch (status)
+                    {
+                        case "Already Expired":
+                            dashboardSummary.ExpiredCount++;
+                            break;
+                        case "Near Expired":
+                            dashboardSummary.NearExpiredCount++;
+                            break;
+                        case "Shortage":
+                            dashboardSummary.ShortageCount++;
+                            break;
+                        case "Over Stock":
+                            dashboardSummary.AboveMaxCount++;
+                            break;
+                    }
+                }
+
                 // 7. Detailed logging for verification
-                _logger.LogInformation($"Dashboard Summary - Items Based:");
+                _logger.LogInformation($"Dashboard Summary - Items Based (Consistent with Table):");
                 _logger.LogInformation($"- Total Items: {dashboardSummary.TotalItems}");
-                _logger.LogInformation($"- Expired: {dashboardSummary.ExpiredCount}");
+                _logger.LogInformation($"- Already Expired: {dashboardSummary.ExpiredCount}");
                 _logger.LogInformation($"- Near Expired: {dashboardSummary.NearExpiredCount}");
                 _logger.LogInformation($"- Shortage: {dashboardSummary.ShortageCount}");
-                _logger.LogInformation($"- Below Min: {dashboardSummary.BelowMinCount}");
-                _logger.LogInformation($"- Above Max: {dashboardSummary.AboveMaxCount}");
+                _logger.LogInformation($"- Over Stock: {dashboardSummary.AboveMaxCount}");
 
                 // Log beberapa contoh items untuk debugging
                 var sampleItems = filteredItems.Take(5).ToList();
@@ -1298,7 +1314,10 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                         TotalCurrentBoxStock = g.Sum(s => s.CurrentBoxStock ?? 0), // Sum ALL records
                         LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
                                      .OrderByDescending(s => s.ParsedLastUpdated)
-                                     .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue
+                                     .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                        StatusExpired = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.StatusExpired
                     });
 
                 // Combine data
@@ -1311,20 +1330,38 @@ private async Task<int> InsertRaksData(List<ExcelRowDataRaks> validRows)
                     LastUpdated = stockSummaryGrouped.ContainsKey(item.ItemCode) 
                                  ? stockSummaryGrouped[item.ItemCode].LastUpdated 
                                  : DateTime.MinValue,
+                    StatusExpired = stockSummaryGrouped.ContainsKey(item.ItemCode)
+                                 ? stockSummaryGrouped[item.ItemCode].StatusExpired
+                                 : null,
                     HasStockData = stockSummaryGrouped.ContainsKey(item.ItemCode)
                 }).ToList();
 
-                var filteredItems = itemsWithStockData;
-
                 var dashboardSummary = new DashboardSummary
                 {
-                    TotalItems = filteredItems.Count,
-                    ExpiredCount = filteredItems.Count(x => IsExpired(x.LastUpdated, x.Item.StandardExp)),
-                    NearExpiredCount = filteredItems.Count(x => IsNearExpired(x.LastUpdated, x.Item.StandardExp)),
-                    ShortageCount = filteredItems.Count(x => IsShortage(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    BelowMinCount = filteredItems.Count(x => IsBelowMin(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    AboveMaxCount = filteredItems.Count(x => IsAboveMax(x.TotalCurrentBoxStock, x.Item.StandardMax))
+                    TotalItems = itemsWithStockData.Count
                 };
+
+                foreach (var item in itemsWithStockData)
+                {
+                    // Use consistent status helper
+                    string status = DetermineItemStatus(item.TotalCurrentBoxStock, item.LastUpdated, item.Item, item.StatusExpired);
+
+                    switch (status)
+                    {
+                        case "Already Expired":
+                            dashboardSummary.ExpiredCount++;
+                            break;
+                        case "Near Expired":
+                            dashboardSummary.NearExpiredCount++;
+                            break;
+                        case "Shortage":
+                            dashboardSummary.ShortageCount++;
+                            break;
+                        case "Over Stock":
+                            dashboardSummary.AboveMaxCount++;
+                            break;
+                    }
+                }
 
                 return Json(dashboardSummary);
             }

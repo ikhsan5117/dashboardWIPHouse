@@ -11,18 +11,17 @@
         padding: 0 15px;
     }
 
+    /* Updated for 5 columns */
     .dashboard-stats-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: space-between;
-        align-items: stretch;
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 15px;
     }
 
     .stats-widget-wrapper {
-        flex: 1;
-        min-width: 220px;
-        max-width: calc(20% - 16px);
+        min-width: 0;
+        width: 100%;
+        /* The original max-width: calc(20% - 16px); is removed as per instruction implied by the new grid layout */
     }
 
     .widget-simple-custom {
@@ -1018,23 +1017,6 @@
             </a>
         </div>
 
-        <div class="stats-widget-wrapper">
-            <!-- Below Min Widget -->
-            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Below Min')">
-                <div class="widget-simple widget-simple-custom">
-                    <div class="widget-icon themed-background-info animation-fadeIn">
-                        <i class="fa fa-arrow-down"></i>
-                    </div>
-                    <div class="widget-content animation-pullDown">
-                        <h3>
-                            <strong id="main-below-min">@Model.BelowMinCount</strong>
-                            Items
-                        </h3>
-                        <small>Below Min</small>
-                    </div>
-                </div>
-            </a>
-        </div>
 
         <div class="stats-widget-wrapper">
             <!-- Above Max Widget -->
@@ -1049,6 +1031,25 @@
                             Items
                         </h3>
                         <small>Over Stock</small>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="stats-widget-wrapper">
+            <!-- Normal Items Widget -->
+            <a href="javascript:void(0)" class="widget widget-hover-effect1" onclick="filterTable('Normal')">
+                <div class="widget-simple widget-simple-custom">
+                    <div class="widget-icon themed-background-info animation-fadeIn">
+                        <i class="fa fa-check-circle"></i>
+                    </div>
+                    <div class="widget-content animation-pullDown">
+                        <h3>
+                            <strong id="main-normal">@(Model.TotalItems - Model.ExpiredCount - Model.NearExpiredCount -
+                                                                Model.ShortageCount - Model.AboveMaxCount)</strong>
+                            Items
+                        </h3>
+                        <small>Normal Stock</small>
                     </div>
                 </div>
             </a>

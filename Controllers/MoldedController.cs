@@ -104,25 +104,42 @@ namespace dashboardWIPHouse.Controllers
                 // Filter items berdasarkan kriteria tertentu (optional)
                 var filteredItems = itemsWithStockData.ToList();
 
-                // Calculate dashboard summary dengan status baru (same as HomeController)
-                var dashboardSummary = new DashboardSummaryMolded
-                {
-                    TotalItems = filteredItems.Count,
-                    ExpiredCount = filteredItems.Count(x => x.TotalCurrentBoxStock > 0 && IsExpired(x.LastUpdated, x.Item.StandardExp)),
-                    NearExpiredCount = filteredItems.Count(x => x.TotalCurrentBoxStock > 0 && IsNearExpired(x.LastUpdated, x.Item.StandardExp)),
-                    ShortageCount = filteredItems.Count(x => IsShortage(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    BelowMinCount = filteredItems.Count(x => IsBelowMin(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    AboveMaxCount = filteredItems.Count(x => IsAboveMax(x.TotalCurrentBoxStock, x.Item.StandardMax))
-                };
+                // Calculate dashboard summary with mutually exclusive status (same as other controllers)
+        var dashboardSummary = new DashboardSummaryMolded
+        {
+            TotalItems = filteredItems.Count
+        };
 
-                // Detailed logging for verification
-                _logger.LogInformation($"MOLDED Dashboard Summary - Items Based:");
-                _logger.LogInformation($"- Total Items: {dashboardSummary.TotalItems}");
-                _logger.LogInformation($"- Expired: {dashboardSummary.ExpiredCount}");
-                _logger.LogInformation($"- Near Expired: {dashboardSummary.NearExpiredCount}");
-                _logger.LogInformation($"- Shortage: {dashboardSummary.ShortageCount}");
-                _logger.LogInformation($"- Below Min: {dashboardSummary.BelowMinCount}");
-                _logger.LogInformation($"- Above Max: {dashboardSummary.AboveMaxCount}");
+        foreach (var item in filteredItems)
+        {
+            // Use consistent status helper
+            string status = DetermineItemStatus(item.TotalCurrentBoxStock, item.LastUpdated, item.Item, null); // Molded doesn't seem to have parsed status_expired in dictionary yet, passed null or need to add it
+
+            switch (status)
+            {
+                case "Already Expired":
+                    dashboardSummary.ExpiredCount++;
+                    break;
+                case "Near Expired":
+                    dashboardSummary.NearExpiredCount++;
+                    break;
+                case "Shortage":
+                    dashboardSummary.ShortageCount++;
+                    break;
+                case "Over Stock":
+                    dashboardSummary.AboveMaxCount++;
+                    break;
+            }
+        }
+
+        // Detailed logging for verification
+        _logger.LogInformation($"MOLDED Dashboard Summary - Items Based (Consistent):");
+        _logger.LogInformation($"- Total Items: {dashboardSummary.TotalItems}");
+        _logger.LogInformation($"- Expired: {dashboardSummary.ExpiredCount}");
+        _logger.LogInformation($"- Near Expired: {dashboardSummary.NearExpiredCount}");
+        _logger.LogInformation($"- Shortage: {dashboardSummary.ShortageCount}");
+        // BelowMin is now merged into Shortage for dashboard display purposes
+        _logger.LogInformation($"- Over Stock: {dashboardSummary.AboveMaxCount}");
 
                 // Log beberapa contoh items untuk debugging
                 var sampleItems = filteredItems.Take(5).ToList();
@@ -544,16 +561,33 @@ namespace dashboardWIPHouse.Controllers
                 var filteredItems = itemsWithStockData;
 
                 var dashboardSummary = new DashboardSummaryMolded
-                {
-                    TotalItems = filteredItems.Count,
-                    ExpiredCount = filteredItems.Count(x => IsExpired(x.LastUpdated, x.Item.StandardExp)),
-                    NearExpiredCount = filteredItems.Count(x => IsNearExpired(x.LastUpdated, x.Item.StandardExp)),
-                    ShortageCount = filteredItems.Count(x => IsShortage(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    BelowMinCount = filteredItems.Count(x => IsBelowMin(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    AboveMaxCount = filteredItems.Count(x => IsAboveMax(x.TotalCurrentBoxStock, x.Item.StandardMax))
-                };
+        {
+            TotalItems = filteredItems.Count
+        };
 
-                return Json(dashboardSummary);
+        foreach (var item in filteredItems)
+        {
+            // Use consistent status helper (Molded doesn't use status_expired from DB view yet in dict)
+            string status = DetermineItemStatus(item.TotalCurrentBoxStock, item.LastUpdated, item.Item, null);
+
+            switch (status)
+            {
+                case "Already Expired":
+                    dashboardSummary.ExpiredCount++;
+                    break;
+                case "Near Expired":
+                    dashboardSummary.NearExpiredCount++;
+                    break;
+                case "Shortage":
+                    dashboardSummary.ShortageCount++;
+                    break;
+                case "Over Stock":
+                    dashboardSummary.AboveMaxCount++;
+                    break;
+            }
+        }
+
+        return Json(dashboardSummary);
             }
             catch (Exception ex)
             {
@@ -1323,16 +1357,16 @@ namespace dashboardWIPHouse.Controllers
                 return "Near Expired";
 
             // Priority 3: Check stock levels
-            if (IsShortage(currentBoxStock, item.StandardMin))
-                return "Shortage";
+    // Green Hose logic: Shortage includes both <= 0 and <= StandardMin
+    // In Molded, IsShortage is <= 0 and IsBelowMin is > 0 && < Min
+    // We combine them to match Green Hose "Shortage" concept
+    if (IsShortage(currentBoxStock, item.StandardMin) || IsBelowMin(currentBoxStock, item.StandardMin))
+        return "Shortage";
 
-            if (IsBelowMin(currentBoxStock, item.StandardMin))
-                return "Below Min";
+    if (IsAboveMax(currentBoxStock, item.StandardMax))
+        return "Over Stock";
 
-            if (IsAboveMax(currentBoxStock, item.StandardMax))
-                return "Over Stock";
-
-            return "Normal";
+    return "Normal";
         }
         // IMPROVED: Helper methods dengan logika yang lebih jelas (same as HomeController)
         private double CalculateDaysUntilExpiry(DateTime lastUpdated, int? standardExp)

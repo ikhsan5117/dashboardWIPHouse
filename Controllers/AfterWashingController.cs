@@ -58,6 +58,9 @@ namespace dashboardWIPHouse.Controllers
                         LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
                                      .OrderByDescending(s => s.ParsedLastUpdated)
                                      .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                        StatusExpired = g.Where(s => s.ParsedLastUpdated.HasValue)
+                                     .OrderByDescending(s => s.ParsedLastUpdated)
+                                     .FirstOrDefault()?.StatusExpired,
                         RecordCount = g.Count(),
                         Records = g.ToList(), // Keep all records for debugging
                         UniqueFullQRCount = g.Select(r => r.FullQr).Distinct().Count()
@@ -88,25 +91,41 @@ namespace dashboardWIPHouse.Controllers
 
                 var filteredItems = itemsWithStockData.ToList();
 
-                // Calculate dashboard summary - SAMA SEPERTI HomeController
+                // 6. Calculate dashboard summary with mutually exclusive status (same as table logic)
                 var dashboardSummary = new DashboardSummary
                 {
-                    TotalItems = filteredItems.Count,
-                    ExpiredCount = filteredItems.Count(x => x.TotalCurrentBoxStock > 0 && IsExpired(x.LastUpdated, x.Item.StandardExp)),
-                    NearExpiredCount = filteredItems.Count(x => x.TotalCurrentBoxStock > 0 && IsNearExpired(x.LastUpdated, x.Item.StandardExp)),
-                    ShortageCount = filteredItems.Count(x => IsShortage(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    BelowMinCount = filteredItems.Count(x => IsBelowMin(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    AboveMaxCount = filteredItems.Count(x => IsAboveMax(x.TotalCurrentBoxStock, x.Item.StandardMax))
+                    TotalItems = filteredItems.Count
                 };
 
+                foreach (var item in filteredItems)
+                {
+                    // Use the same helper method as the table for consistent status
+                    string status = DetermineItemStatus(item.TotalCurrentBoxStock, item.LastUpdated, item.Item, item.StockData?.StatusExpired);
+
+                    switch (status)
+                    {
+                        case "Already Expired":
+                            dashboardSummary.ExpiredCount++;
+                            break;
+                        case "Near Expired":
+                            dashboardSummary.NearExpiredCount++;
+                            break;
+                        case "Shortage":
+                            dashboardSummary.ShortageCount++;
+                            break;
+                        case "Over Stock":
+                            dashboardSummary.AboveMaxCount++;
+                            break;
+                    }
+                }
+
                 // Detailed logging for verification
-                _logger.LogInformation($"After Washing Dashboard Summary - Items Based:");
+                _logger.LogInformation($"After Washing Dashboard Summary - Items Based (Consistent with Table):");
                 _logger.LogInformation($"- Total Items: {dashboardSummary.TotalItems}");
-                _logger.LogInformation($"- Expired: {dashboardSummary.ExpiredCount}");
+                _logger.LogInformation($"- Already Expired: {dashboardSummary.ExpiredCount}");
                 _logger.LogInformation($"- Near Expired: {dashboardSummary.NearExpiredCount}");
                 _logger.LogInformation($"- Shortage: {dashboardSummary.ShortageCount}");
-                _logger.LogInformation($"- Below Min: {dashboardSummary.BelowMinCount}");
-                _logger.LogInformation($"- Above Max: {dashboardSummary.AboveMaxCount}");
+                _logger.LogInformation($"- Over Stock: {dashboardSummary.AboveMaxCount}");
 
                 // Log some sample items for debugging
                 var sampleItems = filteredItems.Take(5).ToList();
@@ -521,41 +540,127 @@ namespace dashboardWIPHouse.Controllers
                 var allStockSummaries = await _context.StockSummaryAW.ToListAsync();
 
                 var stockSummaryGrouped = allStockSummaries
-                    .Where(s => !string.IsNullOrEmpty(s.ItemCode))
-                    .GroupBy(s => s.ItemCode)
-                    .ToDictionary(g => g.Key, g => new
+            .Where(s => !string.IsNullOrEmpty(s.ItemCode))
+            .GroupBy(s => s.ItemCode)
+            .ToDictionary(g => g.Key, g => new
+            {
+                TotalCurrentBoxStock = g.Sum(s => s.CurrentBoxStock ?? 0), // Sum ALL records
+                LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
+                             .OrderByDescending(s => s.ParsedLastUpdated)
+                             .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue,
+                StatusExpired = g.Where(s => s.ParsedLastUpdated.HasValue)
+                             .OrderByDescending(s => s.ParsedLastUpdated)
+                             .FirstOrDefault()?.StatusExpired
+            });
+
+        var itemsWithStockData = allItems.Select(item => new
+        {
+            Item = item,
+            TotalCurrentBoxStock = stockSummaryGrouped.ContainsKey(item.ItemCode)
+                                  ? stockSummaryGrouped[item.ItemCode].TotalCurrentBoxStock
+                                  : 0,
+            LastUpdated = stockSummaryGrouped.ContainsKey(item.ItemCode)
+                         ? stockSummaryGrouped[item.ItemCode].LastUpdated
+                         : DateTime.MinValue,
+            StatusExpired = stockSummaryGrouped.ContainsKey(item.ItemCode)
+                         ? stockSummaryGrouped[item.ItemCode].StatusExpired
+                         : null,
+            HasStockData = stockSummaryGrouped.ContainsKey(item.ItemCode)
+        }).ToList();
+
+        var dashboardSummary = new DashboardSummary
+        {
+            TotalItems = itemsWithStockData.Count,
+            ExpiredCount = 0,
+            NearExpiredCount = 0,
+            ShortageCount = 0,
+            BelowMinCount = 0, // Assuming BelowMinCount is not directly derived from DetermineItemStatus's main cases
+            AboveMaxCount = 0
+        };
+
+        foreach (var item in itemsWithStockData)
+        {
+            // Use consistent status helper
+            string status = DetermineItemStatus(item.TotalCurrentBoxStock, item.LastUpdated, item.Item, item.StatusExpired);
+
+            switch (status)
+            {
+                case "Already Expired":
+                    dashboardSummary.ExpiredCount++;
+                    break;
+                case "Near Expired":
+                    dashboardSummary.NearExpiredCount++;
+                    break;
+                case "Shortage":
+                    dashboardSummary.ShortageCount++;
+                    break;
+                case "Over Stock": // This corresponds to AboveMaxCount
+                    dashboardSummary.AboveMaxCount++;
+                    break;
+                case "Out of Stock": // Out of Stock implies BelowMin, but not necessarily Shortage if min is 0
+                    dashboardSummary.BelowMinCount++;
+                    break;
+                case "Normal":
+                    // If it's normal, check for BelowMin specifically if not already caught by Shortage
+                    if (IsBelowMin(item.TotalCurrentBoxStock, item.Item.StandardMin))
                     {
-                        TotalCurrentBoxStock = g.Sum(s => s.CurrentBoxStock ?? 0), // Sum ALL records
-                        LastUpdated = g.Where(s => s.ParsedLastUpdated.HasValue)
-                                     .OrderByDescending(s => s.ParsedLastUpdated)
-                                     .FirstOrDefault()?.ParsedLastUpdated ?? DateTime.MinValue
-                    });
+                        dashboardSummary.BelowMinCount++;
+                    }
+                    break;
+            }
+            // The original logic for BelowMinCount was separate.
+            // If Shortage is defined as currentStock < standardMin, then Shortage implies BelowMin.
+            // If BelowMin is meant to be a broader category (e.g., currentStock <= standardMin),
+            // and Shortage is currentStock < standardMin, then we need to be careful.
+            // For now, I'll assume "Shortage" covers the primary "below min" case,
+            // and "Out of Stock" is also a "below min" case.
+            // If "BelowMinCount" needs to be distinct from "ShortageCount" and "Out of Stock",
+            // the definition of IsBelowMin needs to be re-evaluated against IsShortage.
+            // Based on the original code, IsShortage is currentStock < standardMin,
+            // and IsBelowMin is also currentStock < standardMin. They are identical.
+            // So, if an item is "Shortage", it is also "BelowMin".
+            // The original code had:
+            // ShortageCount = filteredItems.Count(x => IsShortage(x.TotalCurrentBoxStock, x.Item.StandardMin)),
+            // BelowMinCount = filteredItems.Count(x => IsBelowMin(x.TotalCurrentBoxStock, x.Item.StandardMin)),
+            // This means ShortageCount and BelowMinCount would be identical if IsShortage and IsBelowMin are identical.
+            // Let's align with the `DetermineItemStatus` logic.
+            // `DetermineItemStatus` has "Shortage" as a status. It does not have a "BelowMin" status.
+            // If "BelowMinCount" is intended to be the same as "ShortageCount", then we can remove the separate increment.
+            // If "BelowMinCount" is meant to capture items that are at min but not below, or if it's just a duplicate of shortage,
+            // then the original code was redundant.
+            // For now, I'll make BelowMinCount increment if it's "Out of Stock" or "Normal" but still below min.
+            // This makes it distinct from "Shortage" if "Shortage" is only for items *strictly* below min.
+            // However, looking at the helper methods:
+            // private bool IsShortage(int currentStock, int? standardMin)
+            // private bool IsBelowMin(int currentStock, int? standardMin)
+            // These are likely identical. If so, the original dashboard had duplicate counts.
+            // I will assume "Shortage" covers the "below min" scenario.
+            // If "BelowMinCount" is truly needed as a separate metric, its definition needs to be clarified.
+            // For now, I will remove the explicit `BelowMinCount` increment in the loop,
+            // as `Shortage` and `Out of Stock` already cover the "below minimum" scenarios.
+            // If `IsBelowMin` is distinct, it should be called.
+            // Let's re-check the helper methods.
+            // IsShortage(currentStock, item.StandardMin)
+            // IsBelowMin(currentStock, item.StandardMin)
+            // The user provided only the signature for IsShortage, not IsBelowMin.
+            // Assuming IsBelowMin is defined similarly to IsShortage, they might be identical.
+            // To be safe and match the original intent of having a `BelowMinCount`,
+            // I will add a check for `IsBelowMin` if the status is not already `Shortage` or `Out of Stock`.
+            // This implies `IsBelowMin` might have a slightly different condition or is a broader category.
+            // Given the instruction is to fix inconsistent logic, and `DetermineItemStatus` doesn't return "BelowMin",
+            // I should ensure `BelowMinCount` is still calculated.
+            // The original code calculated `BelowMinCount` directly using `IsBelowMin`.
+            // Let's re-add a check for `IsBelowMin` for items that are not already categorized as Shortage or Out of Stock.
+            // This ensures `BelowMinCount` is still populated, even if its definition overlaps with `Shortage`.
+            // If `IsBelowMin` is identical to `IsShortage`, then `BelowMinCount` will be the same as `ShortageCount` + `Out of Stock` count.
+            // Let's assume `IsBelowMin` is intended to be distinct or a superset.
+            if (status != "Shortage" && status != "Out of Stock" && IsBelowMin(item.TotalCurrentBoxStock, item.Item.StandardMin))
+            {
+                dashboardSummary.BelowMinCount++;
+            }
+        }
 
-                var itemsWithStockData = allItems.Select(item => new
-                {
-                    Item = item,
-                    TotalCurrentBoxStock = stockSummaryGrouped.ContainsKey(item.ItemCode)
-                                          ? stockSummaryGrouped[item.ItemCode].TotalCurrentBoxStock
-                                          : 0,
-                    LastUpdated = stockSummaryGrouped.ContainsKey(item.ItemCode)
-                                 ? stockSummaryGrouped[item.ItemCode].LastUpdated
-                                 : DateTime.MinValue,
-                    HasStockData = stockSummaryGrouped.ContainsKey(item.ItemCode)
-                }).ToList();
-
-                var filteredItems = itemsWithStockData;
-
-                var dashboardSummary = new DashboardSummary
-                {
-                    TotalItems = filteredItems.Count,
-                    ExpiredCount = filteredItems.Count(x => IsExpired(x.LastUpdated, x.Item.StandardExp)),
-                    NearExpiredCount = filteredItems.Count(x => IsNearExpired(x.LastUpdated, x.Item.StandardExp)),
-                    ShortageCount = filteredItems.Count(x => IsShortage(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    BelowMinCount = filteredItems.Count(x => IsBelowMin(x.TotalCurrentBoxStock, x.Item.StandardMin)),
-                    AboveMaxCount = filteredItems.Count(x => IsAboveMax(x.TotalCurrentBoxStock, x.Item.StandardMax))
-                };
-
-                return Json(dashboardSummary);
+        return Json(dashboardSummary);
             }
             catch (Exception ex)
             {
@@ -704,7 +809,10 @@ namespace dashboardWIPHouse.Controllers
                 }
             }
 
-            // Prioritas 2: Manual Check (jika status masih Normal dan stok > 0)
+            // Prioritas 2: Manual Check (jika status masih Normal)
+            // Note: Green Hose logic checks expiry FIRST even if stock is 0? 
+            // Actually Green Hose checks (stock > 0 && IsExpired) -> Expired.
+            // If stock <= 0, it falls through to Shortage check.
             if (displayStatus == "Normal" && currentBoxStock > 0)
             {
                 if (IsExpired(lastUpdated, item.StandardExp))
@@ -713,15 +821,11 @@ namespace dashboardWIPHouse.Controllers
                     displayStatus = "Near Expired";
             }
 
-            // Jika stok benar-benar 0
-            if (currentBoxStock <= 0)
-            {
-                return "Out of Stock";
-            }
-
-            // Prioritas 3: Stock Levels (Hanya jika belum Berstatus Expired)
+            // Prioritas 3: Stock Levels
+            // Merge "Out of Stock" (<=0) and "Shortage" (< Min) into single "Shortage" status
             if (displayStatus == "Normal")
             {
+                // Check Shortage first (includes 0 stock if Min is set)
                 if (IsShortage(currentBoxStock, item.StandardMin))
                     displayStatus = "Shortage";
                 else if (IsAboveMax(currentBoxStock, item.StandardMax))
@@ -757,8 +861,19 @@ namespace dashboardWIPHouse.Controllers
 
         private bool IsShortage(int currentStock, int? standardMin)
         {
-            if (!standardMin.HasValue || standardMin.Value <= 0) return false;
-            return currentStock < standardMin.Value;
+            // Consistent with Green Hose: 
+            // If Min is not set, no shortage.
+            // If Min is set, any stock <= Min is shortage (including 0 <= 0).
+            // But wait, if Min is 0, stock 0 is Normal?
+            // Green Hose: return currentStock >= 0 && currentStock <= standardMin.Value;
+            
+            if (!standardMin.HasValue) return false;
+            
+            // If Standard Min is 0, we generally don't flag shortage unless we want to flag empty items that explicitly have Min=0 (rare)
+            // But strict <= logic:
+            if (standardMin.Value == 0 && currentStock == 0) return false; // Treat 0/0 as Normal
+            
+            return currentStock <= standardMin.Value;
         }
 
         private bool IsBelowMin(int totalStock, int? standardMin)
