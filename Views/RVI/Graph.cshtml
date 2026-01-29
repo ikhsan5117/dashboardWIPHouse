@@ -472,76 +472,131 @@
         function initNeuralChart(data) {
             const ctx = document.getElementById('neuralChart').getContext('2d');
             
-            const cyanGrad = ctx.createLinearGradient(0, 0, 0, 400);
-            cyanGrad.addColorStop(0, 'rgba(0, 242, 255, 0.5)');
-            cyanGrad.addColorStop(1, 'rgba(0, 242, 255, 0)');
+            // Stock Bar Gradient
+            const barGrad = ctx.createLinearGradient(0, 0, 0, 500);
+            barGrad.addColorStop(0, 'rgba(0, 242, 255, 0.9)');
+            barGrad.addColorStop(1, 'rgba(112, 0, 255, 0.4)');
+
+            // Trend Line Gradient
+            const lineGrad = ctx.createLinearGradient(0, 0, 0, 400);
+            lineGrad.addColorStop(0, 'rgba(0, 242, 255, 0.1)');
+            lineGrad.addColorStop(1, 'rgba(0, 242, 255, 0)');
 
             if (neuralChart) neuralChart.destroy();
 
             neuralChart = new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
                     labels: data.labels,
                     datasets: [
                         {
-                            label: 'STOCK',
+                            label: 'MAX_CAPACITY',
+                            data: data.maxs,
+                            type: 'bar',
+                            backgroundColor: 'rgba(0, 255, 157, 0.05)',
+                            borderColor: 'rgba(0, 255, 157, 0.3)',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            barPercentage: 0.9,
+                            categoryPercentage: 0.8,
+                            order: 5 // Furthest back
+                        },
+                        {
+                            label: 'STOCK_VOLUME',
                             data: data.stocks,
+                            type: 'bar',
+                            backgroundColor: barGrad,
                             borderColor: '#00f2ff',
-                            backgroundColor: cyanGrad,
-                            borderWidth: 4,
-                            fill: true,
-                            tension: 0.4,
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            barPercentage: 0.5,
+                            categoryPercentage: 0.8,
+                            order: 4
+                        },
+                        {
+                            label: 'STOCK_TREND',
+                            data: data.stocks,
+                            type: 'line',
+                            borderColor: '#ffffff',
+                            borderWidth: 2,
                             pointBackgroundColor: '#00f2ff',
-                            pointHoverRadius: 8,
-                            pointRadius: 2,
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            fill: true,
+                            backgroundColor: lineGrad,
+                            tension: 0.4,
                             order: 1
                         },
                         {
-                            label: 'MIN',
+                            label: 'MIN_THRESHOLD',
                             data: data.mins,
+                            type: 'line',
                             borderColor: '#ff007a',
                             borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
                             fill: false,
                             tension: 0.4,
-                            pointRadius: 0,
-                            borderDash: [10, 5],
                             order: 2
-                        },
-                        {
-                            label: 'MAX',
-                            data: data.maxs,
-                            borderColor: '#00ff9d',
-                            borderWidth: 2,
-                            fill: false,
-                            tension: 0.4,
-                            pointRadius: 0,
-                            order: 3
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
-                            backgroundColor: 'rgba(10, 12, 16, 0.95)',
+                            backgroundColor: 'rgba(10, 12, 16, 0.98)',
                             borderColor: '#00f2ff',
                             borderWidth: 1,
                             padding: 20,
-                            titleFont: { family: 'JetBrains Mono', size: 14 },
-                            bodyFont: { family: 'JetBrains Mono', size: 12 },
-                            cornerRadius: 0
+                            titleFont: { family: 'JetBrains Mono', size: 16, weight: 'bold' },
+                            bodyFont: { family: 'JetBrains Mono', size: 13 },
+                            cornerRadius: 4,
+                            filter: function(tooltipItem) {
+                                // Hide redundant trend line from tooltip
+                                return tooltipItem.datasetIndex !== 2;
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    label += context.parsed.y + ' PCS';
+                                    return ' >> ' + label;
+                                },
+                                afterBody: function(items) {
+                                    // Order in items is based on dataset index (0: MAX, 1: STOCK, 2: MIN)
+                                    const max = items[0].parsed.y;
+                                    const stock = items[1].parsed.y;
+                                    const min = items[2].parsed.y;
+                                    let diag = "\nNEURAL_DIAGNOSTIC:\n";
+                                    if (stock <= min) diag += "!! CRITICAL_GAP_IN_FLOW !!";
+                                    else if (stock >= max) diag += "!! OVERFLOW_DETECTED !!";
+                                    else diag += ">> SYSTEM_STABLE";
+                                    return diag;
+                                }
+                            }
                         }
                     },
                     scales: {
                         x: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#64748b', font: { family: 'JetBrains Mono' } }
+                            stacked: true, // Allow bars to overlap
+                            grid: { color: 'rgba(255,255,255,0.02)', display: false },
+                            ticks: { 
+                                color: '#64748b', 
+                                font: { family: 'JetBrains Mono', size: 10 },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
                         },
                         y: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#64748b', font: { family: 'JetBrains Mono' } }
+                            grid: { color: 'rgba(255,255,255,0.03)', borderDash: [2, 2] },
+                            ticks: { color: '#64748b', font: { family: 'JetBrains Mono' } },
+                            beginAtZero: true
                         }
                     }
                 }
@@ -550,33 +605,173 @@
 
         function initHealthOrbit(data) {
             if (healthOrbit) healthOrbit.destroy();
+
+            const canvas = document.getElementById('healthOrbit');
+            const ctx_h = canvas.getContext('2d');
+            
+            // Bio-Glass Gradients (Reflective & Transparent)
+            const gradRed = ctx_h.createLinearGradient(0, 0, 0, 400);
+            gradRed.addColorStop(0, 'rgba(255, 180, 180, 0.4)');   // Top Reflection
+            gradRed.addColorStop(0.3, 'rgba(255, 41, 80, 0.8)');   // Glass Body
+            gradRed.addColorStop(1, 'rgba(255, 41, 80, 0.1)');     // Transparent Bottom
+
+            const gradGreen = ctx_h.createLinearGradient(0, 0, 0, 400);
+            gradGreen.addColorStop(0, 'rgba(180, 255, 220, 0.4)');
+            gradGreen.addColorStop(0.3, 'rgba(0, 255, 170, 0.8)');
+            gradGreen.addColorStop(1, 'rgba(0, 255, 170, 0.1)');
+
+            const gradOrange = ctx_h.createLinearGradient(0, 0, 0, 400);
+            gradOrange.addColorStop(0, 'rgba(255, 230, 180, 0.4)');
+            gradOrange.addColorStop(0.3, 'rgba(255, 191, 0, 0.8)');
+            gradOrange.addColorStop(1, 'rgba(255, 191, 0, 0.1)');
+
+            const total = data.statusData.reduce((a, b) => a + b, 0);
+            
+            const gradients = [gradRed, gradGreen, gradOrange];
+            const colors = ['#ff2950', '#00ffaa', '#ffbf00'];
+
+            // Plugin: Draw Percentages ON the segments with Rotation
+            const segmentLabelPlugin = {
+                id: 'segmentLabels',
+                afterDatasetDraw: (chart, args) => {
+                    const ctx = chart.ctx;
+                    const meta = args.meta;
+                    const total = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                    
+                    meta.data.forEach((element, index) => {
+                        const value = chart.data.datasets[0].data[index];
+                        const percentage = value / total;
+                        
+                        // Only show label if segment is big enough (> 3%)
+                        if (value > 0 && percentage > 0.03) {
+                            const percentStr = (percentage * 100).toFixed(1) + '%';
+                            
+                            // Calculate centroid angle and position
+                            const midAngle = element.startAngle + (element.endAngle - element.startAngle) / 2;
+                            const midRadius = (element.outerRadius + element.innerRadius) / 2;
+                            
+                            const x = element.x + Math.cos(midAngle) * midRadius;
+                            const y = element.y + Math.sin(midAngle) * midRadius;
+
+                            ctx.save();
+                            ctx.translate(x, y);
+                            
+                            // Rotate text to align with the radial angle
+                            // Ensure text is never upside down
+                            let rotation = midAngle;
+                            if (midAngle > Math.PI / 2 && midAngle < 3 * Math.PI / 2) {
+                                rotation += Math.PI;
+                            }
+                            ctx.rotate(rotation);
+
+                            ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                            ctx.font = '800 13px JetBrains Mono'; // Slightly bolder font
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            
+                            // Glass glow
+                            ctx.shadowColor = colors[index]; 
+                            ctx.shadowBlur = 4;
+                            ctx.shadowOffsetX = 0;
+                            ctx.shadowOffsetY = 0;
+                            
+                            ctx.fillText(percentStr, 0, 0);
+                            ctx.restore();
+                        }
+                    });
+                }
+            };
+
+            // Custom Plugin for Center Text
+            const centerTextPlugin = {
+                id: 'centerText',
+                afterDraw: (chart) => {
+                    const { ctx } = chart;
+                    const meta = chart.getDatasetMeta(0);
+                    if (!meta.data[0]) return;
+                    
+                    const centerX = meta.data[0].x;
+                    const centerY = meta.data[0].y;
+                    
+                    ctx.save();
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    
+                    // Title
+                    ctx.font = '700 12px JetBrains Mono';
+                    ctx.fillStyle = '#64748b';
+                    ctx.fillText('CORE_STABILITY', centerX, centerY - 25);
+
+                    // Value
+                    ctx.font = '800 48px Outfit';
+                    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                    ctx.shadowBlur = 15;
+                    ctx.shadowColor = 'rgba(255, 255, 255, 0.2)';
+                    ctx.fillText(total, centerX, centerY + 10);
+
+                    // Subtext
+                    ctx.font = '600 10px JetBrains Mono';
+                    ctx.fillStyle = '#00f2ff';
+                    ctx.shadowBlur = 5;
+                    ctx.shadowColor = 'rgba(0, 242, 255, 0.5)';
+                    ctx.fillText('ACTIVE_NODES', centerX, centerY + 40);
+                    
+                    ctx.restore();
+                }
+            };
+
             healthOrbit = new Chart('healthOrbit', {
                 type: 'doughnut',
                 data: {
                     labels: data.statusLabels,
                     datasets: [{
                         data: data.statusData,
-                        backgroundColor: ['#ff007a', '#00ff9d', '#ffaa00'],
-                        borderWidth: 0,
-                        hoverOffset: 30
+                        backgroundColor: gradients,
+                        hoverBackgroundColor: colors,
+                        borderWidth: 2,
+                        borderColor: 'rgba(255, 255, 255, 0.1)', // Frost rim
+                        hoverOffset: 15,
+                        borderRadius: 4,
+                        spacing: 6
                     }]
                 },
                 options: {
-                    cutout: '85%',
+                    cutout: '50%', 
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: { padding: 10 },
                     plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                color: '#94a3b8',
-                                font: { family: 'JetBrains Mono', size: 11 },
-                                padding: 20
-                            }
+                        legend: { display: false },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(10, 12, 16, 0.8)',
+                            backdropFilter: 'blur(5px)',
+                            bodyFont: { family: 'JetBrains Mono' },
+                            borderColor: 'rgba(255,255,255,0.1)',
+                            borderWidth: 1
                         }
                     }
-                }
+                },
+                plugins: [centerTextPlugin, segmentLabelPlugin]
             });
+
+            // Generate Custom Legend
+            let legendHtml = '';
+            data.statusLabels.forEach((label, i) => {
+                const val = data.statusData[i];
+                const percent = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                const color = colors[i];
+                
+                legendHtml += `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; padding: 15px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                        <div style="width: 30px; height: 4px; background: ${color}; border-radius: 2px; box-shadow: 0 0 10px ${color}; margin-bottom: 10px;"></div>
+                        <span style="font-family: 'JetBrains Mono'; color: #94a3b8; font-size: 0.7rem; text-transform: uppercase; margin-bottom: 5px;">${label}</span>
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #fff;">${val}</div>
+                        <span style="font-size: 0.8rem; color: ${color}; opacity: 0.8;">${percent}%</span>
+                    </div>
+                `;
+            });
+            $('#health-legend').html(legendHtml);
         }
 
         function animateNumbers(data) {
