@@ -977,7 +977,8 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                 SuppliedAt = DateTime.Now,
                 BoxCount = model.BoxCount ?? 0,
                 Tanggal = DateTime.Now.ToString("dd/MM/yyyy"),
-                QtyPcs = model.QtyPcs
+                QtyPcs = model.QtyPcs,
+                PlantId = model.PlantId  // Simpan tujuan plant finishing
             };
             _context.SupplyLogAW.Add(supplyLogAW);
         }

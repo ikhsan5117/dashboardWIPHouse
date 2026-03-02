@@ -578,6 +578,21 @@
             </div>
         </div>
 
+        <!-- Plant / Tujuan (Only for INPUT OUT) -->
+        <div class="form-group" id="plant-group" style="display:none;">
+            <label class="form-label">🏭 Tujuan Plant (Finishing) *</label>
+            <div class="input-wrapper" style="position:relative;">
+                <i class="gi gi-building input-icon"></i>
+                <select class="form-input" id="plantId" style="padding-left: 45px; height: 50px; cursor: pointer; background: white;">
+                    <option value="">-- Pilih Plant Tujuan --</option>
+                    <option value="1">Plant 1 - HOSE</option>
+                    <option value="2">Plant 2 - RVI</option>
+                    <option value="3">Plant 3 - MOLDED</option>
+                    <option value="4">Plant 4 - BTR</option>
+                </select>
+            </div>
+        </div>
+
         <!-- Box Count & Qty Pcs -->
         <div class="row-inputs">
             <div class="form-group">
@@ -654,11 +669,13 @@
                 document.querySelector('.submit-btn').innerHTML = '<i class="gi gi-floppy_disk"></i> SUBMIT INPUT IN';
                 document.getElementById('transaction-type-section').style.display = 'block';
                 document.getElementById('production-date-group').style.display = 'block';
+                document.getElementById('plant-group').style.display = 'none';
             } else {
                 document.getElementById('info-text').textContent = 'Catat material keluar ke Finishing';
                 document.querySelector('.submit-btn').innerHTML = '<i class="gi gi-floppy_disk"></i> SUBMIT INPUT OUT';
                 document.getElementById('transaction-type-section').style.display = 'none';
                 document.getElementById('production-date-group').style.display = 'none';
+                document.getElementById('plant-group').style.display = 'block';
             }
         }
 
@@ -726,7 +743,8 @@
                 fullQR: document.getElementById('fullQR').value,
                 productionDate: document.getElementById('productionDate').value || null,
                 boxCount: parseInt(document.getElementById('boxCount').value) || 0,
-                qtyPcs: parseInt(document.getElementById('qtyPcs').value) || 0
+                qtyPcs: parseInt(document.getElementById('qtyPcs').value) || 0,
+                plantId: currentTab === 'out' ? (document.getElementById('plantId').value || null) : null
             };
 
             try {

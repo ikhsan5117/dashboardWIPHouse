@@ -352,14 +352,19 @@
                                             <span class="sidebar-nav-mini-hide">After Washing</span>
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="@Url.Action("Planning", "AfterWashing")"
-                                            class="@(currentController == "AfterWashing" && currentAction == "Planning" ? "active" : "")">
-                                            <i class="gi gi-calendar sidebar-nav-icon"></i>
-                                            <span class="sidebar-nav-mini-hide">Planning Dashboard</span>
-                                        </a>
-                                    </li>
                                 }
+
+                                <!-- Production Control (For All Users) -->
+                                <li class="sidebar-header">
+                                    <span class="sidebar-nav-mini-hide">Production Control</span>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Planning", "AfterWashing")"
+                                        class="@(currentController == "AfterWashing" && currentAction == "Planning" ? "active" : "")">
+                                        <i class="gi gi-calendar sidebar-nav-icon"></i>
+                                        <span class="sidebar-nav-mini-hide">Supply Finishing</span>
+                                    </a>
+                                </li>
 
                                 <!-- Stock Input Menu (For All Users) -->
                                 <li class="sidebar-header">
@@ -425,6 +430,18 @@
                                         </a>
                                     </li>
                                 }
+
+                                <!-- Production Control (For All Users) -->
+                                <li class="sidebar-header">
+                                    <span class="sidebar-nav-mini-hide">Production Control</span>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Planning", "AfterWashing")"
+                                        class="@(currentController == "AfterWashing" && currentAction == "Planning" ? "active" : "")">
+                                        <i class="gi gi-calendar sidebar-nav-icon"></i>
+                                        <span class="sidebar-nav-mini-hide">Supply Finishing</span>
+                                    </a>
+                                </li>
                                 
                                 <!-- Stock Input Menu (For All Users) -->
                                 <li class="sidebar-header">
@@ -481,7 +498,22 @@
                                             <span class="sidebar-nav-mini-hide">MOLDED Secondary</span>
                                         </a>
                                     </li>
+                                }
+                                
+                                <!-- Production Control (For All Users) -->
+                                <li class="sidebar-header">
+                                    <span class="sidebar-nav-mini-hide">Production Control</span>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Planning", "AfterWashing")"
+                                        class="@(currentController == "AfterWashing" && currentAction == "Planning" ? "active" : "")">
+                                        <i class="gi gi-calendar sidebar-nav-icon"></i>
+                                        <span class="sidebar-nav-mini-hide">Supply Finishing</span>
+                                    </a>
+                                </li>
 
+                                @if (User.IsInRole("Admin"))
+                                {
                                     <!-- Update Data Section -->
                                     <li class="sidebar-header">
                                         <span class="sidebar-nav-mini-hide">Update Data</span>
@@ -529,7 +561,6 @@
                                             <span class="sidebar-nav-mini-hide">BTR Dashboard</span>
                                         </a>
                                     </li>
-
                                     <!-- Update Data Section -->
                                     <li class="sidebar-header">
                                         <span class="sidebar-nav-mini-hide">Update Data</span>
@@ -543,6 +574,18 @@
                                     </li>
                                 }
                                 
+                                <!-- Production Control (For All Users) -->
+                                <li class="sidebar-header">
+                                    <span class="sidebar-nav-mini-hide">Production Control</span>
+                                </li>
+                                <li>
+                                    <a href="@Url.Action("Planning", "AfterWashing")"
+                                        class="@(currentController == "AfterWashing" && currentAction == "Planning" ? "active" : "")">
+                                        <i class="gi gi-calendar sidebar-nav-icon"></i>
+                                        <span class="sidebar-nav-mini-hide">Supply Finishing</span>
+                                    </a>
+                                </li>
+
                                 <!-- Stock Input Menu (For All Users) -->
                                 <li class="sidebar-header">
                                     <span class="sidebar-nav-mini-hide">Stock Input</span>

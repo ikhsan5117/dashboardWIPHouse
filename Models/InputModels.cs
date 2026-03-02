@@ -40,5 +40,7 @@ namespace dashboardWIPHouse.Models
         public int? BoxCount { get; set; }
         
         public int? QtyPcs { get; set; }
+
+        public int? PlantId { get; set; } // For OUT: Tujuan Plant Finishing
     }
 }

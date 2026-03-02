@@ -29,5 +29,8 @@ namespace dashboardWIPHouse.Models
 
         [Column("tanggal")]
         public string Tanggal { get; set; }
+
+        [Column("plant_id")]
+        public int? PlantId { get; set; }
     }
 }
