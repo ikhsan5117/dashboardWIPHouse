@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\dashboardWIPHouse\\dashboardWIPHouse.csproj": {}
+    "E:\\dashboardWIP\\dashboardWIPHouse.csproj": {}
   },
   "projects": {
-    "E:\\dashboardWIPHouse\\dashboardWIPHouse.csproj": {
+    "E:\\dashboardWIP\\dashboardWIPHouse.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\dashboardWIPHouse\\dashboardWIPHouse.csproj",
+        "projectUniqueName": "E:\\dashboardWIP\\dashboardWIPHouse.csproj",
         "projectName": "dashboardWIPHouse",
-        "projectPath": "E:\\dashboardWIPHouse\\dashboardWIPHouse.csproj",
+        "projectPath": "E:\\dashboardWIP\\dashboardWIPHouse.csproj",
         "packagesPath": "C:\\Users\\megi.vlt00553\\.nuget\\packages\\",
-        "outputPath": "E:\\dashboardWIPHouse\\obj\\",
+        "outputPath": "E:\\dashboardWIP\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\megi.vlt00553\\AppData\\Roaming\\NuGet\\NuGet.Config"

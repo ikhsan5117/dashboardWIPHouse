@@ -13,11 +13,13 @@ namespace dashboardWIPHouse.Controllers
     {
         private readonly ILogger<AfterWashingController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly ElwpDbContext _elwpContext;
 
-        public AfterWashingController(ILogger<AfterWashingController> logger, ApplicationDbContext context)
+        public AfterWashingController(ILogger<AfterWashingController> logger, ApplicationDbContext context, ElwpDbContext elwpContext)
         {
             _logger = logger;
             _context = context;
+            _elwpContext = elwpContext;
         }
 
         [Authorize(Roles = "Admin")]
@@ -1166,51 +1168,109 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
             return View();
         }
 
-        // Get Planning Data API
+        // Get ELWP Planning Data API (Data Asli Pusat)
         [HttpGet]
-        public async Task<JsonResult> GetPlanningData(string? mesin = null)
+        public async Task<JsonResult> GetElwpPlanningData()
         {
             try
             {
-                var query = _context.PlanningFinishing.AsQueryable();
-
-                // Filter by mesin if provided
-                if (!string.IsNullOrEmpty(mesin) && mesin != "Semua Mesin")
+                var today = DateTime.Now.Date;
+                var tomorrow = today.AddDays(1);
+                
+                // Ambil PlantId dari User Claims
+                string plantIdStr = User.FindFirst("PlantId")?.Value;
+                int? userPlantId = null;
+                if (int.TryParse(plantIdStr, out int pid))
                 {
-                    query = query.Where(p => p.NoMesin == mesin);
+                    userPlantId = pid;
                 }
 
-                // Get current date to filter only relevant planning
-                var today = DateTime.Now.Date;
+                // Query untuk data planning ELWP
+                var planningQuery = _elwpContext.PlanningElwp
+                    .Where(p => (p.PlanningDate >= today && p.PlanningDate < tomorrow) || 
+                                (p.TanggalPlanning >= today && p.TanggalPlanning < tomorrow));
 
-                var planningData = await query
-                    .OrderBy(p => p.LoadTime)
-                    .ThenBy(p => p.NoMesin)
-                    .Select(p => new
-                    {
-                        mesin = p.NoMesin,
-                        itemCode = p.KodeItem,
-                        qty = p.QtyPlan,
-                        tanggal = p.LoadTime.HasValue ? p.LoadTime.Value.ToString("yyyy-MM-dd") : null,
-                        shift = p.Shift,
-                        keterangan = p.Keterangan
-                    })
-                    .Take(100) // Limit to 100 recent records
-                    .ToListAsync();
+                // Query untuk data master mesin
+                var machineQuery = _elwpContext.MesinElwp.Where(m => m.IsActive == true);
 
-                // Get unique mesin list for filter
-                var mesinList = await _context.PlanningFinishing
-                    .Where(p => p.NoMesin != null)
-                    .Select(p => p.NoMesin)
+                // Filter berdasarkan PlantId jika user memilikinya
+                if (userPlantId.HasValue)
+                {
+                    planningQuery = planningQuery.Where(p => p.PlantId == userPlantId.Value);
+                    machineQuery = machineQuery.Where(m => m.PlantId == userPlantId.Value);
+                }
+
+                var elwpDataRaw = await planningQuery.ToListAsync();
+                var machineMaster = await machineQuery.ToListAsync();
+
+                // Simulasi data supply aktual dari database lokal kita
+                var supplyDoneItems = await _context.SupplyLogAW
+                    .Where(s => s.SuppliedAt.HasValue && s.SuppliedAt.Value.Date == today)
+                    .Select(s => s.ItemCode)
                     .Distinct()
-                    .OrderBy(m => m)
                     .ToListAsync();
 
-                return Json(new { success = true, data = planningData, mesinList });
+                var currentTime = DateTime.Now.TimeOfDay.TotalHours;
+
+                var result = elwpDataRaw
+                    .Join(machineMaster, 
+                          p => p.MesinId, 
+                          m => m.Id, 
+                          (p, m) => new { Planning = p, Machine = m })
+                    .Where(x => x.Machine.NamaMesin != null && x.Machine.NamaMesin.Contains("Finishing Line"))
+                    .Select(x => {
+                        var p = x.Planning;
+                        var m = x.Machine;
+                        
+                        // Ekstrak nomor line dari NamaMesin (Contoh: "Finishing Line 1" -> 1)
+                        int lineNum = 0;
+                        var nameParts = m.NamaMesin.Split(' ');
+                        if (nameParts.Length > 0 && int.TryParse(nameParts.Last(), out int parsedLine)) {
+                            lineNum = parsedLine;
+                        }
+                        // only consider lines between 1 and 22
+                        if (lineNum < 1 || lineNum > 22) return null;
+
+                        var planHourRaw = (double)(p.LoadingTimeHours ?? 0);
+                        var planHour = planHourRaw; // Just for variable naming consistency below
+                        string status = "white";
+
+                        if (supplyDoneItems.Contains(p.KodeItem))
+                        {
+                            status = "green";
+                        }
+                        else if (currentTime > planHour)
+                        {
+                            status = "red";
+                        }
+                        else if (planHour - currentTime <= 0.5)
+                        {
+                            status = "yellow";
+                        }
+
+                        return new
+                        {
+                            mesinId = lineNum, // Gunakan nomor line asli (1, 2, dst)
+                            lineName = m.NamaMesin,
+                            itemCode = p.KodeItem,
+                            partName = p.PartName,
+                            qty = p.QtyPlanning,
+                            time = planHourRaw,
+                            timeStr = $"{Math.Floor(planHourRaw):00}:{(int)Math.Round((planHourRaw - Math.Floor(planHourRaw)) * 60):00}",
+                            status = status,
+                            remarks = p.Shift
+                        };
+                    })
+                    .Where(r => r != null)
+                    .OrderBy(r => r.time)
+                    .ThenBy(r => r.mesinId)
+                    .ToList();
+
+                return Json(new { success = true, data = result });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting planning data");
+                _logger.LogError(ex, "Error getting ELWP planning data");
                 return Json(new { success = false, message = ex.Message });
             }
         }

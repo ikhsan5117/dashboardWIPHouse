@@ -1,335 +1,457 @@
 @{
-    Layout = null;
+    ViewData["Title"] = "SUPPLY FINISHING - COMMAND CENTER";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planning Finishing</title>
-    <link rel="stylesheet" href="~/css/bootstrap.min.css">
-    <link rel="stylesheet" href="~/css/plugins.css">
-    <link rel="stylesheet" href="~/css/main.css">
-    <link rel="stylesheet" href="~/css/themes.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/planning_dashboard.css">
+
+<style>
+    /* Integrate with ProUI Layout */
+    #page-content {
+        padding: 0 !important;
+        background-color: #0f111a !important;
+        overflow: hidden;
+    }
+
+    .dashboard-container {
+        height: calc(100vh - 50px); /* Adjust based on ProUI header height */
+        padding: 15px;
+        box-sizing: border-box;
+        margin: 0;
+        max-width: none;
+    }
+
+    /* Fixed ProUI layout overrides for this page only */
+    body {
+        overflow: hidden !important;
+    }
     
-    <style>
-        :root {
-            --blue-primary: #2196F3;
-            --blue-dark: #1976D2;
-        }
+    #main-container {
+        background-color: #0f111a !important;
+    }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
+    footer {
+        display: none !important; /* Hide footer for full-screen command center */
+    }
 
-        .planning-header {
-            background: var(--blue-primary);
-            color: white;
-            padding: 15px 20px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    .dashboard-header {
+        margin-top: 0;
+    }
+</style>
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0;
-            display: flex;
-            align-items: center;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .refresh-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .filter-section {
-            margin-top: 70px;
-            padding: 15px 20px;
-            background: white;
-            border-bottom: 1px solid #eee;
-        }
-
-        .filter-dropdown {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            background: white;
-            cursor: pointer;
-        }
-
-        .content-area {
-            padding: 15px;
-            padding-bottom: 80px;
-        }
-
-        .planning-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: all 0.2s;
-        }
-
-        .planning-card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-            transform: translateY(-2px);
-        }
-
-        .card-number {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--blue-primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 700;
-            flex-shrink: 0;
-        }
-
-        .card-content {
-            flex: 1;
-        }
-
-        .card-mesin {
-            font-size: 18px;
-            font-weight: 700;
-            color: #222;
-            margin-bottom: 4px;
-        }
-
-        .card-details {
-            font-size: 13px;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .card-detail-row {
-            display: flex;
-            gap: 4px;
-        }
-
-        .card-label {
-            font-weight: 500;
-            color: #888;
-        }
-
-        .loader-container {
-            margin-top: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid var(--blue-primary);
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            animation: spin 1s linear infinite;
-        }
-
-        @@keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-
-        .no-data {
-            text-align: center;
-            padding: 60px 20px;
-            color: #999;
-        }
-
-        .no-data i {
-            font-size: 48px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-    </style>
-</head>
-<body>
-
-    <header class="planning-header">
+<div class="dashboard-container">
+    <header class="dashboard-header">
         <div class="header-left">
-            <button class="back-btn" onclick="window.history.back()">
-                <i class="gi gi-chevron-left"></i>
-            </button>
-            <div class="header-title">Planning Finishing</div>
+            <div class="clock-section" id="clock">00:00</div>
+            <div class="shift-status-pill" onclick="openShiftSettings()">
+                <div class="indicator"></div>
+                <span id="current-shift-display">SHIFT 1</span>
+            </div>
         </div>
-        <button class="refresh-btn" onclick="loadPlanningData()">
-            <i class="gi gi-refresh"></i>
-        </button>
+        
+        <div class="header-center">
+            <h1 id="window-title">PROGRESS SUPPLY FINISHING - @DateTime.Now.ToString("dd MMM yyyy")</h1>
+            <div class="main-nav">
+                <div class="nav-group">
+                    <button class="nav-btn" onclick="shiftWindow(-3)">⏮ PREV 3h</button>
+                    <button class="nav-btn" id="btn-live" onclick="goLive()">● LIVE FOCUS</button>
+                    <button class="nav-btn" onclick="shiftWindow(3)">NEXT 3h ⏭</button>
+                </div>
+                <div class="nav-divider"></div>
+                <div class="nav-group">
+                    <span class="nav-label">LINE PAGE:</span>
+                    <button class="nav-btn line-page-btn" id="lpage-1" onclick="setLinePage(1)">1 - 10</button>
+                    <button class="nav-btn line-page-btn" id="lpage-2" onclick="setLinePage(2)">11 - 22</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <!-- Additional info or status indicators could go here -->
+        </div>
     </header>
 
-    <div class="filter-section">
-        <select class="filter-dropdown" id="mesinFilter" onchange="loadPlanningData()">
-            <option value="Semua Mesin">Semua Mesin</option>
-        </select>
-    </div>
+    <div class="grid-wrapper">
+        <div class="planning-grid">
+            <!-- Header Row -->
+            <div class="grid-header-cell">LINE</div>
+            <div class="time-header" id="dynamic-time-header"></div>
+            <div class="grid-header-cell">AR (%) SUPPLY</div>
+            <div class="grid-header-cell">REMARKS</div>
 
-    <div class="content-area">
-        <div id="loader" class="loader-container">
-            <div class="loader"></div>
-            <div style="margin-top: 10px; font-size: 12px; color: #888;">Loading data...</div>
+            @for (int i = 1; i <= 22; i++)
+            {
+                int pIdx = (i <= 10) ? 1 : 2;
+                <div class="line-label-cell line-page-@pIdx" data-lpage="@pIdx">
+                    <span class="label-sub">Line</span>
+                    <span class="label-num">@i.ToString("D2")</span>
+                </div>
+                <div class="planning-row line-page-@pIdx" id="line-@i" data-lpage="@pIdx">
+                    @for (int j = 0; j < 18; j++) { <div class="grid-cell"></div> }
+                </div>
+                <div class="info-cell ar-cell line-page-@pIdx" id="ar-@i" data-lpage="@pIdx">-</div>
+                <div class="info-cell remarks-cell line-page-@pIdx" id="rm-@i" data-lpage="@pIdx">-</div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal Shift Settings -->
+<div class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>SHIFT SETTINGS</h2>
+            <button class="close-modal" onclick="closeShiftSettings()">&times;</button>
+        </div>
+        
+        <div id="shift-list">
+            <!-- Shifts rendered here -->
         </div>
 
-        <div id="planning-container" style="display: none;"></div>
+        <button class="nav-btn" style="width:100%; margin-top:10px; border-style:dashed;" onclick="editShift(-1)">+ ADD NEW SHIFT</button>
+
+        <div id="shift-editor" class="shift-editor-form">
+            <h3 id="editor-title" style="font-size:12px; margin-bottom:15px; color:var(--accent-blue);">EDIT SHIFT</h3>
+            <div class="form-group">
+                <label>Shift Name</label>
+                <input type="text" id="edit-name" placeholder="example: Shift 3">
+            </div>
+            <div class="form-group">
+                <label>Start Time (Format HH:mm)</label>
+                <input type="text" id="edit-start" placeholder="example: 07:00">
+            </div>
+            <div class="form-group">
+                <label>End Time (Format HH:mm)</label>
+                <input type="text" id="edit-end" placeholder="example: 16:00">
+            </div>
+            <div class="action-btns">
+                <button class="save-btn" style="margin:0; flex:2;" onclick="saveEditor()">OK</button>
+                <button class="btn-secondary" id="btn-delete-shift" style="color:var(--status-red);" onclick="deleteShift()">DEL</button>
+                <button class="btn-secondary" onclick="$('#shift-editor').hide()">CANCEL</button>
+            </div>
+        </div>
+
+        <button class="save-btn" style="margin-top:25px; background:var(--status-green);" onclick="saveShiftSettings()">APPLY & FINISH</button>
     </div>
+</div>
 
-    <script src="~/js/vendor/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+@section Scripts {
     <script>
-        let allData = [];
-        let mesinList = [];
-
-        function loadPlanningData() {
-            const selectedMesin = $('#mesinFilter').val();
-            
-            $('#loader').show();
-            $('#planning-container').hide();
-
-            $.ajax({
-                url: '@Url.Action("GetPlanningData", "AfterWashing")',
-                type: 'GET',
-                data: { mesin: selectedMesin },
-                success: function(response) {
-                    $('#loader').hide();
-                    if (response.success) {
-                        allData = response.data;
-                        mesinList = response.mesinList;
-                        
-                        // Update filter dropdown
-                        updateMesinFilter();
-                        
-                        // Render cards
-                        renderPlanningCards();
-                    } else {
-                        Swal.fire('Error', response.message, 'error');
-                    }
-                },
-                error: function() {
-                    $('#loader').hide();
-                    Swal.fire('Error', 'Failed to load planning data', 'error');
-                }
-            });
+        // compute window start based on current hour (blocks of 3h starting at 7)
+        function getLiveWindowStart() {
+            const now = new Date();
+            let h = now.getHours();
+            if (h < 7) h = 7;
+            if (h > 19) h = 19;
+            return Math.floor((h - 7) / 3) * 3 + 7;
         }
 
-        function updateMesinFilter() {
-            const currentValue = $('#mesinFilter').val();
-            let html = '<option value="Semua Mesin">Semua Mesin</option>';
-            
-            mesinList.forEach(mesin => {
-                html += `<option value="${mesin}">${mesin}</option>`;
+        let currentWindowStart = getLiveWindowStart();
+        let currentLinePage = 1;
+        let isLive = true;
+        let lastData = [];
+
+        function setLinePage(page) {
+            currentLinePage = page;
+            $('.line-page-1, .line-page-2').hide();
+            $(`.line-page-${page}`).each(function() {
+                if ($(this).hasClass('planning-row')) $(this).css('display','grid');
+                else $(this).css('display','flex');
             });
             
-            $('#mesinFilter').html(html);
-            
-            // Restore selected value if exists
-            if (mesinList.includes(currentValue)) {
-                $('#mesinFilter').val(currentValue);
-            }
+            $('.line-page-btn').removeClass('active');
+            $(`#lpage-${page}`).addClass('active');
         }
 
-        function renderPlanningCards() {
+        function rotateLinePage() {
+            let nextPage = (currentLinePage === 1) ? 2 : 1;
+            setLinePage(nextPage);
+        }
+
+        function renderTimeHeader(startHour) {
             let html = '';
-            
-            if (allData.length === 0) {
-                html = `
-                    <div class="no-data">
-                        <i class="gi gi-calendar"></i>
-                        <div>Tidak ada planning untuk mesin ini</div>
-                    </div>
-                `;
-            } else {
-                allData.forEach((item, index) => {
-                    const tanggalFormatted = item.tanggal ? new Date(item.tanggal).toLocaleDateString('id-ID', {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit'
-                    }) : '-';
+            for (let h = startHour; h < startHour + 3; h++) {
+                const hourStr = h.toString().padStart(2, '0') + ':00';
+                html += `
+                    <div class="time-slot">
+                        <span style="font-size:18px; font-weight:900;">${hourStr}</span>
+                        <div style="display:grid; grid-template-columns:repeat(6,1fr); width:100%; font-size:10px; color:#8b949e; text-align:center;">
+                            <span>00</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span>
+                        </div>
+                    </div>`;
+            }
+            $('#dynamic-time-header').html(html);
+            const dateStr = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+            $('#window-title').text(`SUPPLY FINISHING - ${dateStr} (${startHour.toString().padStart(2,'0')}:00 - ${(startHour+2).toString().padStart(2,'0')}:59)`);
+        }
 
-                    html += `
-                        <div class="planning-card">
-                            <div class="card-number">${index + 1}</div>
-                            <div class="card-content">
-                                <div class="card-mesin">Mesin: ${item.mesin}</div>
-                                <div class="card-details">
-                                    <div class="card-detail-row">
-                                        <span class="card-label">Item Code:</span>
-                                        <span>${item.itemCode}</span>
-                                    </div>
-                                    <div class="card-detail-row">
-                                        <span class="card-label">Qty:</span>
-                                        <span>${item.qty}</span>
-                                    </div>
-                                    <div class="card-detail-row">
-                                        <span class="card-label">Tanggal:</span>
-                                        <span>${tanggalFormatted}</span>
-                                    </div>
-                                    ${item.shift ? `
-                                    <div class="card-detail-row">
-                                        <span class="card-label">Shift:</span>
-                                        <span>${item.shift}</span>
-                                    </div>` : ''}
-                                    ${item.keterangan ? `
-                                    <div class="card-detail-row" style="margin-top: 4px; color: #666; font-style: italic;">
-                                        <i class="gi gi-circle_info" style="font-size: 12px;"></i> ${item.keterangan}
-                                    </div>` : ''}
-                                </div>
+        function updateClock() {
+            const now = new Date();
+            $('#clock').text(now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0'));
+            
+            const liveBlockStart = Math.floor((now.getHours() - 7) / 3) * 3 + 7;
+            // Auto-shift window if hour moves to next block while live
+            if (isLive && liveBlockStart !== currentWindowStart && liveBlockStart >= 7 && liveBlockStart <= 19) {
+                currentWindowStart = liveBlockStart;
+                renderPlanning(lastData);
+            }
+            // move red current time line regardless of live mode (it may be offscreen if window is static)
+            $('.time-now-line').css('left', function() {
+                const totalHours = (now.getHours() + now.getMinutes()/60) - currentWindowStart;
+                if (totalHours >=0 && totalHours < 3) {
+                    const pct = (totalHours / 3) * 100;
+                    return `calc(${pct}% + 2px)`;
+                }
+                return '-9999px';
+            });
+        }
+
+        function shiftWindow(offset) {
+            isLive = false;
+            $('#btn-live').removeClass('active');
+            let newStart = currentWindowStart + offset;
+            if (newStart < 7) newStart = 7;
+            if (newStart > 19) newStart = 19;
+            currentWindowStart = newStart;
+            renderPlanning(lastData);
+        }
+
+        function goLive() {
+            isLive = true;
+            $('#btn-live').addClass('active');
+            const now = new Date();
+            let h = now.getHours();
+            if (h < 7) h = 7;
+            if (h > 19) h = 19;
+            currentWindowStart = Math.floor((h - 7) / 3) * 3 + 7;
+            renderPlanning(lastData);
+        }
+
+        async function fetchPlanning() {
+            try {
+                const response = await $.get('/AfterWashing/GetElwpPlanningData');
+                if (response.success) {
+                    lastData = response.data;
+                    renderPlanning(lastData);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        function renderPlanning(data) {
+            renderTimeHeader(currentWindowStart);
+            $('.planning-item').remove();
+            $('.time-now-line').remove();
+
+            // prepare AR/remarks aggregation per line (only for items inside the current 3‑hour window)
+            const lineStats = {};
+
+            // Render planning items
+            data.forEach(item => {
+                // Filter by selected shift
+                if (item.remarks !== selectedShift) return;
+
+                // Get selected shift start time
+                const activeShift = shifts.find(s => s.name === selectedShift);
+                const shiftStartDecimal = timeToDecimal(activeShift.start);
+
+                const row = $(`#line-${item.mesinId}`);
+                
+                // CRITICAL: Calculate time relative to edited shift start
+                const displayTime = item.time + shiftStartDecimal;
+                const offsetHours = displayTime - currentWindowStart;
+
+                // Prepare detail time string for the card
+                const h = Math.floor(displayTime);
+                const m = Math.round((displayTime - h) * 60);
+                const detailTimeStr = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
+
+                // only count towards AR/remarks if the item is visible in the window
+                if (offsetHours >= 0 && offsetHours < 3) {
+                    if (!lineStats[item.mesinId]) {
+                        lineStats[item.mesinId] = { total: 0, supplied: 0, remarks: [] };
+                    }
+                    lineStats[item.mesinId].total++;
+                    if (item.status === 'green') lineStats[item.mesinId].supplied++;
+                    if (item.remarks && !lineStats[item.mesinId].remarks.includes(item.remarks)) {
+                        lineStats[item.mesinId].remarks.push(item.remarks);
+                    }
+                }
+
+                // Calculate status dynamically in frontend
+                let status = item.status; // use green/done from server
+                if (status !== 'green') {
+                    const now = new Date();
+                    const nowHours = now.getHours() + (now.getMinutes() / 60);
+                    if (nowHours > displayTime) {
+                        status = 'red';
+                    } else if (displayTime - nowHours <= 0.5) {
+                        status = 'yellow';
+                    } else {
+                        status = 'white';
+                    }
+                }
+
+                if (row.length && offsetHours >= 0 && offsetHours < 3) {
+                    const leftPercent = (offsetHours / 3) * 100;
+                    row.append(`
+                        <div class="planning-item status-${status}" style="left: calc(${leftPercent}% + 2px)">
+                            <div class="code">.${item.itemCode}</div>
+                            <div class="info-row">
+                                <span>${item.qty}</span>
+                                <span>${detailTimeStr}</span>
                             </div>
                         </div>
-                    `;
-                });
+                    `);
+                }
+            });
+
+            // update AR and remarks cells
+            for (let i = 1; i <= 22; i++) {
+                const stats = lineStats[i];
+                const arCell = $(`#ar-${i}`);
+                const rmCell = $(`#rm-${i}`);
+                if (stats && stats.total > 0) {
+                    const pct = Math.round((stats.supplied / stats.total) * 100);
+                    arCell.text(`${pct}%`);
+                    rmCell.text(stats.remarks.join(', ') || '-');
+                } else {
+                    arCell.text('-');
+                    rmCell.text('-');
+                }
             }
 
-            $('#planning-container').html(html).fadeIn();
+            // draw current time line inside visible rows
+            renderTimeNowLine();
         }
 
-        // Load data on page load
+        function renderTimeNowLine() {
+            const now = new Date();
+            const totalHours = (now.getHours() + now.getMinutes()/60) - currentWindowStart;
+            if (totalHours >= 0 && totalHours < 3) {
+                const pct = (totalHours / 3) * 100;
+                $('.planning-row:visible').append(`
+                    <div class="time-now-line" style="left: calc(${pct}% + 2px)"></div>
+                `);
+            }
+        }
+
+        // Initial shifts with persistence
+        let shifts = JSON.parse(localStorage.getItem('dashboard_shifts')) || [
+            { name: 'Shift 1', start: '07:00', end: '16:00' },
+            { name: 'Shift 2', start: '16:00', end: '00:00' }
+        ];
+        let selectedShift = localStorage.getItem('dashboard_selected_shift') || 'Shift 1';
+        let editingIndex = -1;
+
+        function openShiftSettings() {
+            renderShiftOptions();
+            $('.modal-overlay').css('display', 'flex');
+            $('#shift-editor').hide();
+        }
+
+        function renderShiftOptions() {
+            let html = '';
+            shifts.forEach((s, idx) => {
+                html += `
+                    <div class="shift-option ${s.name === selectedShift ? 'selected' : ''}" data-shift="${s.name}" onclick="selectShift('${s.name}')">
+                        <div style="flex-grow:1;">
+                            <span class="shift-name">${s.name}</span>
+                            <span class="shift-time">${s.start} — ${s.end}</span>
+                        </div>
+                        <button class="edit-shift-btn" onclick="event.stopPropagation(); editShift(${idx})">EDIT</button>
+                    </div>`;
+            });
+            $('#shift-list').html(html);
+        }
+
+        function selectShift(name) {
+            selectedShift = name;
+            localStorage.setItem('dashboard_selected_shift', name);
+            renderShiftOptions();
+        }
+
+        function editShift(idx) {
+            editingIndex = idx;
+            const s = (idx === -1) ? { name: '', start: '', end: '' } : shifts[idx];
+            $('#edit-name').val(s.name);
+            $('#edit-start').val(s.start);
+            $('#edit-end').val(s.end);
+            $('#shift-editor').show();
+            $('#editor-title').text(idx === -1 ? 'ADD NEW SHIFT' : 'EDIT SHIFT');
+            $('#btn-delete-shift').toggle(idx !== -1);
+        }
+
+        function timeToDecimal(timeStr) {
+            if (!timeStr) return 0;
+            const parts = timeStr.split(':');
+            return parseInt(parts[0]) + (parseInt(parts[1]) / 60);
+        }
+
+        function saveEditor() {
+            const name = $('#edit-name').val().trim();
+            const start = $('#edit-start').val().trim();
+            const end = $('#edit-end').val().trim();
+            
+            if (!name || !start || !end) return alert('Fill all fields');
+
+            if (editingIndex === -1) {
+                shifts.push({ name, start, end });
+            } else {
+                // If the selected shift's name is being changed, update selectedShift too
+                if (shifts[editingIndex].name === selectedShift) {
+                    selectedShift = name;
+                    localStorage.setItem('dashboard_selected_shift', name);
+                }
+                shifts[editingIndex] = { name, start, end };
+            }
+
+            localStorage.setItem('dashboard_shifts', JSON.stringify(shifts));
+            $('#shift-editor').hide();
+            renderShiftOptions();
+        }
+
+        function deleteShift() {
+            if (editingIndex !== -1) {
+                const deletedName = shifts[editingIndex].name;
+                shifts.splice(editingIndex, 1);
+                
+                // If we deleted the selected shift, select the first available one
+                if (deletedName === selectedShift) {
+                    selectedShift = shifts.length > 0 ? shifts[0].name : '';
+                    localStorage.setItem('dashboard_selected_shift', selectedShift);
+                }
+
+                localStorage.setItem('dashboard_shifts', JSON.stringify(shifts));
+                $('#shift-editor').hide();
+                renderShiftOptions();
+            }
+        }
+
+        function saveShiftSettings() {
+            $('#current-shift-display').text(selectedShift.toUpperCase());
+            closeShiftSettings();
+            renderPlanning(lastData);
+        }
+
+        function closeShiftSettings() {
+            $('.modal-overlay').hide();
+        }
+
         $(document).ready(function() {
-            loadPlanningData();
+            setLinePage(1);
+            
+            // Re-apply the selected shift name to display
+            $('#current-shift-display').text(selectedShift.toUpperCase());
+
+            goLive();
+            setInterval(updateClock, 1000);
+            fetchPlanning();
+            setInterval(fetchPlanning, 60000);
+
+            // Close modal when clicking outside
+            $(window).click(function(event) {
+                if ($(event.target).hasClass('modal-overlay')) closeShiftSettings();
+            });
         });
     </script>
-</body>
-</html>
+}

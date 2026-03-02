@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "BnJXjhHOOh0=",
+  "dgSpecHash": "rgGF8oIwsR4=",
   "success": true,
-  "projectFilePath": "E:\\dashboardWIPHouse\\dashboardWIPHouse.csproj",
+  "projectFilePath": "E:\\dashboardWIP\\dashboardWIPHouse.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\megi.vlt00553\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\megi.vlt00553\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

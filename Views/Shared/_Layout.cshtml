@@ -347,9 +347,16 @@
                                     </li>
                                     <li>
                                         <a href="@Url.Action("Index", "AfterWashing")"
-                                            class="@(currentController == "AfterWashing" ? "active" : "")">
+                                            class="@(currentController == "AfterWashing" && currentAction == "Index" ? "active" : "")">
                                             <i class="gi gi-leaf sidebar-nav-icon"></i>
                                             <span class="sidebar-nav-mini-hide">After Washing</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Planning", "AfterWashing")"
+                                            class="@(currentController == "AfterWashing" && currentAction == "Planning" ? "active" : "")">
+                                            <i class="gi gi-calendar sidebar-nav-icon"></i>
+                                            <span class="sidebar-nav-mini-hide">Planning Dashboard</span>
                                         </a>
                                     </li>
                                 }

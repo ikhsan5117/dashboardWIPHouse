@@ -21,5 +21,8 @@ namespace DashboardWIPHouse.Models
 
         [Column("last_login")]
         public DateTime? LastLogin { get; set; }
+
+        [Column("plant_id")]
+        public int? PlantId { get; set; }
     }
 }

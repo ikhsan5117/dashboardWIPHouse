@@ -72,7 +72,8 @@ namespace DashboardWIPHouse.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Username),
                         new Claim(ClaimTypes.Role, role),
-                        new Claim("Database", "HOSE")
+                        new Claim("Database", "HOSE"),
+                        new Claim("PlantId", user.PlantId?.ToString() ?? "")
                     };
 
                     var claimsIdentity = new ClaimsIdentity(
@@ -115,7 +116,8 @@ namespace DashboardWIPHouse.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Username),
                         new Claim(ClaimTypes.Role, role),
-                        new Claim("Database", "RVI")
+                        new Claim("Database", "RVI"),
+                        new Claim("PlantId", user.PlantId?.ToString() ?? "")
                     };
 
                     var claimsIdentity = new ClaimsIdentity(
@@ -166,7 +168,8 @@ namespace DashboardWIPHouse.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Username),
                         new Claim(ClaimTypes.Role, role),
-                        new Claim("Database", "MOLDED")
+                        new Claim("Database", "MOLDED"),
+                        new Claim("PlantId", user.PlantId?.ToString() ?? "")
                     };
 
                     var claimsIdentity = new ClaimsIdentity(
@@ -217,7 +220,8 @@ namespace DashboardWIPHouse.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.Username),
                         new Claim(ClaimTypes.Role, role),
-                        new Claim("Database", "BTR")
+                        new Claim("Database", "BTR"),
+                        new Claim("PlantId", user.PlantId?.ToString() ?? "")
                     };
 
                     var claimsIdentity = new ClaimsIdentity(

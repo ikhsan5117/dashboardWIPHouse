@@ -30,6 +30,10 @@ builder.Services.AddDbContext<MoldedContext>(options =>
 builder.Services.AddDbContext<BTRDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BTRDb")));
 
+// ✅ Tambah ELWP DbContext
+builder.Services.AddDbContext<ElwpDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ElwpDb")));
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddLogging();
