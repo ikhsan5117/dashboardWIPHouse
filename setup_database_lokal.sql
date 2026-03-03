@@ -233,6 +233,132 @@ IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = 'DB_SUPPLY_BTR')        
 GO
 
 -- ============================================================
+-- [5] SETUP DATABASE BTR (tabel & view yang diperlukan)
+-- ============================================================
+USE DB_SUPPLY_BTR;
+GO
+
+-- Items master
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'items')
+BEGIN
+    CREATE TABLE dbo.items (
+        item_code     NVARCHAR(50) PRIMARY KEY,
+        mesin         NVARCHAR(20) NULL,
+        qty_per_box   INT DEFAULT 0,
+        standard_exp  INT DEFAULT 0,
+        standard_min  INT DEFAULT 0,
+        standard_max  INT DEFAULT 0,
+        created_at    DATETIME DEFAULT GETDATE(),
+        updated_at    DATETIME DEFAULT GETDATE()
+    );
+    PRINT 'BTR: tabel items dibuat.';
+END
+GO
+
+-- Raks
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'raks')
+BEGIN
+    CREATE TABLE dbo.raks (
+        full_qr   NVARCHAR(100) PRIMARY KEY,
+        location  NVARCHAR(50) NULL,
+        item_code NVARCHAR(50) NULL,
+        created_at DATETIME DEFAULT GETDATE()
+    );
+    PRINT 'BTR: tabel raks dibuat.';
+END
+GO
+
+-- Storage log (IN)
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'storage_log')
+BEGIN
+    CREATE TABLE dbo.storage_log (
+        log_id          INT IDENTITY(1,1) PRIMARY KEY,
+        item_code       NVARCHAR(50),
+        full_qr         NVARCHAR(100) NULL,
+        production_date DATETIME NULL,
+        box_count       INT DEFAULT 0,
+        qty_pcs         INT DEFAULT 0,
+        stored_at       DATETIME DEFAULT GETDATE(),
+        tanggal         DATETIME DEFAULT CAST(GETDATE() AS DATE)
+    );
+    PRINT 'BTR: tabel storage_log dibuat.';
+END
+GO
+
+-- Supply log (OUT)
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'supply_log')
+BEGIN
+    CREATE TABLE dbo.supply_log (
+        log_id          INT IDENTITY(1,1) PRIMARY KEY,
+        item_code       NVARCHAR(50),
+        full_qr         NVARCHAR(100) NULL,
+        production_date DATETIME NULL,
+        box_count       INT DEFAULT 0,
+        qty_pcs         INT DEFAULT 0,
+        supplied_at     DATETIME DEFAULT GETDATE(),
+        to_process      NVARCHAR(50) NULL,
+        tanggal         DATETIME DEFAULT CAST(GETDATE() AS DATE),
+        storage_log_id  INT NULL
+    );
+    PRINT 'BTR: tabel supply_log dibuat.';
+END
+GO
+
+-- Users
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'users')
+BEGIN
+    CREATE TABLE dbo.users (
+        id           INT IDENTITY(1,1) PRIMARY KEY,
+        username     NVARCHAR(50) NOT NULL,
+        password     NVARCHAR(255) NOT NULL,
+        created_date DATETIME DEFAULT GETDATE(),
+        last_login   DATETIME NULL,
+        plant_id     INT NULL
+    );
+    PRINT 'BTR: tabel users dibuat.';
+END
+-- create admin
+IF NOT EXISTS (SELECT 1 FROM dbo.users WHERE username = 'adminBTR')
+BEGIN
+    INSERT INTO dbo.users (username,password,created_date,plant_id)
+    VALUES('adminBTR','adminBTR',GETDATE(),4);
+    PRINT 'BTR: adminBTR user inserted.';
+END
+GO
+
+-- View stok summary (simplified to avoid GROUP BY issues)
+IF EXISTS (SELECT * FROM sys.views WHERE name = 'vw_stok_summary')
+    DROP VIEW dbo.vw_stok_summary;
+GO
+CREATE VIEW dbo.vw_stok_summary AS
+SELECT
+    ROW_NUMBER() OVER (ORDER BY i.item_code) AS log_id,
+    i.item_code,
+    ''                                         AS full_qr,
+    GETDATE()                                  AS stored_at,
+    ISNULL(in_total.total_in, 0) - ISNULL(out_total.total_out, 0) AS current_box_stock,
+    i.standard_exp                             AS expired_date,
+    CASE 
+        WHEN ISNULL(in_total.total_in, 0) - ISNULL(out_total.total_out, 0) <= 0 THEN 'Out Of Stock'
+        ELSE ''
+    END                                        AS status_expired,
+    GETDATE()                                  AS last_update
+FROM dbo.items i
+LEFT JOIN (
+    SELECT item_code, SUM(box_count) AS total_in
+    FROM dbo.storage_log
+    GROUP BY item_code
+) in_total ON i.item_code = in_total.item_code
+LEFT JOIN (
+    SELECT item_code, SUM(box_count) AS total_out
+    FROM dbo.supply_log
+    GROUP BY item_code
+) out_total ON i.item_code = out_total.item_code;
+GO
+PRINT 'BTR: view vw_stok_summary dibuat (dengan perhitungan IN - OUT).';
+GO
+
+-- ============================================================
 -- [5] VERIFIKASI AKHIR
 -- ============================================================
 USE ELWP_PRD;

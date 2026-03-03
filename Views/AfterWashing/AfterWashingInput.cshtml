@@ -472,6 +472,30 @@
         background-color: rgba(33, 150, 243, 0.1);
         transform: scale(1.1);
     }
+
+    /* Planning Item Cards */
+    .planning-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: white;
+        border: 2px solid #90CAF9;
+        border-radius: 10px;
+        padding: 10px 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .planning-card:hover { border-color: #2196F3; background: #E3F2FD; }
+    .planning-card.selected { border-color: #2196F3; background: #BBDEFB; }
+    .planning-card.done { border-color: #4CAF50; background: #E8F5E9; cursor: default; opacity: 0.7; }
+    .planning-card .card-left { display: flex; flex-direction: column; gap: 2px; }
+    .planning-card .card-code { font-weight: 700; font-size: 14px; color: #1976D2; }
+    .planning-card .card-name { font-size: 12px; color: #555; }
+    .planning-card .card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+    .planning-card .card-qty { font-weight: 600; font-size: 13px; color: #333; }
+    .planning-card .card-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+    .badge-done { background: #4CAF50; color: white; }
+    .badge-pending { background: #FF9800; color: white; }
 </style>
 </head>
 <body>
@@ -578,18 +602,22 @@
             </div>
         </div>
 
-        <!-- Plant / Tujuan (Only for INPUT OUT) -->
+        <!-- Line selector (Only for INPUT OUT) -->
         <div class="form-group" id="plant-group" style="display:none;">
-            <label class="form-label">🏭 Tujuan Plant (Finishing) *</label>
+            <label class="form-label">🏭 Pilih Line Finishing *</label>
             <div class="input-wrapper" style="position:relative;">
                 <i class="gi gi-building input-icon"></i>
-                <select class="form-input" id="plantId" style="padding-left: 45px; height: 50px; cursor: pointer; background: white;">
-                    <option value="">-- Pilih Plant Tujuan --</option>
-                    <option value="1">Plant 1 - HOSE</option>
-                    <option value="2">Plant 2 - RVI</option>
-                    <option value="3">Plant 3 - MOLDED</option>
-                    <option value="4">Plant 4 - BTR</option>
+                <select class="form-input" id="plantId" style="padding-left: 45px; height: 50px; cursor: pointer; background: white;" onchange="onLineChange(this.value)">
+                    <option value="">-- Pilih Line --</option>
                 </select>
+            </div>
+        </div>
+
+        <!-- Planning Supply list (Only for INPUT OUT, muncul setelah pilih Line) -->
+        <div class="form-group" id="planning-list-group" style="display:none;">
+            <label class="form-label">📋 Planning Supply - Pilih Item</label>
+            <div id="planning-list-container" style="display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto;">
+                <div style="text-align:center; color:#999; padding:16px;">Pilih line terlebih dahulu</div>
             </div>
         </div>
 
@@ -670,12 +698,119 @@
                 document.getElementById('transaction-type-section').style.display = 'block';
                 document.getElementById('production-date-group').style.display = 'block';
                 document.getElementById('plant-group').style.display = 'none';
+                document.getElementById('planning-list-group').style.display = 'none';
+                document.getElementById('itemCode').readOnly = false;
             } else {
                 document.getElementById('info-text').textContent = 'Catat material keluar ke Finishing';
-                document.querySelector('.submit-btn').innerHTML = '<i class="gi gi-floppy_disk"></i> SUBMIT INPUT OUT';
+                document.querySelector('.submit-btn').innerHTML = '<i class="gi gi-upload"></i> SUBMIT INPUT OUT';
                 document.getElementById('transaction-type-section').style.display = 'none';
                 document.getElementById('production-date-group').style.display = 'none';
                 document.getElementById('plant-group').style.display = 'block';
+                document.getElementById('planning-list-group').style.display = 'none';
+                document.getElementById('itemCode').readOnly = true;
+                loadFinishingLines();
+            }
+        }
+
+        // Load Finishing Lines dari ELWP_PRD
+        async function loadFinishingLines() {
+            try {
+                const res = await $.get('/AfterWashing/GetFinishingLines');
+                const sel = document.getElementById('plantId');
+                sel.innerHTML = '<option value="">-- Pilih Line --</option>';
+                if (res.success && res.data.length > 0) {
+                    res.data.forEach(line => {
+                        sel.innerHTML += `<option value="${line.id}">${line.namaMesin}</option>`;
+                    });
+                } else {
+                    sel.innerHTML += '<option disabled>Tidak ada line tersedia</option>';
+                }
+            } catch(e) { console.error('Error loading lines:', e); }
+        }
+
+        // Ketika pilih Line
+        async function onLineChange(mesinId) {
+            const container = document.getElementById('planning-list-container');
+            const group = document.getElementById('planning-list-group');
+
+            // Reset item code
+            document.getElementById('itemCode').value = '';
+            document.querySelectorAll('.planning-card').forEach(c => c.classList.remove('selected'));
+
+            if (!mesinId) {
+                group.style.display = 'none';
+                return;
+            }
+
+            group.style.display = 'block';
+            container.innerHTML = '<div style="text-align:center;padding:16px;color:#999;">Memuat planning...</div>';
+
+            try {
+                const res = await $.get(`/AfterWashing/GetPlanningByLine?mesinId=${mesinId}`);
+                if (!res.success || res.data.length === 0) {
+                    container.innerHTML = '<div style="text-align:center;padding:16px;color:#f44336;">Tidak ada planning untuk line ini hari ini</div>';
+                    return;
+                }
+                renderPlanningList(res.data);
+            } catch(e) {
+                container.innerHTML = '<div style="text-align:center;padding:16px;color:#f44336;">Error memuat data planning</div>';
+            }
+        }
+
+        // Render daftar planning sebagai cards
+        function renderPlanningList(data) {
+            const container = document.getElementById('planning-list-container');
+            container.innerHTML = '';
+            data.forEach(item => {
+                const timeH = Math.floor(item.time);
+                const timeM = Math.round((item.time - timeH) * 60);
+                // Tampilkan jam aktual = shift start 07:00 + offset
+                const shifts = JSON.parse(localStorage.getItem('dashboard_shifts') || '[]');
+                const shift1 = shifts.find(s => s.name === item.shift) || { start: '07:00' };
+                const [sh, sm] = shift1.start.split(':').map(Number);
+                const totalMin = sh * 60 + sm + Math.round(item.time * 60);
+                const dispH = String(Math.floor(totalMin / 60)).padStart(2, '0');
+                const dispM = String(totalMin % 60).padStart(2, '0');
+
+                const isDone = item.isDone;
+                container.innerHTML += `
+                    <div class="planning-card ${isDone ? 'done' : ''}" 
+                         id="card-${item.id}"
+                         onclick="${isDone ? '' : `selectPlanningItem('${item.kodeItem}', 'card-${item.id}')`}">
+                        <div class="card-left">
+                            <span class="card-code">${item.kodeItem}</span>
+                            <span class="card-name">${item.partName || '-'}</span>
+                        </div>
+                        <div class="card-right">
+                            <span class="card-qty">Qty: ${item.qty} pcs</span>
+                            <span class="card-badge ${isDone ? 'badge-done' : 'badge-pending'}">
+                                ${isDone ? '✓ Done' : `⏰ ${dispH}:${dispM}`}
+                            </span>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // Pilih item dari planning
+        async function selectPlanningItem(kodeItem, cardId) {
+            document.querySelectorAll('.planning-card').forEach(c => c.classList.remove('selected'));
+            document.getElementById(cardId).classList.add('selected');
+            document.getElementById('itemCode').value = kodeItem;
+
+            // Auto-fill dari storage terbaru di DB_SUPPLY
+            try {
+                const res = await fetch(`/AfterWashing/GetStorageByItemCode?itemCode=${encodeURIComponent(kodeItem)}`);
+                const data = await res.json();
+                if (data.success) {
+                    if (data.fullQr)         document.getElementById('fullQR').value         = data.fullQr;
+                    if (data.boxCount != null) document.getElementById('boxCount').value       = data.boxCount;
+                    if (data.qtyPcs   != null) document.getElementById('qtyPcs').value         = data.qtyPcs;
+                    if (data.productionDate)  document.getElementById('productionDate').value  = data.productionDate;
+                } else {
+                    console.info('GetStorageByItemCode:', data.message);
+                }
+            } catch (err) {
+                console.warn('Gagal auto-fill storage:', err);
             }
         }
 
@@ -733,10 +868,13 @@
         }
 
 
+        // PlantId dari user session (Razor)
+        const userPlantId = @(User.FindFirst("PlantId")?.Value ?? "null");
+
         // Form submission
         document.getElementById('inputForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const data = {
                 transactionType: currentTab === 'in' ? document.getElementById('transactionTypeValue').value : 'OUT',
                 itemCode: document.getElementById('itemCode').value,
@@ -744,7 +882,7 @@
                 productionDate: document.getElementById('productionDate').value || null,
                 boxCount: parseInt(document.getElementById('boxCount').value) || 0,
                 qtyPcs: parseInt(document.getElementById('qtyPcs').value) || 0,
-                plantId: currentTab === 'out' ? (document.getElementById('plantId').value || null) : null
+                plantId: currentTab === 'out' ? userPlantId : null
             };
 
             try {
@@ -763,10 +901,21 @@
                         text: result.message,
                         confirmButtonColor: '#2196F3'
                     });
-                    this.reset();
-                    // Reset transaction type to IN
-                    document.querySelector('input[name="transactionType"][value="IN"]').checked = true;
-                    document.getElementById('transactionTypeValue').value = 'IN';
+
+                    if (currentTab === 'out') {
+                        // Jangan reset form, cukup reset item code & qty, lalu reload planning list
+                        document.getElementById('itemCode').value = '';
+                        document.getElementById('fullQR').value = '';
+                        document.getElementById('boxCount').value = '';
+                        document.getElementById('qtyPcs').value = '';
+                        const mesinId = document.getElementById('plantId').value;
+                        if (mesinId) onLineChange(mesinId); // refresh list → item jadi Done
+                    } else {
+                        this.reset();
+                        // Reset transaction type to IN
+                        document.querySelector('input[name="transactionType"][value="IN"]').checked = true;
+                        document.getElementById('transactionTypeValue').value = 'IN';
+                    }
                 } else {
                     Swal.fire({
                         icon: 'error',

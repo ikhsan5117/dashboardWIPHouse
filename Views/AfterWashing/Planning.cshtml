@@ -3,7 +3,7 @@
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/planning_dashboard.css">
+<link rel="stylesheet" href="/css/planning_dashboard.css?v=4">
 
 <style>
     /* Integrate with ProUI Layout */
@@ -174,8 +174,8 @@
                 const hourStr = h.toString().padStart(2, '0') + ':00';
                 html += `
                     <div class="time-slot">
-                        <span style="font-size:18px; font-weight:900;">${hourStr}</span>
-                        <div style="display:grid; grid-template-columns:repeat(6,1fr); width:100%; font-size:10px; color:#8b949e; text-align:center;">
+                        <span class="time-slot-hour">${hourStr}</span>
+                        <div class="time-slot-mins">
                             <span>00</span><span>10</span><span>20</span><span>30</span><span>40</span><span>50</span>
                         </div>
                     </div>`;
@@ -293,13 +293,20 @@
 
                 if (row.length && offsetHours >= 0 && offsetHours < 3) {
                     const leftPercent = (offsetHours / 3) * 100;
+                    const qtySupplied = item.qtySupplied || 0;
+                    const qtyTotal = item.qty || 0;
+                    // Tampilkan progress jika sudah ada supply tapi belum penuh
+                    const showProgress = qtySupplied > 0 && status !== 'green';
+                    const qtyDisplay = showProgress ? `${qtySupplied}/${qtyTotal}` : `${qtyTotal}`;
+                    const progressPct = qtyTotal > 0 ? Math.round((qtySupplied / qtyTotal) * 100) : 0;
                     row.append(`
                         <div class="planning-item status-${status}" style="left: calc(${leftPercent}% + 2px)">
                             <div class="code">.${item.itemCode}</div>
                             <div class="info-row">
-                                <span>${item.qty}</span>
+                                <span>${qtyDisplay}</span>
                                 <span>${detailTimeStr}</span>
                             </div>
+                            ${showProgress ? `<div class="qty-progress-bar"><div class="qty-progress-fill" style="width:${progressPct}%"></div></div>` : ''}
                         </div>
                     `);
                 }
@@ -313,9 +320,17 @@
                 if (stats && stats.total > 0) {
                     const pct = Math.round((stats.supplied / stats.total) * 100);
                     arCell.text(`${pct}%`);
+                    // Colour-code AR cell by achievement
+                    if (pct >= 100) {
+                        arCell.css('color', 'var(--status-green)').css('text-shadow', '0 0 10px var(--status-green-glow)');
+                    } else if (pct > 0) {
+                        arCell.css('color', 'var(--status-yellow)').css('text-shadow', '0 0 8px var(--status-yellow-glow)');
+                    } else {
+                        arCell.css('color', '#ef4444').css('text-shadow', '0 0 8px var(--status-red-glow)');
+                    }
                     rmCell.text(stats.remarks.join(', ') || '-');
                 } else {
-                    arCell.text('-');
+                    arCell.text('-').css('color', 'var(--text-dim)').css('text-shadow', 'none');
                     rmCell.text('-');
                 }
             }

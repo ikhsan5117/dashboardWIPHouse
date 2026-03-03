@@ -858,10 +858,9 @@ E:\dashboardWIP\obj\Release\net8.0\staticwebassets.pack.json
 E:\dashboardWIP\obj\Release\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 E:\dashboardWIP\obj\Release\net8.0\scopedcss\bundle\DashboardWIPHouse.styles.css
 E:\dashboardWIP\obj\Release\net8.0\scopedcss\projectbundle\DashboardWIPHouse.bundle.scp.css
-E:\dashboardWIP\obj\Release\net8.0\Dashboar.AA629419.Up2Date
 E:\dashboardWIP\obj\Release\net8.0\DashboardWIPHouse.dll
 E:\dashboardWIP\obj\Release\net8.0\refint\DashboardWIPHouse.dll
 E:\dashboardWIP\obj\Release\net8.0\DashboardWIPHouse.pdb
 E:\dashboardWIP\obj\Release\net8.0\DashboardWIPHouse.genruntimeconfig.cache
 E:\dashboardWIP\obj\Release\net8.0\ref\DashboardWIPHouse.dll
-E:\dashboardWIP\bin\Release\net8.0\DashboardWIP\web.config
+E:\dashboardWIP\obj\Release\net8.0\dashboar.44A26ED7.Up2Date

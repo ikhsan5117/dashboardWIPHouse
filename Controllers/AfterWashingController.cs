@@ -1204,12 +1204,15 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                 var elwpDataRaw = await planningQuery.ToListAsync();
                 var machineMaster = await machineQuery.ToListAsync();
 
-                // Simulasi data supply aktual dari database lokal kita
-                var supplyDoneItems = await _context.SupplyLogAW
+                // Ambil total qty yang sudah di-supply per item_code hari ini
+                var supplyQtyPerItem = await _context.SupplyLogAW
                     .Where(s => s.SuppliedAt.HasValue && s.SuppliedAt.Value.Date == today)
-                    .Select(s => s.ItemCode)
-                    .Distinct()
+                    .GroupBy(s => s.ItemCode)
+                    .Select(g => new { ItemCode = g.Key, TotalQty = g.Sum(s => s.QtyPcs ?? 0) })
                     .ToListAsync();
+
+                // Buat dictionary untuk lookup cepat
+                var supplyQtyDict = supplyQtyPerItem.ToDictionary(x => x.ItemCode, x => x.TotalQty);
 
                 var currentTime = DateTime.Now.TimeOfDay.TotalHours;
 
@@ -1233,29 +1236,34 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                         if (lineNum < 1 || lineNum > 22) return null;
 
                         var planHourRaw = (double)(p.LoadingTimeHours ?? 0);
-                        var planHour = planHourRaw; // Just for variable naming consistency below
-                        string status = "white";
+                        var qtyPlanning = p.QtyPlanning ?? 0;
 
-                        if (supplyDoneItems.Contains(p.KodeItem))
+                        // Cek total qty yang sudah di-supply untuk item ini
+                        var qtySupplied = supplyQtyDict.ContainsKey(p.KodeItem) ? supplyQtyDict[p.KodeItem] : 0;
+                        bool fullySupplied = qtySupplied >= qtyPlanning && qtyPlanning > 0;
+
+                        string status = "white";
+                        if (fullySupplied)
                         {
                             status = "green";
                         }
-                        else if (currentTime > planHour)
+                        else if (currentTime > planHourRaw)
                         {
                             status = "red";
                         }
-                        else if (planHour - currentTime <= 0.5)
+                        else if (planHourRaw - currentTime <= 0.5)
                         {
                             status = "yellow";
                         }
 
                         return new
                         {
-                            mesinId = lineNum, // Gunakan nomor line asli (1, 2, dst)
+                            mesinId = lineNum,
                             lineName = m.NamaMesin,
                             itemCode = p.KodeItem,
                             partName = p.PartName,
-                            qty = p.QtyPlanning,
+                            qty = qtyPlanning,
+                            qtySupplied = qtySupplied,
                             time = planHourRaw,
                             timeStr = $"{Math.Floor(planHourRaw):00}:{(int)Math.Round((planHourRaw - Math.Floor(planHourRaw)) * 60):00}",
                             status = status,
@@ -1272,6 +1280,130 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting ELWP planning data");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // =============================================
+        // GET FINISHING LINES (untuk dropdown di INPUT OUT)
+        // =============================================
+        [HttpGet]
+        public async Task<JsonResult> GetFinishingLines()
+        {
+            try
+            {
+                string plantIdStr = User.FindFirst("PlantId")?.Value;
+                int? userPlantId = null;
+                if (int.TryParse(plantIdStr, out int pid))
+                    userPlantId = pid;
+
+                var query = _elwpContext.MesinElwp
+                    .Where(m => m.IsActive == true && m.NamaMesin.Contains("Finishing Line"));
+
+                if (userPlantId.HasValue)
+                    query = query.Where(m => m.PlantId == userPlantId.Value);
+
+                var lines = await query
+                    .OrderBy(m => m.KodeMesin)
+                    .Select(m => new { id = m.Id, kodeMesin = m.KodeMesin, namaMesin = m.NamaMesin })
+                    .ToListAsync();
+
+                return Json(new { success = true, data = lines });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting finishing lines");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // =============================================
+        // GET PLANNING BY LINE (untuk daftar item di INPUT OUT)
+        // =============================================
+        [HttpGet]
+        public async Task<JsonResult> GetPlanningByLine(int mesinId)
+        {
+            try
+            {
+                var today = DateTime.Now.Date;
+                var tomorrow = today.AddDays(1);
+
+                var planning = await _elwpContext.PlanningElwp
+                    .Where(p => p.MesinId == mesinId &&
+                                ((p.PlanningDate >= today && p.PlanningDate < tomorrow) ||
+                                 (p.TanggalPlanning >= today && p.TanggalPlanning < tomorrow)))
+                    .OrderBy(p => p.LoadingTimeHours)
+                    .Select(p => new
+                    {
+                        id         = p.Id,
+                        kodeItem   = p.KodeItem,
+                        partName   = p.PartName,
+                        qty        = p.QtyPlanning,
+                        shift      = p.Shift,
+                        time       = p.LoadingTimeHours
+                    })
+                    .ToListAsync();
+
+                // Cek item mana yang sudah di-supply hari ini
+                var suppliedItems = await _context.SupplyLogAW
+                    .Where(s => s.SuppliedAt.HasValue && s.SuppliedAt.Value.Date == today)
+                    .Select(s => s.ItemCode)
+                    .Distinct()
+                    .ToListAsync();
+
+                var result = planning.Select(p => new
+                {
+                    p.id,
+                    p.kodeItem,
+                    p.partName,
+                    p.qty,
+                    p.shift,
+                    p.time,
+                    isDone = suppliedItems.Contains(p.kodeItem)
+                }).ToList();
+
+                return Json(new { success = true, data = result });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting planning by line");
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // =============================================
+        // GET LATEST STORAGE BY ITEM CODE (untuk auto-fill form INPUT OUT)
+        // =============================================
+        [HttpGet]
+        public async Task<JsonResult> GetStorageByItemCode(string itemCode)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(itemCode))
+                    return Json(new { success = false, message = "Item code kosong" });
+
+                var latest = await _context.StorageLogAW
+                    .Where(s => s.ItemCode == itemCode)
+                    .OrderByDescending(s => s.StoredAt)
+                    .FirstOrDefaultAsync();
+
+                if (latest == null)
+                    return Json(new { success = false, message = "Data tidak ditemukan di storage" });
+
+                return Json(new
+                {
+                    success  = true,
+                    fullQr   = latest.FullQr,
+                    boxCount = latest.BoxCount,
+                    qtyPcs   = latest.QtyPcs,
+                    productionDate = latest.ProductionDate.HasValue
+                        ? latest.ProductionDate.Value.ToString("yyyy-MM-dd")
+                        : null
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting storage by item code");
                 return Json(new { success = false, message = ex.Message });
             }
         }

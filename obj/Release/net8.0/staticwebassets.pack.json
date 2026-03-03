@@ -1,8 +1,8 @@
 {
   "Files": [
     {
-      "Id": "E:\\dashboardWIP\\obj\\Release\\net8.0\\scopedcss\\projectbundle\\DashboardWIPHouse.bundle.scp.css",
-      "PackagePath": "staticwebassets\\DashboardWIPHouse.bundle.scp.css"
+      "Id": "E:\\dashboardWIP\\obj\\Release\\net8.0\\scopedcss\\projectbundle\\dashboardWIPHouse.bundle.scp.css",
+      "PackagePath": "staticwebassets\\dashboardWIPHouse.bundle.scp.css"
     },
     {
       "Id": "E:\\dashboardWIP\\wwwroot\\camera-test.html",
@@ -107,6 +107,10 @@
     {
       "Id": "E:\\dashboardWIP\\wwwroot\\css\\main.css",
       "PackagePath": "staticwebassets\\css\\main.css"
+    },
+    {
+      "Id": "E:\\dashboardWIP\\wwwroot\\css\\planning_dashboard.css",
+      "PackagePath": "staticwebassets\\css\\planning_dashboard.css"
     },
     {
       "Id": "E:\\dashboardWIP\\wwwroot\\css\\plugins.css",
@@ -2553,20 +2557,20 @@
       "PackagePath": "staticwebassets\\test-simple.html"
     },
     {
-      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.DashboardWIPHouse.Microsoft.AspNetCore.StaticWebAssets.props",
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.build.dashboardWIPHouse.props",
+      "PackagePath": "build\\dashboardWIPHouse.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.dashboardWIPHouse.props",
+      "PackagePath": "buildMultiTargeting\\dashboardWIPHouse.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildTransitive.dashboardWIPHouse.props",
+      "PackagePath": "buildTransitive\\dashboardWIPHouse.props"
+    },
+    {
+      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.dashboardWIPHouse.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
-    },
-    {
-      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.build.DashboardWIPHouse.props",
-      "PackagePath": "build\\DashboardWIPHouse.props"
-    },
-    {
-      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.DashboardWIPHouse.props",
-      "PackagePath": "buildMultiTargeting\\DashboardWIPHouse.props"
-    },
-    {
-      "Id": "obj\\Release\\net8.0\\staticwebassets\\msbuild.buildTransitive.DashboardWIPHouse.props",
-      "PackagePath": "buildTransitive\\DashboardWIPHouse.props"
     }
   ],
   "ElementsToRemove": []
