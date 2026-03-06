@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using dashboardWIPHouse.Data;
 using dashboardWIPHouse.Models;
+using dashboardWIPHouse.Hubs;
+using Microsoft.AspNetCore.SignalR;
 using System.Diagnostics;
 using System.Globalization;
 
@@ -14,12 +16,14 @@ namespace dashboardWIPHouse.Controllers
         private readonly ILogger<AfterWashingController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly ElwpDbContext _elwpContext;
+        private readonly IHubContext<PlanningHub> _planningHub;
 
-        public AfterWashingController(ILogger<AfterWashingController> logger, ApplicationDbContext context, ElwpDbContext elwpContext)
+        public AfterWashingController(ILogger<AfterWashingController> logger, ApplicationDbContext context, ElwpDbContext elwpContext, IHubContext<PlanningHub> planningHub)
         {
             _logger = logger;
             _context = context;
             _elwpContext = elwpContext;
+            _planningHub = planningHub;
         }
 
         [Authorize(Roles = "Admin")]
@@ -1000,6 +1004,12 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
 
         await _context.SaveChangesAsync();
 
+        // Broadcast real-time update ke semua dashboard Supply Finishing
+        if (model.TransactionType == "OUT")
+        {
+            await _planningHub.Clients.All.SendAsync("planningUpdated");
+        }
+
         string transactionLabel = model.TransactionType;
         return Json(new { success = true, message = $"Data successfully saved ({transactionLabel})" });
     }
@@ -1304,11 +1314,18 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                     query = query.Where(m => m.PlantId == userPlantId.Value);
 
                 var lines = await query
-                    .OrderBy(m => m.KodeMesin)
                     .Select(m => new { id = m.Id, kodeMesin = m.KodeMesin, namaMesin = m.NamaMesin })
                     .ToListAsync();
 
-                return Json(new { success = true, data = lines });
+                // Sort numerik: ambil angka di akhir nama ("Finishing Line 10" → 10)
+                var linesSorted = lines
+                    .OrderBy(m => {
+                        var parts = m.namaMesin?.Split(' ');
+                        return int.TryParse(parts?.LastOrDefault(), out int n) ? n : 999;
+                    })
+                    .ToList();
+
+                return Json(new { success = true, data = linesSorted });
             }
             catch (Exception ex)
             {
@@ -1344,12 +1361,21 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                     })
                     .ToListAsync();
 
-                // Cek item mana yang sudah di-supply hari ini
-                var suppliedItems = await _context.SupplyLogAW
+                // Hitung total qty yang sudah di-supply per item hari ini
+                var suppliedQtyDict = (await _context.SupplyLogAW
                     .Where(s => s.SuppliedAt.HasValue && s.SuppliedAt.Value.Date == today)
-                    .Select(s => s.ItemCode)
-                    .Distinct()
-                    .ToListAsync();
+                    .GroupBy(s => s.ItemCode)
+                    .Select(g => new { ItemCode = g.Key, TotalQty = g.Sum(s => s.QtyPcs ?? 0) })
+                    .ToListAsync())
+                    .ToDictionary(x => x.ItemCode, x => x.TotalQty);
+
+                // Hitung total stok yang sudah masuk (IN) per item hari ini
+                var stockInDict = (await _context.StorageLogAW
+                    .Where(s => s.ProductionDate.HasValue && s.ProductionDate.Value.Date == today)
+                    .GroupBy(s => s.ItemCode)
+                    .Select(g => new { ItemCode = g.Key, TotalQty = g.Sum(s => s.QtyPcs ?? 0) })
+                    .ToListAsync())
+                    .ToDictionary(x => x.ItemCode, x => x.TotalQty);
 
                 var result = planning.Select(p => new
                 {
@@ -1359,7 +1385,12 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                     p.qty,
                     p.shift,
                     p.time,
-                    isDone = suppliedItems.Contains(p.kodeItem)
+                    qtySupplied = suppliedQtyDict.ContainsKey(p.kodeItem) ? suppliedQtyDict[p.kodeItem] : 0,
+                    stockIn     = stockInDict.ContainsKey(p.kodeItem)     ? stockInDict[p.kodeItem]     : 0,
+                    // isDone hanya true jika qty yang di-supply >= qty planning
+                    isDone = suppliedQtyDict.ContainsKey(p.kodeItem)
+                             && p.qty.HasValue && p.qty.Value > 0
+                             && suppliedQtyDict[p.kodeItem] >= p.qty.Value
                 }).ToList();
 
                 return Json(new { success = true, data = result });
@@ -1373,6 +1404,7 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
 
         // =============================================
         // GET LATEST STORAGE BY ITEM CODE (untuk auto-fill form INPUT OUT)
+        // Returns remaining stock = storage qty - already supplied for that QR
         // =============================================
         [HttpGet]
         public async Task<JsonResult> GetStorageByItemCode(string itemCode)
@@ -1382,6 +1414,7 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                 if (string.IsNullOrWhiteSpace(itemCode))
                     return Json(new { success = false, message = "Item code kosong" });
 
+                // Ambil entry storage terbaru untuk item ini
                 var latest = await _context.StorageLogAW
                     .Where(s => s.ItemCode == itemCode)
                     .OrderByDescending(s => s.StoredAt)
@@ -1390,12 +1423,28 @@ public async Task<JsonResult> SubmitAfterWashingInput([FromBody] AfterWashingInp
                 if (latest == null)
                     return Json(new { success = false, message = "Data tidak ditemukan di storage" });
 
+                // Hitung total yang sudah di-supply untuk QR ini
+                var alreadySupplied = await _context.SupplyLogAW
+                    .Where(s => s.FullQr == latest.FullQr)
+                    .SumAsync(s => s.QtyPcs ?? 0);
+
+                var alreadySuppliedBox = await _context.SupplyLogAW
+                    .Where(s => s.FullQr == latest.FullQr)
+                    .SumAsync(s => s.BoxCount ?? 0);
+
+                // Sisa = qty storage - yang sudah keluar
+                var remainQty = Math.Max(0, (latest.QtyPcs ?? 0) - alreadySupplied);
+                var remainBox = Math.Max(0, (latest.BoxCount ?? 0) - alreadySuppliedBox);
+
                 return Json(new
                 {
-                    success  = true,
-                    fullQr   = latest.FullQr,
-                    boxCount = latest.BoxCount,
-                    qtyPcs   = latest.QtyPcs,
+                    success        = true,
+                    fullQr         = latest.FullQr,
+                    boxCount       = remainBox,
+                    qtyPcs         = remainQty,
+                    originalQty    = latest.QtyPcs,
+                    originalBox    = latest.BoxCount,
+                    alreadySupplied= alreadySupplied,
                     productionDate = latest.ProductionDate.HasValue
                         ? latest.ProductionDate.Value.ToString("yyyy-MM-dd")
                         : null

@@ -487,15 +487,86 @@
     }
     .planning-card:hover { border-color: #2196F3; background: #E3F2FD; }
     .planning-card.selected { border-color: #2196F3; background: #BBDEFB; }
-    .planning-card.done { border-color: #4CAF50; background: #E8F5E9; cursor: default; opacity: 0.7; }
+    .planning-card.done { border-color: #4CAF50; background: #E8F5E9; opacity: 0.85; }
+    .planning-card.done:hover { border-color: #2E7D32; background: #C8E6C9; cursor: pointer; }
+    .planning-card.partial { border-color: #FF9800; background: #FFF8E1; }
+    .planning-card.no-stock { border-color: #B0BEC5; background: #FAFAFA; opacity: 0.8; }
+    .planning-card.stock-kurang { border-color: #F57C00; background: #FFF3E0; }
     .planning-card .card-left { display: flex; flex-direction: column; gap: 2px; }
     .planning-card .card-code { font-weight: 700; font-size: 14px; color: #1976D2; }
     .planning-card .card-name { font-size: 12px; color: #555; }
     .planning-card .card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
     .planning-card .card-qty { font-weight: 600; font-size: 13px; color: #333; }
     .planning-card .card-badge { font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+    .card-progress-bar { height: 4px; background: #FFE082; border-radius: 4px; margin-top: 4px; width: 100%; }
+    .card-progress-fill { height: 100%; background: #FF9800; border-radius: 4px; transition: width 0.3s; }
     .badge-done { background: #4CAF50; color: white; }
-    .badge-pending { background: #FF9800; color: white; }
+    .badge-partial { background: #FF9800; color: white; }
+    .badge-pending { background: #90A4AE; color: white; }
+    .badge-resupply { background: #1976D2; color: white; font-size: 10px; }
+    .badge-nostock { background: #78909C; color: white; }
+    .badge-stockkurang { background: #F57C00; color: white; }
+    .badge-stockok { background: #43A047; color: white; }
+
+    /* Stock Info Popup */
+    .stock-popup-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.45);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+    }
+    .stock-popup-overlay.show { display: flex; }
+    .stock-popup {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px 22px 20px;
+        width: 320px;
+        max-width: 95vw;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+        animation: popupIn .18s ease;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2001;
+    }
+    @@keyframes popupIn { from { transform: scale(.92); opacity:0; } to { transform: scale(1); opacity:1; } }
+    .stock-popup-title {
+        font-size: 13px; font-weight: 700; color: #1976D2;
+        letter-spacing: .04em; margin-bottom: 2px;
+    }
+    .stock-popup-name {
+        font-size: 12px; color: #666; margin-bottom: 14px;
+    }
+    .stock-popup-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .stock-row {
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 13px; padding: 7px 12px; border-radius: 8px;
+        background: #F5F5F5;
+    }
+    .stock-row .sr-label { color: #555; }
+    .stock-row .sr-value { font-weight: 700; }
+    .stock-row.highlight { background: #E3F2FD; }
+    .stock-row.highlight .sr-value { color: #1976D2; font-size: 15px; }
+    .stock-row.supplied .sr-value { color: #E53935; }
+    .stock-row.zero .sr-value { color: #9E9E9E; }
+    .stock-bar-wrap { margin: 0 0 16px; }
+    .stock-bar-bg { height: 8px; background: #EEE; border-radius: 8px; overflow: hidden; }
+    .stock-bar-fill { height: 100%; border-radius: 8px; transition: width .4s; }
+    .stock-bar-label { font-size: 10px; color: #888; margin-top: 3px; text-align: right; }
+    .stock-popup-btns { display: flex; gap: 10px; }
+    .stock-popup-btns button {
+        flex: 1; padding: 10px; border: none; border-radius: 8px;
+        font-size: 14px; font-weight: 700; cursor: pointer; transition: opacity .15s;
+    }
+    .stock-popup-btns button:hover { opacity: .85; }
+    .btn-popup-use   { background: #1976D2; color: #fff; }
+    .btn-popup-cancel { background: #EEEEEE; color: #555; }
 </style>
 </head>
 <body>
@@ -509,6 +580,37 @@
             </a>
         </div>
     </header>
+
+<div class="stock-popup-overlay" id="stockPopupOverlay" onclick="closeStockPopup(event)">
+    <div class="stock-popup">
+        <div class="stock-popup-title" id="sp-code"></div>
+        <div class="stock-popup-name" id="sp-name"></div>
+        <div class="stock-popup-rows">
+            <div class="stock-row">
+                <span class="sr-label">📦 Total masuk (IN)</span>
+                <span class="sr-value" id="sp-total">-</span>
+            </div>
+            <div class="stock-row supplied">
+                <span class="sr-label">🚚 Sudah ke Finishing</span>
+                <span class="sr-value" id="sp-supplied">-</span>
+            </div>
+            <div class="stock-row highlight" id="sp-remain-row">
+                <span class="sr-label">✅ Sisa Stok</span>
+                <span class="sr-value" id="sp-remain">-</span>
+            </div>
+        </div>
+        <div class="stock-bar-wrap">
+            <div class="stock-bar-bg">
+                <div class="stock-bar-fill" id="sp-bar" style="width:0%"></div>
+            </div>
+            <div class="stock-bar-label" id="sp-bar-label"></div>
+        </div>
+        <div class="stock-popup-btns">
+            <button class="btn-popup-cancel" onclick="closeStockPopup()">Batal</button>
+            <button class="btn-popup-use" id="btn-popup-use" onclick="confirmUseStock()">Pakai Stok Ini →</button>
+        </div>
+    </div>
+</div>
 
 <div class="input-page-container">
     <div class="input-header" style="display: flex; align-items: center;">
@@ -764,7 +866,6 @@
             data.forEach(item => {
                 const timeH = Math.floor(item.time);
                 const timeM = Math.round((item.time - timeH) * 60);
-                // Tampilkan jam aktual = shift start 07:00 + offset
                 const shifts = JSON.parse(localStorage.getItem('dashboard_shifts') || '[]');
                 const shift1 = shifts.find(s => s.name === item.shift) || { start: '07:00' };
                 const [sh, sm] = shift1.start.split(':').map(Number);
@@ -772,45 +873,151 @@
                 const dispH = String(Math.floor(totalMin / 60)).padStart(2, '0');
                 const dispM = String(totalMin % 60).padStart(2, '0');
 
-                const isDone = item.isDone;
+                const isDone       = item.isDone;
+                const qtySupplied  = item.qtySupplied || 0;
+                const qtyTotal     = item.qty || 0;
+                const stockIn      = item.stockIn || 0;   // stok yang sudah INPUT IN
+                const isPartial    = !isDone && qtySupplied > 0;
+                const progressPct  = qtyTotal > 0 ? Math.min(100, Math.round((qtySupplied / qtyTotal) * 100)) : 0;
+
+                // Status stok di after washing
+                const noStock      = !isDone && stockIn === 0;  // belum ada INPUT IN sama sekali
+                const stockKurang  = !isDone && stockIn > 0 && stockIn < qtyTotal; // ada tapi kurang
+
+                let cardClass = 'planning-card';
+                if (isDone)     cardClass += ' done';
+                else if (isPartial)  cardClass += ' partial';
+                else if (noStock)    cardClass += ' no-stock';
+                else if (stockKurang) cardClass += ' stock-kurang';
+
+                // Badge stok IN
+                let stockBadge = '';
+                if (!isDone) {
+                    if (noStock)
+                        stockBadge = `<span class="card-badge badge-nostock">📦 Belum IN</span>`;
+                    else if (stockKurang)
+                        stockBadge = `<span class="card-badge badge-stockkurang">📦 IN: ${stockIn}/${qtyTotal}</span>`;
+                    else
+                        stockBadge = `<span class="card-badge badge-stockok">📦 Stok OK</span>`;
+                }
+
                 container.innerHTML += `
-                    <div class="planning-card ${isDone ? 'done' : ''}" 
+                    <div class="${cardClass}" 
                          id="card-${item.id}"
-                         onclick="${isDone ? '' : `selectPlanningItem('${item.kodeItem}', 'card-${item.id}')`}">
+                         onclick="selectPlanningItem('${item.kodeItem}', 'card-${item.id}', ${isDone ? 'null' : qtyTotal - qtySupplied})">
                         <div class="card-left">
                             <span class="card-code">${item.kodeItem}</span>
                             <span class="card-name">${item.partName || '-'}</span>
+                            ${isPartial ? `<div class="card-progress-bar"><div class="card-progress-fill" style="width:${progressPct}%"></div></div>` : ''}
+                            ${stockBadge}
                         </div>
                         <div class="card-right">
-                            <span class="card-qty">Qty: ${item.qty} pcs</span>
-                            <span class="card-badge ${isDone ? 'badge-done' : 'badge-pending'}">
-                                ${isDone ? '✓ Done' : `⏰ ${dispH}:${dispM}`}
+                            <span class="card-qty">${isPartial ? `${qtySupplied}/${qtyTotal} pcs` : `Qty: ${qtyTotal} pcs`}</span>
+                            <span class="card-badge ${isDone ? 'badge-done' : isPartial ? 'badge-partial' : 'badge-pending'}">
+                                ${isDone ? '✓ Done' : isPartial ? `⚡ ${progressPct}%` : `⏰ ${dispH}:${dispM}`}
                             </span>
+                            ${isDone ? '<span class="card-badge badge-resupply" style="margin-top:2px">+ Stok Baru?</span>' : ''}
                         </div>
                     </div>`;
             });
         }
 
+        // ─── Stock popup state ───────────────────────────────────────
+        let _pendingStockData   = null;   // data dari server
+        let _pendingCardId      = null;
+        let _pendingQtyRemaining = null;
+
+        function closeStockPopup(e) {
+            if (e && e.target !== document.getElementById('stockPopupOverlay')) return;
+            document.getElementById('stockPopupOverlay').classList.remove('show');
+        }
+
+        function confirmUseStock() {
+            document.getElementById('stockPopupOverlay').classList.remove('show');
+            _applyStockToForm(_pendingStockData, _pendingQtyRemaining);
+        }
+
+        function _applyStockToForm(data, qtyRemaining) {
+            if (data.fullQr)         document.getElementById('fullQR').value        = data.fullQr;
+            if (data.productionDate) document.getElementById('productionDate').value = data.productionDate;
+
+            const stockRemain = data.qtyPcs  || 0;
+            const stockBox    = data.boxCount || 0;
+            const origQty     = data.originalQty || stockRemain;
+            const origBox     = data.originalBox || stockBox;
+
+            const useQty = (qtyRemaining != null && qtyRemaining > 0)
+                ? Math.min(qtyRemaining, stockRemain)
+                : stockRemain;
+
+            document.getElementById('qtyPcs').value   = useQty;
+            document.getElementById('boxCount').value = origQty > 0
+                ? Math.ceil((useQty / origQty) * origBox)
+                : stockBox;
+        }
+
         // Pilih item dari planning
-        async function selectPlanningItem(kodeItem, cardId) {
+        async function selectPlanningItem(kodeItem, cardId, qtyRemaining) {
             document.querySelectorAll('.planning-card').forEach(c => c.classList.remove('selected'));
             document.getElementById(cardId).classList.add('selected');
             document.getElementById('itemCode').value = kodeItem;
 
-            // Auto-fill dari storage terbaru di DB_SUPPLY
+            // Ambil data stok dulu, tampilkan popup
             try {
                 const res = await fetch(`/AfterWashing/GetStorageByItemCode?itemCode=${encodeURIComponent(kodeItem)}`);
                 const data = await res.json();
-                if (data.success) {
-                    if (data.fullQr)         document.getElementById('fullQR').value         = data.fullQr;
-                    if (data.boxCount != null) document.getElementById('boxCount').value       = data.boxCount;
-                    if (data.qtyPcs   != null) document.getElementById('qtyPcs').value         = data.qtyPcs;
-                    if (data.productionDate)  document.getElementById('productionDate').value  = data.productionDate;
+
+                const noStock = !data.success;
+                const totalQty    = data.originalQty    || 0;
+                const supplied    = data.alreadySupplied || 0;
+                const stockRemain = data.qtyPcs          || 0;
+                const usedPct     = totalQty > 0 ? Math.round((supplied / totalQty) * 100) : 0;
+                const remainPct   = 100 - usedPct;
+
+                // Isi popup
+                document.getElementById('sp-code').textContent    = kodeItem;
+                document.getElementById('sp-name').textContent    = document.querySelector(`#${cardId} .card-name`)?.textContent || '';
+
+                if (noStock) {
+                    // Belum ada INPUT IN
+                    document.getElementById('sp-total').textContent    = '— belum ada';
+                    document.getElementById('sp-supplied').textContent = '—';
+                    document.getElementById('sp-remain').textContent   = '0 pcs';
+                    const bar = document.getElementById('sp-bar');
+                    bar.style.width      = '100%';
+                    bar.style.background = '#546E7A';
+                    document.getElementById('sp-bar-label').textContent = 'Barang belum masuk After Washing';
+                    document.getElementById('sp-remain-row').className = 'stock-row zero';
                 } else {
-                    console.info('GetStorageByItemCode:', data.message);
+                    document.getElementById('sp-total').textContent   = `${totalQty} pcs / ${data.originalBox || 0} box`;
+                    document.getElementById('sp-supplied').textContent= `${supplied} pcs`;
+                    document.getElementById('sp-remain').textContent  = `${stockRemain} pcs`;
+
+                    const bar   = document.getElementById('sp-bar');
+                    const isOut = stockRemain <= 0;
+                    bar.style.width      = isOut ? '100%' : `${remainPct}%`;
+                    bar.style.background = isOut ? '#E53935' : (remainPct < 30 ? '#FF9800' : '#4CAF50');
+                    document.getElementById('sp-bar-label').textContent =
+                        isOut ? 'Stok habis' : `${remainPct}% tersisa`;
+                    document.getElementById('sp-remain-row').className = 'stock-row ' + (isOut ? 'zero' : 'highlight');
                 }
+
+                // Tombol pakai — disable kalau belum ada INPUT IN atau stok habis
+                const btnUse   = document.getElementById('btn-popup-use');
+                const isOut    = stockRemain <= 0;
+                btnUse.disabled    = noStock || isOut;
+                btnUse.textContent = noStock  ? '⚠ Lakukan INPUT IN dulu' : (isOut ? 'Stok Habis' : 'Pakai Stok Ini →');
+                btnUse.style.background = (noStock || isOut) ? '#546E7A' : '';
+
+                // Simpan state untuk confirm
+                _pendingStockData    = data;
+                _pendingCardId       = cardId;
+                _pendingQtyRemaining = qtyRemaining;
+
+                document.getElementById('stockPopupOverlay').classList.add('show');
+
             } catch (err) {
-                console.warn('Gagal auto-fill storage:', err);
+                console.warn('Gagal ambil stok:', err);
             }
         }
 

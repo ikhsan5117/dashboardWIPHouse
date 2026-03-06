@@ -3,6 +3,7 @@ using dashboardWIPHouse.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using dashboardWIPHouse.Models;
 using DashboardWIPHouse.Models;
+using dashboardWIPHouse.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,7 @@ builder.Services.AddDbContext<ElwpDbContext>(options =>
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddLogging();
+builder.Services.AddSignalR();
 
 // ✅ Tambah Session & HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
@@ -92,6 +94,8 @@ app.MapControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");
+
+app.MapHub<PlanningHub>("/planningHub");
 
 // 🔎 Test koneksi database saat startup
 using (var scope = app.Services.CreateScope())

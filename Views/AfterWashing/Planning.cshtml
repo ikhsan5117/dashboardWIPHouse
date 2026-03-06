@@ -3,7 +3,7 @@
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/css/planning_dashboard.css?v=4">
+<link rel="stylesheet" href="/css/planning_dashboard.css?v=6">
 
 <style>
     /* Integrate with ProUI Layout */
@@ -37,12 +37,78 @@
     .dashboard-header {
         margin-top: 0;
     }
+
+    /* Clock Widget (header-right) */
+    .clock-widget {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(100,181,246,0.2);
+        border-radius: 12px;
+        padding: 7px 14px;
+        cursor: pointer;
+        transition: border-color .2s;
+    }
+    .clock-widget:hover { border-color: rgba(100,181,246,0.5); }
+    .cw-shift-badge {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,152,0,0.12);
+        border: 1px solid rgba(255,152,0,0.35);
+        border-radius: 20px;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 800;
+        color: #FFB74D;
+        letter-spacing: 1.2px;
+        white-space: nowrap;
+        user-select: none;
+    }
+    .cw-shift-dot {
+        width: 7px;
+        height: 7px;
+        background: #FFB74D;
+        border-radius: 50%;
+        animation: shiftPulse 2s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+    @@keyframes shiftPulse {
+        0%,100% { opacity:1; box-shadow:0 0 0 0 rgba(255,152,0,.6); }
+        50%      { opacity:.6; box-shadow:0 0 0 5px rgba(255,152,0,0); }
+    }
+    .cw-vdivider {
+        width: 1px;
+        height: 30px;
+        background: rgba(100,181,246,0.18);
+        flex-shrink: 0;
+    }
+    .cw-date-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        line-height: 1.35;
+    }
+    .clock-day {
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 2.5px;
+        color: #64b5f6;
+        text-transform: uppercase;
+    }
+    .clock-fulldate {
+        font-size: 12px;
+        font-weight: 700;
+        color: #cfd8dc;
+        letter-spacing: 0.5px;
+        white-space: nowrap;
+    }
 </style>
 
 <div class="dashboard-container">
     <header class="dashboard-header">
         <div class="header-left">
-            <div class="clock-section" id="clock">00:00</div>
             <div class="shift-status-pill" onclick="openShiftSettings()">
                 <div class="indicator"></div>
                 <span id="current-shift-display">SHIFT 1</span>
@@ -50,7 +116,7 @@
         </div>
         
         <div class="header-center">
-            <h1 id="window-title">PROGRESS SUPPLY FINISHING - @DateTime.Now.ToString("dd MMM yyyy")</h1>
+            <h1 id="window-title">SUPPLY FINISHING</h1>
             <div class="main-nav">
                 <div class="nav-group">
                     <button class="nav-btn" onclick="shiftWindow(-3)">⏮ PREV 3h</button>
@@ -67,7 +133,13 @@
         </div>
 
         <div class="header-right">
-            <!-- Additional info or status indicators could go here -->
+            <div class="clock-widget">
+                <div class="clock-section" id="clock">00:00</div>
+                <div class="cw-date-info">
+                    <span class="clock-day" id="clock-day">---</span>
+                    <span class="clock-fulldate" id="clock-fulldate">-- --- ----</span>
+                </div>
+            </div>
         </div>
     </header>
 
@@ -136,6 +208,7 @@
 </div>
 
 @section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script>
         // compute window start based on current hour (blocks of 3h starting at 7)
         function getLiveWindowStart() {
@@ -181,14 +254,36 @@
                     </div>`;
             }
             $('#dynamic-time-header').html(html);
-            const dateStr = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-            $('#window-title').text(`SUPPLY FINISHING - ${dateStr} (${startHour.toString().padStart(2,'0')}:00 - ${(startHour+2).toString().padStart(2,'0')}:59)`);
         }
 
         function updateClock() {
             const now = new Date();
             $('#clock').text(now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0'));
-            
+            const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+            $('#clock-day').text(days[now.getDay()]);
+            $('#clock-fulldate').text(now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }));
+
+            // ── Auto-detect current shift ──────────────────────────
+            const nowDec = now.getHours() + now.getMinutes() / 60;
+            let detectedShift = null;
+            for (const s of shifts) {
+                let ss = timeToDecimal(s.start);
+                let se = timeToDecimal(s.end);
+                if (se === 0) se = 24;
+                // shift crosses midnight (e.g. 19:30 → 07:00)
+                if (se <= ss) {
+                    if (nowDec >= ss || nowDec < se) { detectedShift = s.name; break; }
+                } else {
+                    if (nowDec >= ss && nowDec < se) { detectedShift = s.name; break; }
+                }
+            }
+            if (detectedShift && detectedShift !== selectedShift) {
+                selectedShift = detectedShift;
+                localStorage.setItem('dashboard_selected_shift', detectedShift);
+                $('#current-shift-display').text(detectedShift.toUpperCase());
+            }
+            // ──────────────────────────────────────────────────────
+
             const liveBlockStart = Math.floor((now.getHours() - 7) / 3) * 3 + 7;
             // Auto-shift window if hour moves to next block while live
             if (isLive && liveBlockStart !== currentWindowStart && liveBlockStart >= 7 && liveBlockStart <= 19) {
@@ -247,55 +342,39 @@
 
             // Render planning items
             data.forEach(item => {
-                // Filter by selected shift
                 if (item.remarks !== selectedShift) return;
 
-                // Get selected shift start time
                 const activeShift = shifts.find(s => s.name === selectedShift);
                 const shiftStartDecimal = timeToDecimal(activeShift.start);
-
                 const row = $(`#line-${item.mesinId}`);
-                
-                // CRITICAL: Calculate time relative to edited shift start
                 const displayTime = item.time + shiftStartDecimal;
                 const offsetHours = displayTime - currentWindowStart;
 
-                // Prepare detail time string for the card
                 const h = Math.floor(displayTime);
                 const m = Math.round((displayTime - h) * 60);
                 const detailTimeStr = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}`;
 
-                // only count towards AR/remarks if the item is visible in the window
                 if (offsetHours >= 0 && offsetHours < 3) {
-                    if (!lineStats[item.mesinId]) {
-                        lineStats[item.mesinId] = { total: 0, supplied: 0, remarks: [] };
-                    }
+                    if (!lineStats[item.mesinId]) lineStats[item.mesinId] = { total: 0, supplied: 0, remarks: [] };
                     lineStats[item.mesinId].total++;
                     if (item.status === 'green') lineStats[item.mesinId].supplied++;
-                    if (item.remarks && !lineStats[item.mesinId].remarks.includes(item.remarks)) {
+                    if (item.remarks && !lineStats[item.mesinId].remarks.includes(item.remarks))
                         lineStats[item.mesinId].remarks.push(item.remarks);
-                    }
                 }
 
-                // Calculate status dynamically in frontend
-                let status = item.status; // use green/done from server
+                let status = item.status;
                 if (status !== 'green') {
                     const now = new Date();
                     const nowHours = now.getHours() + (now.getMinutes() / 60);
-                    if (nowHours > displayTime) {
-                        status = 'red';
-                    } else if (displayTime - nowHours <= 0.5) {
-                        status = 'yellow';
-                    } else {
-                        status = 'white';
-                    }
+                    if (nowHours > displayTime) status = 'red';
+                    else if (displayTime - nowHours <= 0.5) status = 'yellow';
+                    else status = 'white';
                 }
 
                 if (row.length && offsetHours >= 0 && offsetHours < 3) {
                     const leftPercent = (offsetHours / 3) * 100;
                     const qtySupplied = item.qtySupplied || 0;
                     const qtyTotal = item.qty || 0;
-                    // Tampilkan progress jika sudah ada supply tapi belum penuh
                     const showProgress = qtySupplied > 0 && status !== 'green';
                     const qtyDisplay = showProgress ? `${qtySupplied}/${qtyTotal}` : `${qtyTotal}`;
                     const progressPct = qtyTotal > 0 ? Math.round((qtySupplied / qtyTotal) * 100) : 0;
@@ -352,8 +431,8 @@
 
         // Initial shifts with persistence
         let shifts = JSON.parse(localStorage.getItem('dashboard_shifts')) || [
-            { name: 'Shift 1', start: '07:00', end: '16:00' },
-            { name: 'Shift 2', start: '16:00', end: '00:00' }
+            { name: 'Shift 1', start: '07:00', end: '19:30' },
+            { name: 'Shift 2', start: '19:30', end: '07:00' }
         ];
         let selectedShift = localStorage.getItem('dashboard_selected_shift') || 'Shift 1';
         let editingIndex = -1;
@@ -461,7 +540,37 @@
             goLive();
             setInterval(updateClock, 1000);
             fetchPlanning();
-            setInterval(fetchPlanning, 60000);
+            // Fallback polling setiap 5 menit (kalau SignalR putus)
+            setInterval(fetchPlanning, 300000);
+
+            // ── SignalR real-time update ──────────────────────────────
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl('/planningHub')
+                .withAutomaticReconnect([0, 2000, 5000, 10000, 30000])
+                .configureLogging(signalR.LogLevel.Warning)
+                .build();
+
+            connection.on('planningUpdated', () => {
+                console.log('[SignalR] planningUpdated → refresh data');
+                fetchPlanning();
+            });
+
+            connection.onreconnected(() => {
+                console.log('[SignalR] Reconnected — refreshing data');
+                fetchPlanning();
+            });
+
+            async function startSignalR() {
+                try {
+                    await connection.start();
+                    console.log('[SignalR] Connected to /planningHub');
+                } catch (err) {
+                    console.warn('[SignalR] Connection failed, will retry in 10s', err);
+                    setTimeout(startSignalR, 10000);
+                }
+            }
+            startSignalR();
+            // ─────────────────────────────────────────────────────────
 
             // Close modal when clicking outside
             $(window).click(function(event) {
